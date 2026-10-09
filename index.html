@@ -1,5 +1,92 @@
 <!doctype html>
+<html lang="zh-Hant">
+<head>
 <meta charset="utf-8">
-<meta http-equiv="refresh" content="0; url=./ledger-house/app.html">
-<title>記帳小屋</title>
-<a href="./ledger-house/app.html">開啟記帳小屋</a>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Eric 的工具箱</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@700&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* 版面：單欄工具清單。分類標題做成劇組貼在器材箱上的黑色大力膠帶＋白色手寫字；其餘保持安靜，卡片一張一列，網站變多也不用改版 */
+:root{
+  --bg: oklch(96.2% 0.004 250);
+  --panel: oklch(99.4% 0.002 250);
+  --ink: oklch(22% 0.012 255);
+  --ink-2: oklch(42% 0.012 255);
+  --ink-3: oklch(56% 0.01 255);
+  --rule: oklch(88% 0.008 250);
+  --tape: oklch(21% 0.006 255);          /* 大力膠帶：霧黑 */
+  --tape-ink: oklch(97% 0.004 90);       /* 膠帶上的白色奇異筆 */
+  --accent: oklch(47% 0.13 250);         /* 連結與焦點 */
+  --accent-soft: oklch(94% 0.025 250);
+  --hand: "LXGW WenKai TC", "Kaiti TC", "DFKai-SB", serif;
+  --sans: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg: oklch(18.5% 0.008 255); --panel: oklch(22.5% 0.01 255); --ink: oklch(93% 0.005 250); --ink-2: oklch(78% 0.008 250);
+  --ink-3: oklch(64% 0.008 250); --rule: oklch(32% 0.01 255); --tape: oklch(12% 0.004 255); --tape-ink: oklch(95% 0.004 90);
+  --accent: oklch(74% 0.11 250); --accent-soft: oklch(30% 0.04 250); color-scheme: dark } }
+:root[data-theme="dark"]{
+  --bg: oklch(18.5% 0.008 255); --panel: oklch(22.5% 0.01 255); --ink: oklch(93% 0.005 250); --ink-2: oklch(78% 0.008 250);
+  --ink-3: oklch(64% 0.008 250); --rule: oklch(32% 0.01 255); --tape: oklch(12% 0.004 255); --tape-ink: oklch(95% 0.004 90);
+  --accent: oklch(74% 0.11 250); --accent-soft: oklch(30% 0.04 250); color-scheme: dark }
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 var(--sans);-webkit-font-smoothing:antialiased}
+.wrap{max-width:760px;margin:0 auto;padding-inline:20px;padding-block:calc(40px + env(safe-area-inset-top, 0px)) calc(48px + env(safe-area-inset-bottom, 0px));display:flex;flex-direction:column;gap:28px}
+header h1{font:700 30px/1.25 var(--sans);margin:0;letter-spacing:.01em;text-wrap:balance}
+header p{margin:6px 0 0;color:var(--ink-3);font-size:14px;max-width:60ch}
+/* 大力膠帶標籤：撕邊用 clip-path 做出不規則的兩端 */
+.tape{display:inline-block;background:var(--tape);color:var(--tape-ink);font:700 19px/1 var(--hand);letter-spacing:.06em;
+  padding:9px 22px 8px;transform:rotate(-1.2deg);
+  clip-path:polygon(0 8%,3% 0,97% 4%,100% 0,98% 52%,100% 100%,96% 94%,4% 100%,0 92%,2% 48%)}
+section{display:flex;flex-direction:column;gap:14px}
+.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.tool{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:18px 20px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 18px;align-items:center}
+.tool h2{font:700 19px/1.35 var(--sans);margin:0;grid-column:1}
+.tool .desc{margin:0;color:var(--ink-2);font-size:14.5px;grid-column:1;max-width:58ch}
+.tool .meta{grid-column:1;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;margin-top:4px}
+.host{font:500 12.5px/1.4 var(--mono);color:var(--ink-3);overflow-wrap:anywhere}
+.chip{font-size:12px;font-weight:500;color:var(--ink-2);border:1px solid var(--rule);border-radius:999px;padding:1px 9px}
+.open{grid-column:2;grid-row:1 / span 3;align-self:center;display:inline-flex;align-items:center;gap:6px;text-decoration:none;
+  background:var(--accent);color:var(--panel);font-weight:700;font-size:15px;padding:11px 18px;border-radius:8px;white-space:nowrap;
+  transition:filter .15s ease,transform .1s ease}
+.open:hover{filter:brightness(1.08)} .open:active{transform:translateY(1px)}
+.open:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.tip{grid-column:1 / -1;margin:8px 0 0;padding:9px 12px;border-radius:7px;background:var(--accent-soft);color:var(--ink-2);font-size:13.5px}
+@media (max-width:520px){
+  .tool{grid-template-columns:minmax(0,1fr)}
+  .open{grid-column:1;grid-row:auto;justify-self:start;margin-top:8px}
+}
+footer{color:var(--ink-3);font-size:13px;border-top:1px solid var(--rule);padding-top:14px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <h1>Eric 的工具箱</h1>
+    <p>我自己做的網站都放這裡，點了就開。</p>
+  </header>
+
+  <section aria-labelledby="sec-work">
+    <div><span class="tape" id="sec-work">接案工具</span></div>
+    <ul class="list">
+      <li class="tool">
+        <h2>勞報單產生器</h2>
+        <p class="desc">基本資料鎖定後，每張只改日期、專案名稱、金額，直接下載 PDF。山上影像、成為影像兩種格式。</p>
+        <div class="meta"><span class="host">labor-report-delta.vercel.app</span><span class="chip">山上影像</span><span class="chip">成為影像</span></div>
+        <a class="open" href="https://labor-report-delta.vercel.app" target="_blank" rel="noopener noreferrer">開啟 <span aria-hidden="true">↗</span></a>
+        <p class="tip">基本資料只存在各自的瀏覽器。換手機或換電腦時，先在原本那台按「下載備份檔」，再到新的那台「從備份檔匯入」。</p>
+      </li>
+    </ul>
+  </section>
+
+  <footer>只給自己用的導航頁，不會被搜尋引擎收錄。這頁和它的原始碼是公開的，公司內部工具不要放這裡。</footer>
+</main>
+</body>
+</html>
