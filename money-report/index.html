@@ -121,7 +121,8 @@ section{margin-top:12px}
 .bar{height:10px;border-radius:0 4px 4px 0;min-width:0}
 .track{background:transparent;min-width:0}
 .row .amt{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;font-size:14px}
-.row .amt small{display:block;font-size:12px;color:var(--ink-3)}
+.row .amt small{display:block;font-size:12px;color:var(--ink-3);white-space:normal;max-width:17em;margin-left:auto;text-wrap:pretty}
+@media (max-width:480px){ .row .amt small{max-width:9.5em} }   /* 比較說明換行，不把長條擠掉 */
 .subrows{grid-column:1/-1;display:grid;grid-template-columns:subgrid;padding:2px 0 6px}
 .subrow{grid-column:1/-1;display:grid;grid-template-columns:subgrid;align-items:center;padding:4px 6px 4px 30px;font-size:13px;color:var(--ink-2)}
 .subrow > span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:12em}
