@@ -68,6 +68,7 @@ main{display:flex;flex-direction:column;min-width:0;min-height:0}
 .newtab:hover{border-color:var(--accent)}
 .stage{position:relative;flex:1;min-height:0}
 .stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--bg)}
+.launch{height:100%;overflow:auto;display:grid;place-items:center;padding:32px 20px}.launch-card{width:min(100%,560px);padding:32px;border:1px solid var(--rule);border-radius:12px;background:var(--side)}.launch-card .label{font:500 12px/1.4 var(--mono);color:var(--ink-3);letter-spacing:.08em;margin:0 0 14px}.launch-card h3{font:700 24px/1.5 var(--sans);margin:0 0 12px}.launch-card p{font-size:16px;color:var(--ink-2);margin:0 0 22px}.launch-card .launch-button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 18px;background:var(--accent);color:var(--bg);border-radius:7px;text-decoration:none;font-weight:700}.launch-button:focus-visible{outline:3px solid var(--accent);outline-offset:4px}.launch-card .launch-note{font-size:14px;margin:18px 0 0;color:var(--ink-3)}
 .empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--ink-3);font-size:14px}
 /* 手機：選單改到頂端橫排 */
 @media (max-width:760px){
@@ -91,10 +92,10 @@ main{display:flex;flex-direction:column;min-width:0;min-height:0}
   <aside>
     <h1 class="brand">Eric 的工具箱</h1>
     <nav aria-label="工具" id="nav"></nav>
-    <p class="foot">只給自己用，不會被搜尋引擎收錄。這頁和原始碼是公開的，公司內部工具不要放這裡。</p>
+    <p class="foot">這是公開工具入口。私人工作台需登入使用，案件資料留在工作台內。</p>
   </aside>
   <main>
-    <div class="bar"><h2 id="cur">選一個工具</h2><a class="newtab" id="newtab" href="#" target="_blank" rel="noopener" hidden>在新分頁開啟 ↗</a></div>
+    <div class="bar"><h2 id="cur">選一個工具</h2><a class="newtab" id="newtab" href="#" target="_blank" rel="noopener noreferrer" hidden>在新分頁開啟 ↗</a></div>
     <div class="stage" id="stage"><p class="empty">從左邊選一個工具</p></div>
   </main>
 </div>
@@ -102,6 +103,7 @@ main{display:flex;flex-direction:column;min-width:0;min-height:0}
 // 工具清單：加網站就在這裡加一筆（同網址底下的工具放子資料夾，資料才不會被瀏覽器分開存）
 const TOOLS = [
   { id: 'labor-report', group: '接案工具', name: '勞報單產生器', hint: '山上影像・成為影像', src: 'labor-report/' },
+  { id: 'project-desk', group: '接案工具', name: '案務專案工作台', hint: '進度・處理紀錄・工作流', src: 'https://studio-project-desk.expertrook16.chatgpt.site/', mode: 'external' },
 ];
 const $ = id => document.getElementById(id);
 const frames = {};
@@ -119,7 +121,19 @@ function select(id){
   const nt = $('newtab'); nt.href = t.src; nt.hidden = false;
   const stage = $('stage'), empty = stage.querySelector('.empty'); if (empty) empty.remove();
   if (!frames[t.id]){   // 第一次選才載入；切換時保留狀態
-    const f = document.createElement('iframe'); f.src = t.src; f.title = t.name; f.loading = 'eager';
+    let f;
+    if (t.mode === 'external') {
+      f = document.createElement('section'); f.className = 'launch';
+      const card = document.createElement('div'); card.className = 'launch-card';
+      const label = document.createElement('p'); label.className = 'label'; label.textContent = 'PRIVATE WORKSPACE';
+      const title = document.createElement('h3'); title.textContent = t.name;
+      const description = document.createElement('p'); description.textContent = '追蹤每個專案的進度與下一步，記下每次處理，讓有效的做法成為下一案的工作流程。';
+      const link = document.createElement('a'); link.className = 'launch-button'; link.href = t.src; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.textContent = '開啟案務工作台';
+      const note = document.createElement('p'); note.className = 'launch-note'; note.textContent = '在新分頁開啟，登入原本的 ChatGPT 帳號即可使用。';
+      card.append(label, title, description, link, note); f.appendChild(card);
+    } else {
+      f = document.createElement('iframe'); f.src = t.src; f.title = t.name; f.loading = 'eager';
+    }
     stage.appendChild(f); frames[t.id] = f;
   }
   Object.entries(frames).forEach(([k, f]) => { f.hidden = k !== t.id; });
