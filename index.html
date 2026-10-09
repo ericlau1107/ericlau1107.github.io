@@ -121,6 +121,8 @@ function select(id){
   const t = TOOLS.find(x => x.id === id) || TOOLS[0];
   if (!t) return;
   document.querySelectorAll('.item').forEach(b => { if (b.dataset.id === t.id) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
+  const on = document.querySelector('.item[aria-current]');   // 手機版選單是橫向一列：選中的項目捲進看得到的範圍
+  if (on) on.scrollIntoView({block: 'nearest', inline: 'nearest'});
   $('cur').textContent = t.name;
   const nt = $('newtab'); nt.href = t.src; nt.hidden = false;
   const stage = $('stage'), empty = stage.querySelector('.empty'); if (empty) empty.remove();
