@@ -1,2 +1,3 @@
 User-agent: *
 Disallow: /labor-report/
+Disallow: /money-report/

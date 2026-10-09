@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<!-- 資料只存在這台裝置：CSP 不允許任何對外連線（連字型都用系統內建的），網頁在技術上無法把資料送出去 -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-860vx4D6m3Dx7plrbRlyM6w7tetaFo8BAMtVgbNrIuU='; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>記帳月報</title>
+<style>
+/* ══ 記帳月報：月報檔（money-report/1）的檢視器。所有資料只存在這台裝置的瀏覽器（IndexedDB）。
+   視覺跟工具箱同一套中性色；圖表色依類別代碼固定（dataviz 參考配色，淺／深色都經驗證工具驗過）。 ══ */
+:root{
+  --bg: oklch(96.2% 0.004 250); --card: oklch(99.2% 0.002 250);
+  --ink: oklch(22% 0.012 255); --ink-2: oklch(42% 0.012 255); --ink-3: oklch(52% 0.01 255);
+  --rule: oklch(90% 0.008 250); --grid: #e1e0d9; --axis: #c3c2b7;
+  --accent: oklch(47% 0.13 250); --accent-soft: oklch(94% 0.03 250);
+  --tip: oklch(22% 0.012 255); --tip-ink: oklch(97% 0.004 250);
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#e87ba4; --s6:#008300; --s7:#4a3aa7; --s0:#898781;
+  --fF:#86b6ef; --fB:#3987e5; --fD:#184f95;
+  --hatch: #8e9298;   /* 沒記帳斜線：對卡片 3.05:1 */
+  --sans:"PingFang TC","Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --danger: oklch(50% 0.17 25); --danger-line: oklch(80% 0.06 25);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg: oklch(18.5% 0.008 255); --card: oklch(22.5% 0.01 255);
+  --ink: oklch(93% 0.005 250); --ink-2: oklch(80% 0.008 250); --ink-3: oklch(68% 0.008 250);
+  --rule: oklch(32% 0.01 255); --grid: #2c2c2a; --axis: #383835;
+  --accent: oklch(74% 0.11 250); --accent-soft: oklch(30% 0.045 250);
+  --tip: oklch(93% 0.005 250); --tip-ink: oklch(18.5% 0.008 255);
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#008300; --s7:#9085e9; --s0:#898781;
+  --fF:#184f95; --fB:#3987e5; --fD:#9ec5f4; --hatch: #6b6f75; --danger: oklch(72% 0.15 25); --danger-line: oklch(45% 0.1 25); color-scheme: dark } }
+:root[data-theme="dark"]{
+  --bg: oklch(18.5% 0.008 255); --card: oklch(22.5% 0.01 255);
+  --ink: oklch(93% 0.005 250); --ink-2: oklch(80% 0.008 250); --ink-3: oklch(68% 0.008 250);
+  --rule: oklch(32% 0.01 255); --grid: #2c2c2a; --axis: #383835;
+  --accent: oklch(74% 0.11 250); --accent-soft: oklch(30% 0.045 250);
+  --tip: oklch(93% 0.005 250); --tip-ink: oklch(18.5% 0.008 255);
+  --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#d55181; --s6:#008300; --s7:#9085e9; --s0:#898781;
+  --fF:#184f95; --fB:#3987e5; --fD:#9ec5f4; --hatch: #6b6f75; --danger: oklch(72% 0.15 25); --danger-line: oklch(45% 0.1 25); color-scheme: dark }
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1040px;margin:0 auto;padding-inline:clamp(16px,3vw,28px);padding-block:20px calc(48px + env(safe-area-inset-bottom,0px))}
+.num{font-variant-numeric:tabular-nums}
+.k{font:500 11px/1.4 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+
+/* 頁首 */
+.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 16px;margin-bottom:16px}
+.top h1{margin:0;font:700 24px/1.25 var(--sans);letter-spacing:.01em}
+.top p{margin:4px 0 0;font-size:13px;color:var(--ink-3)}
+.acts{display:flex;flex-wrap:wrap;gap:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:8px 14px;border-radius:8px;border:1px solid var(--rule);
+     background:var(--card);cursor:pointer;font-size:14px;font-weight:500;transition:border-color .15s}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--card)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.danger{color:var(--danger);border-color:var(--danger-line)}
+.alert{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:space-between;gap:8px 12px;padding:12px 14px;border-radius:10px;margin-bottom:12px;
+       border:1px solid var(--danger-line);background:var(--card);font-size:14px}
+.alert ul{margin:4px 0 0;padding-left:1.2em}
+.warn{color:var(--danger);font-weight:500}
+.months{display:flex;gap:6px;overflow-x:auto;padding:2px 2px 8px;margin:0 -2px 8px;scrollbar-width:thin}
+.months button{flex:none;min-height:36px;padding:6px 12px;border-radius:999px;border:1px solid var(--rule);background:var(--card);cursor:pointer;font-size:14px}
+.months button[aria-current]{background:var(--ink);border-color:var(--ink);color:var(--card);font-weight:700}
+.banner{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px;padding:10px 14px;border-radius:10px;
+        background:var(--accent-soft);color:var(--ink);font-size:14px;margin-bottom:12px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:20;max-width:min(92vw,520px);
+       padding:10px 16px;border-radius:10px;background:var(--tip);color:var(--tip-ink);font-size:14px;box-shadow:0 6px 24px rgb(0 0 0 / .18)}
+
+/* 卡片與區塊 */
+.card{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:18px clamp(14px,2.4vw,22px);min-width:0}
+.grid{display:grid;gap:12px}
+section{margin-top:12px}
+.sec-h{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 12px;margin-bottom:12px}
+.sec-h h2{margin:0;font:700 17px/1.35 var(--sans)}
+.sec-h .k{text-transform:none;letter-spacing:.02em}
+.honest{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;font-size:13px;color:var(--ink-2)}
+.tag{display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:700;
+     background:oklch(93% 0.06 85);color:oklch(38% 0.08 70)}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .tag{background:oklch(34% 0.06 80);color:oklch(90% 0.08 85)} }
+:root[data-theme="dark"] .tag{background:oklch(34% 0.06 80);color:oklch(90% 0.08 85)}
+
+/* 主要數字 */
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.tile{display:flex;flex-direction:column;gap:2px}
+.tile .v{font:700 26px/1.2 var(--sans);font-variant-numeric:tabular-nums;letter-spacing:-.01em;overflow-wrap:anywhere}
+.tile .sub{font-size:13px;color:var(--ink-3)}
+@media (max-width:820px){ .tiles{grid-template-columns:repeat(2,minmax(0,1fr))} }
+@media (max-width:380px){ .tile .v{font-size:22px} }
+
+/* 分析 */
+.an-head{margin:0 0 14px;font:700 19px/1.5 var(--sans);text-wrap:balance}
+.an-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px 24px}
+.an-cols h3{margin:0 0 6px;font-size:14px;color:var(--ink-2)}
+.an-cols ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px}
+.an-foot{display:flex;flex-wrap:wrap;gap:8px 24px;margin-top:14px;padding-top:12px;border-top:1px solid var(--rule);font-size:14px}
+.an-foot b{font-weight:700}
+.empty-an{color:var(--ink-3);font-size:14px;margin:0}
+@media (max-width:720px){ .an-cols{grid-template-columns:1fr} }
+
+/* 分布：堆疊總覽條＋排序列 */
+.stack{display:flex;gap:2px;height:14px;border-radius:7px;overflow:hidden;margin-bottom:16px;background:var(--card)}
+.stack i{display:block;min-width:2px}
+/* 同一張卡裡的列共用一組欄線（subgrid）：名稱欄寬由最長的名稱決定，長條一律從同一條線開始 */
+.rows{display:grid;grid-template-columns:max-content minmax(0,1fr) max-content;column-gap:12px;row-gap:2px}
+.row{grid-column:1/-1;display:grid;grid-template-columns:subgrid;align-items:center;padding:7px 6px;border-radius:8px;
+     width:100%;text-align:left;border:0;background:transparent;cursor:pointer}
+.row:hover{background:var(--accent-soft)}
+.row .nm{display:flex;align-items:center;gap:8px;font-weight:500;white-space:nowrap;min-width:0;max-width:12em}
+.nm .t{overflow:hidden;text-overflow:ellipsis;min-width:0}
+.row .nm .sw{width:10px;height:10px;border-radius:3px;flex:none}
+.row .nm .chev{font-size:11px;color:var(--ink-3);transition:transform .15s}
+.row[aria-expanded="true"] .chev{transform:rotate(90deg)}
+.bar{height:10px;border-radius:0 4px 4px 0;min-width:0}
+.track{background:transparent;min-width:0}
+.row .amt{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;font-size:14px}
+.row .amt small{display:block;font-size:12px;color:var(--ink-3)}
+.subrows{grid-column:1/-1;display:grid;grid-template-columns:subgrid;padding:2px 0 6px}
+.subrow{grid-column:1/-1;display:grid;grid-template-columns:subgrid;align-items:center;padding:4px 6px 4px 30px;font-size:13px;color:var(--ink-2)}
+.subrow > span:first-child{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:12em}
+.subrow .bar{height:6px}
+.flexnote{font-size:12px;color:var(--ink-3);font-weight:400}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:820px){ .two{grid-template-columns:1fr} }
+@media (max-width:480px){ .rows{column-gap:8px} .row .nm,.subrow > span:first-child{max-width:9em}
+  .row .nm .t{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical} }
+
+/* 彈性度 */
+.flexbar{display:flex;gap:2px;height:28px;border-radius:6px;overflow:hidden}
+.flexbar i{display:block;min-width:2px}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:10px;font-size:13px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend .sw{width:10px;height:10px;border-radius:3px}
+.flex-desc{margin:10px 0 0;font-size:13px;color:var(--ink-3)}
+
+/* 圖表 */
+.chart{position:relative;width:100%}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart text{font:500 11px var(--mono);fill:var(--ink-3)}
+.tip{position:fixed;z-index:30;pointer-events:none;padding:8px 10px;border-radius:8px;background:var(--tip);color:var(--tip-ink);
+     font-size:13px;line-height:1.45;box-shadow:0 6px 24px rgb(0 0 0 / .2);max-width:240px}
+.tip b{display:block;font-weight:700}
+details.tbl{margin-top:12px;font-size:13px}
+details.tbl summary{cursor:pointer;color:var(--ink-2);padding:4px 0}
+.tblwrap{overflow-x:auto;margin-top:6px}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{padding:6px 8px;border-bottom:1px solid var(--rule);text-align:left;white-space:nowrap}
+td.r,th.r{text-align:right}
+
+/* 空狀態與匯入 */
+.empty{display:grid;place-items:center;text-align:center;padding:48px 20px}
+.empty h2{margin:0 0 8px;font-size:20px}
+.empty p{margin:0 auto 18px;max-width:30em;color:var(--ink-2);font-size:14px}
+.drop{position:fixed;inset:0;z-index:40;display:grid;place-items:center;background:color-mix(in oklab,var(--bg) 82%,transparent);
+      border:3px dashed var(--accent);font:700 20px var(--sans);color:var(--accent)}
+.manage ul{list-style:none;margin:0;padding:0}
+.manage li{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:10px 0;border-bottom:1px solid var(--rule)}
+.manage .meta{font-size:12px;color:var(--ink-3)}
+.privacy{margin-top:18px;font-size:12px;color:var(--ink-3);line-height:1.6}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div><h1>記帳月報</h1><p>每月的花費分布與建議。資料只存在這台裝置的瀏覽器。</p></div>
+    <div class="acts">
+      <button class="btn primary" type="button" id="importBtn">匯入月報檔</button>
+      <button class="btn" type="button" id="sampleBtn">看樣本</button>
+      <button class="btn" type="button" id="manageBtn" aria-expanded="false" aria-controls="manage">管理資料</button>
+    </div>
+    <input type="file" id="file" accept=".json,application/json" multiple hidden>
+  </header>
+  <div class="alert" id="alert" role="alert" hidden></div>
+  <div class="banner" id="sampleBanner" hidden><span>正在看<b>樣本</b>：以下是虛構資料，沒有存進這台裝置。</span><button class="btn" type="button" id="leaveSample">離開樣本</button></div>
+  <section class="card manage" id="manage" hidden aria-labelledby="mg-h">
+    <div class="sec-h"><h2 id="mg-h">這台裝置上的月報</h2><span class="k">存在瀏覽器（IndexedDB），不會上傳</span></div>
+    <ul id="mgList"></ul>
+    <div class="acts" style="margin-top:12px"><button class="btn danger" type="button" id="wipeBtn">刪除全部月報</button></div>
+  </section>
+  <nav class="months" id="months" aria-label="月份"></nav>
+  <main id="main"></main>
+  <p class="privacy">這個網頁不會把任何資料傳出去：它的安全設定不允許連線到任何伺服器（連字型都用裝置內建的）。月報只存在你現在用的這台裝置的瀏覽器裡；同一個網站（ericlau1107.github.io）上的其他工具頁在技術上也讀得到，所以那些頁面一律不放廣告或追蹤程式。換手機或清除瀏覽器資料就要重新匯入。</p>
+</div>
+<div class="drop" id="drop" hidden>放開以匯入月報檔</div>
+<div class="tip" id="tip" role="status" hidden></div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<script>
+'use strict';
+/* 樣本（虛構資料，由記帳系統的產生器對假台帳產出；建置時嵌入） */
+const SAMPLES = [{"schema":"money-report/1","month":"2026-09","generated_at":"2026-10-09T21:22:49+08:00","currency":"TWD","coverage":{"days_in_month":30,"days_with_entry":24,"partial":true,"rows":71,"unknown_amount":0,"est_rows":0,"dup_rows":0,"dup_amount":0,"warnings":0},"totals":{"income":46000,"expense":23743,"net_savings":22257,"saving_rate":0.4838,"capital_transfer_out":8000,"capital_transfer_in":0,"owed_out":0},"transfers":[{"code":"X2","name":"儲蓄","out":8000,"in":0}],"by_flex":{"F":13499,"B":1959,"D":8285,"-":0},"groups":[{"code":"E1","name":"食","amount":8174,"count":49,"cats":[{"code":"E1.01","name":"外食","amount":6160,"count":36,"flex":"D"},{"code":"E1.02","name":"食材採買","amount":1037,"count":2,"flex":"B"},{"code":"E1.03","name":"咖啡飲料","amount":977,"count":11,"flex":"D"}]},{"code":"E2","name":"行","amount":542,"count":14,"cats":[{"code":"E2.01","name":"大眾運輸","amount":542,"count":14,"flex":"B"}]},{"code":"E3","name":"住","amount":13350,"count":2,"cats":[{"code":"E3.01","name":"房租","amount":12000,"count":1,"flex":"F"},{"code":"E3.02","name":"水電網路電信","amount":1350,"count":1,"flex":"F"}]},{"code":"E5","name":"樂","amount":1297,"count":3,"cats":[{"code":"E5.01","name":"娛樂休閒","amount":1148,"count":2,"flex":"D"},{"code":"E5.02","name":"訂閱服務","amount":149,"count":1,"flex":"F"}]},{"code":"E7","name":"保健","amount":380,"count":1,"cats":[{"code":"E7.02","name":"醫療","amount":380,"count":1,"flex":"B"}]}],"income_by_cat":[{"code":"I1","name":"薪資","amount":46000}],"daily":[{"date":"2026-09-01","expense":334,"fixed":0,"has_entry":true},{"date":"2026-09-02","expense":467,"fixed":0,"has_entry":true},{"date":"2026-09-03","expense":0,"fixed":0,"has_entry":false},{"date":"2026-09-04","expense":0,"fixed":0,"has_entry":false},{"date":"2026-09-05","expense":12265,"fixed":12000,"has_entry":true},{"date":"2026-09-06","expense":490,"fixed":0,"has_entry":true},{"date":"2026-09-07","expense":231,"fixed":0,"has_entry":true},{"date":"2026-09-08","expense":1496,"fixed":1350,"has_entry":true},{"date":"2026-09-09","expense":387,"fixed":0,"has_entry":true},{"date":"2026-09-10","expense":303,"fixed":0,"has_entry":true},{"date":"2026-09-11","expense":1176,"fixed":0,"has_entry":true},{"date":"2026-09-12","expense":0,"fixed":0,"has_entry":false},{"date":"2026-09-13","expense":0,"fixed":0,"has_entry":false},{"date":"2026-09-14","expense":350,"fixed":0,"has_entry":true},{"date":"2026-09-15","expense":517,"fixed":149,"has_entry":true},{"date":"2026-09-16","expense":215,"fixed":0,"has_entry":true},{"date":"2026-09-17","expense":331,"fixed":0,"has_entry":true},{"date":"2026-09-18","expense":742,"fixed":0,"has_entry":true},{"date":"2026-09-19","expense":222,"fixed":0,"has_entry":true},{"date":"2026-09-20","expense":0,"fixed":0,"has_entry":false},{"date":"2026-09-21","expense":0,"fixed":0,"has_entry":false},{"date":"2026-09-22","expense":481,"fixed":0,"has_entry":true},{"date":"2026-09-23","expense":163,"fixed":0,"has_entry":true},{"date":"2026-09-24","expense":543,"fixed":0,"has_entry":true},{"date":"2026-09-25","expense":187,"fixed":0,"has_entry":true},{"date":"2026-09-26","expense":531,"fixed":0,"has_entry":true},{"date":"2026-09-27","expense":88,"fixed":0,"has_entry":true},{"date":"2026-09-28","expense":450,"fixed":0,"has_entry":true},{"date":"2026-09-29","expense":454,"fixed":0,"has_entry":true},{"date":"2026-09-30","expense":1320,"fixed":0,"has_entry":true}],"merchants":[{"name":"範例房東","amount":12000,"count":1},{"name":"範例麵店","amount":2303,"count":13},{"name":"範例速食","amount":1466,"count":9},{"name":"範例電信","amount":1350,"count":1},{"name":"範例自助餐","amount":1251,"count":7},{"name":"範例便當店","amount":1140,"count":7},{"name":"範例超市","amount":1037,"count":2},{"name":"範例桌遊店","amount":895,"count":1},{"name":"範例手搖飲","amount":611,"count":7},{"name":"捷運","amount":542,"count":14}],"funds":[{"code":"BANK.A","name":"範例銀行金融卡","amount":18091,"count":21},{"code":"LINEPAY.BAL","name":"LINE Pay 儲值","amount":2815,"count":19},{"code":"CASH","name":"現金","amount":2295,"count":15},{"code":"EASYCARD","name":"悠遊卡","amount":542,"count":14}],"analysis":{"headline":"（樣本資料）九月記帳 24 天，外食是最大宗支出。","commitment":"（樣本）十月外食比九月少。","question":"（樣本）手搖飲要不要設一週上限？","findings":["（樣本）外食占消費支出最高比例，午晚餐幾乎天天外食。","（樣本）固定支出（房租、電信、訂閱）占比穩定。","（樣本）有 6 天沒有記帳，月報標為不完整。"],"advice":["（樣本）每週挑兩天帶便當，外食預算先從減兩成開始。","（樣本）沒記帳的日子隔天補一句就好，不用補明細。"]}},{"schema":"money-report/1","month":"2026-10","generated_at":"2026-10-09T21:22:49+08:00","currency":"TWD","coverage":{"days_in_month":31,"days_with_entry":29,"partial":true,"rows":92,"unknown_amount":0,"est_rows":1,"dup_rows":0,"dup_amount":0,"warnings":0},"totals":{"income":49500,"expense":27976,"net_savings":21524,"saving_rate":0.4348,"capital_transfer_out":9000,"capital_transfer_in":0,"owed_out":0},"transfers":[{"code":"X2","name":"儲蓄","out":8000,"in":0},{"code":"X4","name":"帳戶互轉","out":1000,"in":0}],"by_flex":{"F":13499,"B":1616,"D":12561,"-":300},"groups":[{"code":"E1","name":"食","amount":10030,"count":54,"cats":[{"code":"E1.01","name":"外食","amount":8344,"count":39,"flex":"D"},{"code":"E1.03","name":"咖啡飲料","amount":1460,"count":14,"flex":"D"},{"code":"E1.02","name":"食材採買","amount":226,"count":1,"flex":"B"}]},{"code":"E2","name":"行","amount":1677,"count":25,"cats":[{"code":"E2.01","name":"大眾運輸","amount":912,"count":23,"flex":"B"},{"code":"E2.02","name":"計程車叫車","amount":765,"count":2,"flex":"D"}]},{"code":"E3","name":"住","amount":13350,"count":2,"cats":[{"code":"E3.01","name":"房租","amount":12000,"count":1,"flex":"F"},{"code":"E3.02","name":"水電網路電信","amount":1350,"count":1,"flex":"F"}]},{"code":"E4","name":"日用","amount":98,"count":2,"cats":[{"code":"E4.01","name":"日用品","amount":98,"count":2,"flex":"B"}]},{"code":"E5","name":"樂","amount":941,"count":2,"cats":[{"code":"E5.01","name":"娛樂休閒","amount":792,"count":1,"flex":"D"},{"code":"E5.02","name":"訂閱服務","amount":149,"count":1,"flex":"F"}]},{"code":"E7","name":"保健","amount":1580,"count":2,"cats":[{"code":"E7.03","name":"人情","amount":1200,"count":1,"flex":"D"},{"code":"E7.02","name":"醫療","amount":380,"count":1,"flex":"B"}]},{"code":"E8","name":"其他","amount":300,"count":1,"cats":[{"code":"E8.99","name":"未分類","amount":300,"count":1,"flex":"-"}]}],"income_by_cat":[{"code":"I1","name":"薪資","amount":46000},{"code":"I3","name":"接案","amount":3500}],"daily":[{"date":"2026-10-01","expense":369,"fixed":0,"has_entry":true},{"date":"2026-10-02","expense":427,"fixed":0,"has_entry":true},{"date":"2026-10-03","expense":562,"fixed":0,"has_entry":true},{"date":"2026-10-04","expense":814,"fixed":0,"has_entry":true},{"date":"2026-10-05","expense":12323,"fixed":12000,"has_entry":true},{"date":"2026-10-06","expense":0,"fixed":0,"has_entry":false},{"date":"2026-10-07","expense":0,"fixed":0,"has_entry":true},{"date":"2026-10-08","expense":1702,"fixed":1350,"has_entry":true},{"date":"2026-10-09","expense":122,"fixed":0,"has_entry":true},{"date":"2026-10-10","expense":787,"fixed":0,"has_entry":true},{"date":"2026-10-11","expense":238,"fixed":0,"has_entry":true},{"date":"2026-10-12","expense":424,"fixed":0,"has_entry":true},{"date":"2026-10-13","expense":752,"fixed":0,"has_entry":true},{"date":"2026-10-14","expense":474,"fixed":0,"has_entry":true},{"date":"2026-10-15","expense":487,"fixed":149,"has_entry":true},{"date":"2026-10-16","expense":365,"fixed":0,"has_entry":true},{"date":"2026-10-17","expense":1432,"fixed":0,"has_entry":true},{"date":"2026-10-18","expense":564,"fixed":0,"has_entry":true},{"date":"2026-10-19","expense":0,"fixed":0,"has_entry":false},{"date":"2026-10-20","expense":453,"fixed":0,"has_entry":true},{"date":"2026-10-21","expense":709,"fixed":0,"has_entry":true},{"date":"2026-10-22","expense":169,"fixed":0,"has_entry":true},{"date":"2026-10-23","expense":1703,"fixed":0,"has_entry":true},{"date":"2026-10-24","expense":36,"fixed":0,"has_entry":true},{"date":"2026-10-25","expense":381,"fixed":0,"has_entry":true},{"date":"2026-10-26","expense":539,"fixed":0,"has_entry":true},{"date":"2026-10-27","expense":908,"fixed":0,"has_entry":true},{"date":"2026-10-28","expense":44,"fixed":0,"has_entry":true},{"date":"2026-10-29","expense":482,"fixed":0,"has_entry":true},{"date":"2026-10-30","expense":281,"fixed":0,"has_entry":true},{"date":"2026-10-31","expense":429,"fixed":0,"has_entry":true}],"merchants":[{"name":"範例房東","amount":12000,"count":1},{"name":"範例自助餐","amount":3173,"count":15},{"name":"範例便當店","amount":2722,"count":12},{"name":"範例速食","amount":1438,"count":7},{"name":"範例電信","amount":1350,"count":1},{"name":"紅包","amount":1200,"count":1},{"name":"範例麵店","amount":1011,"count":5},{"name":"捷運","amount":912,"count":23},{"name":"範例手搖飲","amount":822,"count":9},{"name":"範例電影院","amount":792,"count":1}],"funds":[{"code":"BANK.A","name":"範例銀行金融卡","amount":17986,"count":22},{"code":"LINEPAY.BAL","name":"LINE Pay 儲值","amount":4656,"count":25},{"code":"CASH","name":"現金","amount":4422,"count":18},{"code":"EASYCARD","name":"悠遊卡","amount":912,"count":23}],"analysis":{"headline":"（樣本資料）十月記帳 29 天（其中 1 天沒花錢），外食比九月多，娛樂比九月少。","commitment":"（樣本）十一月一週兩天帶便當。","findings":["（樣本）可調整支出（D 類）比九月增加，主要來自外食，以及九月沒有的叫車。","（樣本）多了一筆接案收入，但支出增加得更多，儲蓄率比九月低。","（樣本）一筆人情支出與一筆退款都已分類；有一筆想不起來的支出以估計值入帳；LINE Pay 儲值是轉帳，不算支出也不算存款。"],"advice":["（樣本）叫車改搭捷運的日子，可以省下大部分叫車費。","（樣本）外食承諾沒達成，下個月改成更小的目標：一週兩天帶便當。"]}}];
+
+const SCHEMA = 'money-report/1';
+const $ = id => document.getElementById(id);
+/* 安全建構 DOM：所有資料一律走 textContent／setAttribute，不經 innerHTML */
+function h(tag, attrs, ...kids){
+  const el = document.createElement(tag);
+  if (attrs) for (const [k, v] of Object.entries(attrs)) {
+    if (v == null || v === false) continue;
+    if (k === 'class') el.className = v; else if (k === 'style') el.style.cssText = v; else if (k.startsWith('on')) el.addEventListener(k.slice(2), v);
+    else el.setAttribute(k, v === true ? '' : String(v));
+  }
+  for (const c of kids.flat()) if (c != null && c !== false) el.append(c instanceof Node ? c : String(c));
+  return el;
+}
+const SVGNS = 'http://www.w3.org/2000/svg';
+function s(tag, attrs, ...kids){
+  const el = document.createElementNS(SVGNS, tag);
+  for (const [k, v] of Object.entries(attrs || {})) if (v != null) el.setAttribute(k, String(v));
+  for (const c of kids.flat()) if (c != null) el.append(c instanceof Node ? c : String(c));
+  return el;
+}
+const fmt = n => (n < 0 ? '−' : '') + 'NT$' + Math.abs(n).toLocaleString('zh-TW');
+const pct = x => (x * 100).toFixed(1).replace(/\.0$/, '') + '%';
+const monthLabel = m => { const [y, mm] = m.split('-'); return `${y} 年 ${+mm} 月`; };
+const prevMonth = m => { let [y, mm] = m.split('-').map(Number); mm--; if (!mm) { mm = 12; y--; } return `${y}-${String(mm).padStart(2, '0')}`; };
+/* 類別組代碼 → 固定色槽（依代碼，不依排名；超出的併成中性灰） */
+const GROUP_SLOT = {E1: 1, E2: 2, E3: 3, E4: 4, E5: 5, E7: 6, E8: 7};
+const colorOf = code => `var(--s${GROUP_SLOT[code] || 0})`;
+const FLEX = [['F', '固定', '房租、電信、訂閱這類每月固定'], ['B', '基本', '買菜、交通、日用這類必要但可微調'], ['D', '可調整', '外食、娛樂、叫車這類最容易省']];
+
+/* ══ 驗證：照 CONTRACT.md；不符就拒收並說出哪一欄 ══ */
+function validate(r){
+  const len = v => [...v].length;   // 以字元（碼點）計，跟產生器的 Python len() 一致
+  const isInt = v => Number.isInteger(v), isStr = (v, max = 500) => typeof v === 'string' && len(v) <= max;
+  const arr = (v, max) => Array.isArray(v) && v.length <= max;
+  const sum = a => a.reduce((n, x) => n + x, 0);
+  if (!r || typeof r !== 'object' || Array.isArray(r)) return '檔案內容不是月報物件';
+  if (r.schema !== SCHEMA) return typeof r.schema === 'string' && r.schema.startsWith('money-report/') ? `版本 ${r.schema} 比這個網頁新，請更新網頁` : '不是月報檔（schema 不符）';
+  if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(r.month || '')) return 'month 格式錯誤';
+  if (typeof r.generated_at !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?([+-]\d{2}:\d{2}|Z)$/.test(r.generated_at)) return 'generated_at 不是含時區的 ISO 時間';
+  if (r.currency !== 'TWD') return 'currency 必須是 TWD';
+  const [yy, mm] = r.month.split('-').map(Number);
+  const c = r.coverage, t = r.totals;
+  if (!c || c.days_in_month !== new Date(yy, mm, 0).getDate()) return 'coverage.days_in_month 跟該月實際天數不符';
+  for (const k of ['days_with_entry', 'rows', 'unknown_amount', 'est_rows']) if (!isInt(c[k]) || c[k] < 0) return `coverage.${k} 錯誤`;
+  for (const k of ['dup_rows', 'dup_amount', 'warnings']) if (c[k] !== undefined && (!isInt(c[k]) || c[k] < 0)) return `coverage.${k} 錯誤`;
+  if (c.days_with_entry > c.days_in_month) return 'coverage.days_with_entry 超過當月天數';
+  if (typeof c.partial !== 'boolean') return 'coverage.partial 錯誤';
+  if (!t) return '缺少 totals';
+  for (const k of ['income', 'expense', 'net_savings', 'capital_transfer_out', 'capital_transfer_in', 'owed_out']) if (!isInt(t[k])) return `totals.${k} 錯誤`;
+  if (t.net_savings !== t.income - t.expense) return 'totals.net_savings ≠ income − expense';
+  if (t.income > 0 ? !(typeof t.saving_rate === 'number' && Math.abs(t.saving_rate - Math.round(t.net_savings / t.income * 1e4) / 1e4) < 1e-9) : t.saving_rate !== null)
+    return 'totals.saving_rate 跟收入、淨儲蓄對不起來';
+  if (!r.by_flex || !['F', 'B', 'D', '-'].every(k => isInt(r.by_flex[k]))) return 'by_flex 錯誤';
+  if (sum(['F', 'B', 'D', '-'].map(k => r.by_flex[k])) !== t.expense) return '支出彈性加總 ≠ 消費支出';
+  if (!arr(r.groups, 12)) return 'groups 錯誤';
+  for (const [gi, g] of r.groups.entries()) {
+    if (!isStr(g.code, 12) || !isStr(g.name, 20) || !isInt(g.amount) || !isInt(g.count) || !arr(g.cats, 60)) return `groups[${gi}] 內容錯誤`;
+    for (const [ci, ct] of g.cats.entries()) if (!isStr(ct.code, 12) || !isStr(ct.name, 30) || !isInt(ct.amount) || !isInt(ct.count) || !isStr(ct.flex, 2)) return `groups[${gi}].cats[${ci}] 內容錯誤`;
+    if (sum(g.cats.map(x => x.amount)) !== g.amount || sum(g.cats.map(x => x.count)) !== g.count) return `groups[${gi}]（${g.name}）細項加總不符`;
+  }
+  if (!arr(r.income_by_cat, 12) || r.income_by_cat.some(x => !isStr(x.code, 12) || !isStr(x.name, 30) || !isInt(x.amount))) return 'income_by_cat 錯誤';
+  if (!Array.isArray(r.daily) || r.daily.length !== c.days_in_month) return 'daily 天數與當月不符';
+  for (let i = 0; i < r.daily.length; i++) {
+    const d = r.daily[i];
+    if (d.date !== `${r.month}-${String(i + 1).padStart(2, '0')}` || !isInt(d.expense)) return `daily[${i}] 日期或金額錯誤`;
+    if (d.has_entry !== undefined && typeof d.has_entry !== 'boolean') return `daily[${i}].has_entry 錯誤`;
+    if (d.fixed !== undefined && !isInt(d.fixed)) return `daily[${i}].fixed 錯誤`;
+  }
+  if (r.daily.some(d => d.has_entry !== undefined) && r.daily.filter(d => d.has_entry).length !== c.days_with_entry) return '記帳天數 ≠ 每日有記帳的天數';
+  if (!arr(r.merchants, 10)) return 'merchants 錯誤';
+  for (const [i, x] of r.merchants.entries()) if (!isStr(x.name, 60) || !isInt(x.amount) || !isInt(x.count)) return `merchants[${i}] 錯誤（店名上限 60 字）`;
+  if (!arr(r.funds, 20)) return 'funds 錯誤';
+  for (const [i, x] of r.funds.entries()) if (!isStr(x.code, 30) || !isStr(x.name, 40) || !isInt(x.amount) || !isInt(x.count)) return `funds[${i}] 錯誤`;
+  if (r.transfers !== undefined) {
+    if (!arr(r.transfers, 10) || r.transfers.some(x => !isStr(x.code, 12) || !isStr(x.name, 30) || !isInt(x.out) || !isInt(x.in))) return 'transfers 錯誤';
+    if (sum(r.transfers.map(x => x.out)) !== t.capital_transfer_out || sum(r.transfers.map(x => x.in)) !== t.capital_transfer_in) return '轉帳分項加總 ≠ 轉出／轉回';
+  }
+  if (sum(r.groups.map(g => g.amount)) !== t.expense) return '類別組加總 ≠ 消費支出';
+  if (sum(r.daily.map(d => d.expense)) !== t.expense) return '每日加總 ≠ 消費支出';
+  if (sum(r.funds.map(f => f.amount)) !== t.expense) return '資金來源加總 ≠ 消費支出';
+  if (r.daily.some(d => d.fixed !== undefined) && sum(r.daily.map(d => d.fixed || 0)) !== r.by_flex.F) return '每日固定支出加總 ≠ 固定支出';
+  const a = r.analysis;
+  if (a !== null) {
+    if (!a || typeof a !== 'object' || !isStr(a.headline) || !a.headline.trim()) return 'analysis.headline 錯誤';
+    for (const k of ['findings', 'advice']) if (a[k] !== undefined && (!arr(a[k], 8) || a[k].some(x => !isStr(x)))) return `analysis.${k} 錯誤`;
+    for (const k of ['commitment', 'question']) if (a[k] != null && !isStr(a[k])) return `analysis.${k} 錯誤`;
+  }
+  return null;
+}
+
+/* ══ 儲存：IndexedDB；不能用（私密瀏覽、被封鎖）就退回記憶體並明說 ══ */
+const DB = {
+  db: null, mem: new Map(), ok: false,
+  async open(){
+    try {
+      this.db = await new Promise((res, rej) => {
+        const q = indexedDB.open('money-report', 1);
+        q.onupgradeneeded = () => q.result.createObjectStore('months', {keyPath: 'month'});
+        q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error);
+      });
+      this.ok = true;
+    } catch (e) { this.ok = false; }
+  },
+  tx(mode){ return this.db.transaction('months', mode).objectStore('months'); },
+  req(r){ return new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); },
+  async all(){ return this.ok ? this.req(this.tx('readonly').getAll()) : [...this.mem.values()]; },
+  async put(rep){ if (this.ok) await this.req(this.tx('readwrite').put(rep)); else this.mem.set(rep.month, rep); },
+  async del(m){ if (this.ok) await this.req(this.tx('readwrite').delete(m)); else this.mem.delete(m); },
+  async clear(){ if (this.ok) await this.req(this.tx('readwrite').clear()); else this.mem.clear(); }
+};
+
+/* ══ 狀態 ══ */
+let reports = [];         // 目前顯示的月報（樣本模式時是樣本）
+let stored = [];          // 存在裝置上的月報
+let sampleMode = false, cur = null;
+const byMonth = m => reports.find(r => r.month === m);
+
+function toast(msg){
+  const t = $('toast'); t.textContent = msg; t.hidden = false;
+  clearTimeout(toast.t); toast.t = setTimeout(() => { t.hidden = true; }, 4200);
+}
+
+async function load(){
+  stored = (await DB.all()).filter(r => !validate(r)).sort((a, b) => a.month.localeCompare(b.month));
+  if (!sampleMode) reports = stored;
+}
+
+/* ══ 匯入 ══ */
+async function importFiles(files){
+  const done = [], bad = [];
+  for (const f of files) {
+    if (f.size > 2e6) { bad.push(`${f.name}：檔案太大（月報檔通常只有幾十 KB）`); continue; }
+    let rep;
+    try { rep = JSON.parse(await f.text()); } catch (e) { bad.push(`${f.name}：不是 JSON 檔`); continue; }
+    const err = validate(rep);
+    if (err) { bad.push(`${f.name}：${err}`); continue; }
+    const old = stored.find(r => r.month === rep.month);
+    try { await DB.put(rep); } catch (e) { bad.push(`${f.name}：無法存進這台裝置（${e && e.name || '儲存失敗'}）`); continue; }
+    done.push(monthLabel(rep.month) + (old ? '（取代舊版）' : ''));
+  }
+  if (sampleMode && done.length) leaveSample(false);
+  await load();
+  if (done.length) cur = reports.length ? reports[reports.length - 1].month : null;
+  render();
+  showErrors(bad);
+  if (done.length) toast(`已匯入 ${done.join('、')}` + (!DB.ok ? '。這台裝置不能長期儲存，關掉頁面就會消失' : ''));
+}
+/* 失敗原因放在頁面上、不自動消失：方便照著改或轉告 Claude */
+function showErrors(list){
+  const box = $('alert'); box.replaceChildren();
+  box.hidden = !list.length;
+  if (!list.length) return;
+  box.append(h('div', null, h('b', null, `有 ${list.length} 個檔案無法匯入`), h('ul', null, list.map(x => h('li', null, x)))),
+    h('button', {class: 'btn', type: 'button', onclick: () => { box.hidden = true; }}, '關閉'));
+}
+
+function enterSample(){
+  sampleMode = true; reports = SAMPLES.slice(); cur = reports[reports.length - 1].month;
+  $('sampleBanner').hidden = false; render();
+}
+function leaveSample(rerender = true){
+  sampleMode = false; reports = stored; cur = reports.length ? reports[reports.length - 1].month : null;
+  $('sampleBanner').hidden = true; if (rerender) render();
+}
+
+/* ══ 畫面 ══ */
+function render(){
+  renderMonths(); renderManage();
+  const main = $('main'); main.replaceChildren();
+  hideTip();
+  if (!reports.length) { main.append(emptyState()); return; }
+  if (!byMonth(cur)) cur = reports[reports.length - 1].month;
+  const r = byMonth(cur), prev = byMonth(prevMonth(cur));
+  main.append(honestySec(r), tilesSec(r, prev), analysisSec(r), distSec(r, prev),
+              h('div', {class: 'two'}, flexSec(r), listSec('fd-h', '付款來源', '這個月的消費從哪裡付', r.funds, x => x.name)),
+              dailySec(r), trendSec(), listSec('mc-h', '花最多的店家', '前 10 名', r.merchants, x => x.name));
+}
+
+function renderMonths(){
+  const nav = $('months'); nav.replaceChildren();
+  nav.hidden = reports.length < 1;
+  for (const r of [...reports].reverse()) {
+    nav.append(h('button', {type: 'button', 'aria-current': r.month === cur ? 'true' : null,
+      onclick: () => { cur = r.month; render(); }}, monthLabel(r.month)));
+  }
+}
+
+function renderManage(){
+  const ul = $('mgList'); ul.replaceChildren();
+  if (!stored.length) ul.append(h('li', null, h('span', {class: 'meta'}, '目前沒有存任何月報。')));
+  for (const r of [...stored].reverse()) {
+    const del = h('button', {class: 'btn danger', type: 'button'}, '刪除');
+    del.addEventListener('click', async () => {
+      if (del.dataset.armed !== '1') { del.dataset.armed = '1'; del.textContent = '再按一次確定刪除'; setTimeout(() => { del.dataset.armed = ''; del.textContent = '刪除'; }, 4000); return; }
+      try { await DB.del(r.month); } catch (e) { toast('刪除失敗，請重新整理頁面再試一次'); return; }
+      await load(); if (!sampleMode) cur = null; render(); toast(`已刪除 ${monthLabel(r.month)}`);
+    });
+    ul.append(h('li', null, h('div', null, h('b', null, monthLabel(r.month)),
+      h('div', {class: 'meta'}, `產生於 ${String(r.generated_at).slice(0, 16).replace('T', ' ')}・${r.coverage.rows} 筆`)), del));
+  }
+  $('wipeBtn').disabled = !stored.length;
+}
+
+function emptyState(){
+  return h('div', {class: 'card empty'}, h('div', null,
+    h('h2', null, '還沒有月報'),
+    h('p', null, '每月月底跟 Claude 說「幫我做這個月的月結」，記帳系統會產生一個月報檔（例如 2026-10.report.json）。把它拖進這個頁面，或按「匯入月報檔」。'),
+    h('div', {class: 'acts', style: 'justify-content:center'},
+      h('button', {class: 'btn primary', type: 'button', onclick: () => $('file').click()}, '匯入月報檔'),
+      h('button', {class: 'btn', type: 'button', onclick: enterSample}, '先看樣本'))));
+}
+
+function secHead(id, title, note){
+  return h('div', {class: 'sec-h'}, h('h2', {id}, title), note ? h('span', {class: 'k'}, note) : null);
+}
+
+function honestySec(r){
+  const c = r.coverage;
+  return h('section', {class: 'card', 'aria-label': '記帳完整度'}, h('div', {class: 'honest'},
+    h('span', null, h('b', {class: 'num'}, `記帳 ${c.days_with_entry}／${c.days_in_month} 天`)),
+    h('span', {class: 'num'}, `${c.rows} 筆`),
+    c.est_rows ? h('span', {class: 'num'}, `估計補記 ${c.est_rows} 筆`) : null,
+    c.unknown_amount ? h('span', {class: 'num warn'}, `金額待確認 ${c.unknown_amount} 筆`) : null,
+    c.dup_rows ? h('span', {class: 'num warn'}, `疑似重複 ${c.dup_rows} 筆還沒確認，支出可能多算 ${fmt(c.dup_amount || 0)}`) : null,
+    c.warnings ? h('span', {class: 'num'}, `檢查提醒 ${c.warnings} 項`) : null,
+    c.partial ? h('span', {class: 'tag'}, '不完整') : null,
+    c.partial ? h('span', {style: 'color:var(--ink-3)'}, '有沒記帳的日子，實際花費可能比這裡多。') : null));
+}
+
+/* 兩個月能不能直接比：任一個月記不到八成的天數、或兩個月完整度差太多，百分比就會誤導 */
+const ratio = r => r.coverage.days_with_entry / r.coverage.days_in_month;
+function comparable(r, prev){
+  if (!prev) return {ok: false, why: '上個月的月報還沒匯入'};
+  const a = ratio(r), b = ratio(prev);
+  if (b < 0.8) return {ok: false, why: `上月只記 ${prev.coverage.days_with_entry}／${prev.coverage.days_in_month} 天，不能直接比`};
+  if (a < 0.8) return {ok: false, why: `本月只記 ${r.coverage.days_with_entry}／${r.coverage.days_in_month} 天，不能直接比`};
+  if (Math.abs(a - b) > 0.15) return {ok: false, why: '兩個月記帳天數差太多，不能直接比'};
+  return {ok: true};
+}
+
+function delta(curV, prevV){
+  if (prevV == null) return null;
+  if (prevV === 0) return curV === 0 ? '跟上月一樣' : '上月是 0';
+  if (curV <= 0 || prevV < 0) { const diff = curV - prevV; return diff === 0 ? '跟上月一樣' : `比上月 ${diff > 0 ? '多' : '少'} ${fmt(Math.abs(diff))}`; }
+  const d = (curV - prevV) / Math.abs(prevV);
+  if (Math.abs(d) < 0.005) return '跟上月差不多';
+  return `比上月 ${d > 0 ? '多' : '少'} ${pct(Math.abs(d))}`;
+}
+
+function tilesSec(r, prev){
+  const t = r.totals, cmp = comparable(r, prev), pt = cmp.ok ? prev.totals : null;
+  const incNames = r.income_by_cat.filter(x => x.amount).map(x => x.name).join('・');
+  const tile = (k, v, sub) => h('div', {class: 'card tile'}, h('span', {class: 'k'}, k), h('span', {class: 'v'}, v), h('span', {class: 'sub'}, sub));
+  let saveTile;
+  if (r.transfers) {
+    const sav = r.transfers.filter(x => x.code === 'X1' || x.code === 'X2'), other = r.transfers.filter(x => x.code !== 'X1' && x.code !== 'X2');
+    const net = sav.reduce((n, x) => n + x.out - x.in, 0), otherOut = other.reduce((n, x) => n + x.out, 0);
+    saveTile = tile('存進儲蓄／投資（淨）', fmt(net), otherOut ? `另有${other.filter(x => x.out).map(x => x.name).join('、')} ${fmt(otherOut)}，都不算支出` : '轉帳不算支出');
+  } else saveTile = tile('轉帳合計', fmt(t.capital_transfer_out), '含繳卡費、儲值等，不算支出');
+  return h('section', {class: 'tiles', 'aria-label': '本月總覽'},
+    tile('消費支出', fmt(t.expense), cmp.ok ? delta(t.expense, pt.expense) : cmp.why),
+    tile('收入', fmt(t.income), incNames || '這個月沒有收入紀錄'),
+    tile('淨儲蓄', fmt(t.net_savings), t.saving_rate == null ? '沒有收入，無法算儲蓄率' : `儲蓄率 ${pct(t.saving_rate)}` + (pt && pt.saving_rate != null ? `（上月 ${pct(pt.saving_rate)}）` : '')),
+    saveTile);
+}
+
+function analysisSec(r){
+  const a = r.analysis, sec = h('section', {class: 'card', 'aria-labelledby': 'an-h'}, secHead('an-h', '分析與建議', 'Claude 依這個月的帳寫的'));
+  if (!a) { sec.append(h('p', {class: 'empty-an'}, '這個月的分析還沒寫。月底跟 Claude 說「幫我寫這個月的分析」，重新匯入月報檔就會出現。')); return sec; }
+  const list = (title, items) => items && items.length ? h('div', null, h('h3', null, title), h('ul', null, items.map(x => h('li', null, x)))) : null;
+  sec.append(h('p', {class: 'an-head'}, a.headline),
+    h('div', {class: 'an-cols'}, list('這個月的發現', a.findings), list('建議', a.advice)));
+  if (a.commitment || a.question) sec.append(h('div', {class: 'an-foot'},
+    a.commitment ? h('span', null, h('b', null, '下個月的承諾：'), a.commitment) : null,
+    a.question ? h('span', null, h('b', null, '想一想：'), a.question) : null));
+  return sec;
+}
+
+function distSec(r, prev){
+  const total = r.totals.expense;
+  const sec = h('section', {class: 'card', 'aria-labelledby': 'ds-h'}, secHead('ds-h', '消費分布', `共 ${fmt(total)}・點類別看細項`));
+  const groups = r.groups.filter(g => g.amount !== 0 || g.count);
+  if (!groups.length) { sec.append(h('p', {class: 'empty-an'}, '這個月沒有消費支出紀錄。')); return sec; }
+  const pos = groups.filter(g => g.amount > 0), posSum = pos.reduce((n, g) => n + g.amount, 0);
+  const showPct = total > 0 && posSum > 0;
+  if (total <= 0) sec.append(h('p', {class: 'empty-an', style: 'margin-bottom:12px'}, `這個月退款比消費多（淨 ${fmt(total)}），所以不算占比。`));
+  if (showPct) {
+    const stack = h('div', {class: 'stack', role: 'img', 'aria-label': '各類別占比：' + pos.map(g => `${g.name} ${pct(g.amount / posSum)}`).join('、')});
+    for (const g of pos) stack.append(h('i', {style: `flex:${g.amount} 1 0;background:${colorOf(g.code)}`}));
+    sec.append(stack);
+  }
+  const max = Math.max(...groups.map(g => g.amount), 1);
+  const cmp = comparable(r, prev);
+  const prevGroup = code => (prev.groups.find(x => x.code === code) || {amount: 0, cats: []});
+  /* 跟上月比：只在兩個月可比時算；並指出變化最大的細項，避免「保健多 300%」其實是一筆紅包 */
+  const change = g => {
+    if (!cmp.ok) return null;
+    const pg = prevGroup(g.code), d = delta(g.amount, pg.amount);
+    if (!d || pg.amount === g.amount) return d;
+    let top = null;
+    for (const ct of g.cats) { const pa = (pg.cats.find(x => x.code === ct.code) || {amount: 0}).amount, diff = ct.amount - pa; if (!top || Math.abs(diff) > Math.abs(top.diff)) top = {name: ct.name, diff}; }
+    for (const pc of pg.cats) if (!g.cats.some(x => x.code === pc.code) && (!top || pc.amount > Math.abs(top.diff))) top = {name: pc.name, diff: -pc.amount};
+    return top && g.cats.length + pg.cats.length > 1 && top.diff ? `${d}（主要是${top.name} ${top.diff > 0 ? '+' : '−'}${fmt(Math.abs(top.diff)).replace('−', '')}）` : d;
+  };
+  const rows = h('div', {class: 'rows'});
+  for (const g of [...groups].sort((a, b) => b.amount - a.amount || a.code.localeCompare(b.code))) {
+    const sub = h('div', {class: 'subrows', hidden: true});
+    for (const ct of g.cats) {
+      const fl = FLEX.find(f => f[0] === ct.flex);
+      sub.append(h('div', {class: 'subrow'},
+        h('span', null, ct.name, fl ? h('span', {class: 'flexnote'}, `・${fl[1]}`) : null),
+        h('span', {class: 'track'}, h('i', {class: 'bar', style: `display:block;width:${Math.max(0, ct.amount) / max * 100}%;background:${colorOf(g.code)}`})),
+        h('span', {class: 'amt num'}, fmt(ct.amount), h('small', null, `${ct.count} 筆`))));
+    }
+    const d = change(g), share = showPct ? pct(Math.max(0, g.amount) / posSum) : null;
+    const btn = h('button', {class: 'row', type: 'button', 'aria-expanded': 'false'},
+      h('span', {class: 'nm'}, h('span', {class: 'chev', 'aria-hidden': 'true'}, '▸'), h('span', {class: 'sw', style: `background:${colorOf(g.code)}`, 'aria-hidden': 'true'}), h('span', {class: 't'}, g.name)),
+      h('span', {class: 'track'}, h('i', {class: 'bar', style: `display:block;width:${Math.max(0, g.amount) / max * 100}%;background:${colorOf(g.code)}`})),
+      h('span', {class: 'amt num'}, fmt(g.amount), h('small', null, [share, d].filter(Boolean).join('・'))));
+    btn.addEventListener('click', () => { const o = btn.getAttribute('aria-expanded') === 'true'; btn.setAttribute('aria-expanded', String(!o)); sub.hidden = o; });
+    rows.append(btn, sub);
+  }
+  sec.append(rows);
+  if (!cmp.ok && prev) sec.append(h('p', {class: 'flex-desc'}, `沒有顯示跟上月的比較：${cmp.why}。`));
+  sec.append(tableView(['類別', '細項', '金額', '筆數', '占比'],
+    groups.flatMap(g => g.cats.map(ct => [g.name, ct.name, fmt(ct.amount), ct.count, showPct ? pct(Math.max(0, ct.amount) / posSum) : '—'])), [2, 3, 4]));
+  return sec;
+}
+
+function tableView(head, rows, rightCols = []){
+  return h('details', {class: 'tbl'}, h('summary', null, '以表格檢視'),
+    h('div', {class: 'tblwrap'}, h('table', null,
+      h('thead', null, h('tr', null, head.map((x, i) => h('th', {class: rightCols.includes(i) ? 'r' : null}, x)))),
+      h('tbody', null, rows.map(r => h('tr', null, r.map((x, i) => h('td', {class: rightCols.includes(i) ? 'r' : null}, x))))))));
+}
+
+function flexSec(r){
+  const f = r.by_flex, tot = FLEX.reduce((n, [k]) => n + Math.max(0, f[k]), 0), anyNeg = FLEX.some(([k]) => f[k] < 0);
+  const sec = h('section', {class: 'card', 'aria-labelledby': 'fx-h'}, secHead('fx-h', '支出彈性', '哪些錢比較好省'));
+  if (tot <= 0) { sec.append(h('p', {class: 'empty-an'}, '沒有可以分析的支出。')); return sec; }
+  const share = k => anyNeg ? '' : `（${pct(Math.max(0, f[k]) / tot)}）`;
+  const bar = h('div', {class: 'flexbar', role: 'img', 'aria-label': FLEX.map(([k, n]) => `${n} ${fmt(f[k])}${share(k)}`).join('、')});
+  for (const [k] of FLEX) if (f[k] > 0) bar.append(h('i', {style: `flex:${f[k]} 1 0;background:var(--f${k})`}));
+  sec.append(bar, h('div', {class: 'legend'}, FLEX.map(([k, n]) => h('span', null, h('i', {class: 'sw', style: `background:var(--f${k})`, 'aria-hidden': 'true'}),
+    h('span', {class: 'num'}, `${n} ${fmt(f[k])}${share(k)}`)))),
+    h('p', {class: 'flex-desc'}, FLEX.map(([, n, d]) => `${n}：${d}`).join('。') + '。' + (f['-'] ? ` 另有未分類 ${fmt(f['-'])}。` : '') + (anyNeg ? ' 有退款大於消費的項目，所以不算占比。' : '')));
+  return sec;
+}
+
+function listSec(id, title, note, items, nameOf){
+  const sec = h('section', {class: 'card', 'aria-labelledby': id}, secHead(id, title, note));
+  const vis = items.filter(x => x.amount > 0);
+  if (!vis.length) { sec.append(h('p', {class: 'empty-an'}, '沒有資料。')); return sec; }
+  const max = Math.max(...vis.map(x => x.amount));
+  sec.append(h('div', {class: 'rows'}, vis.map(x => h('div', {class: 'row', style: 'cursor:default'},
+    h('span', {class: 'nm', title: nameOf(x)}, h('span', {class: 't'}, nameOf(x))),
+    h('span', {class: 'track'}, h('i', {class: 'bar', style: `display:block;width:${x.amount / max * 100}%;background:var(--s1)`})),
+    h('span', {class: 'amt num'}, fmt(x.amount), h('small', null, `${x.count} 筆`))))),
+    tableView(['名稱', '金額', '筆數'], vis.map(x => [nameOf(x), fmt(x.amount), x.count]), [1, 2]));
+  return sec;
+}
+
+/* ── 每日支出：單一系列直條。斜線＝沒記帳；淡色＝只有估計補記；什麼都沒有＝記了、沒花錢 ── */
+function dailySec(r){
+  /* 每日圖畫「日常花費」＝當天支出扣掉固定支出：房租那天不會把整張圖壓扁，平均也才有意義 */
+  const days = r.daily.map(d => ({...d, daily: d.expense - (d.fixed || 0), est: d.has_entry === false && d.expense !== 0}));
+  const hasFlag = days.some(d => d.has_entry !== undefined), hasEst = days.some(d => d.est);
+  const fixedSum = days.reduce((n, d) => n + (d.fixed || 0), 0);
+  const entered = days.filter(d => d.has_entry !== false), avg = entered.length ? Math.round(entered.reduce((n, d) => n + d.daily, 0) / entered.length) : 0;
+  const legend = ['虛線＝平均', hasFlag ? '斜線＝沒記帳' : '', hasEst ? '淡色＝估計補記' : ''].filter(Boolean).join('・');
+  const sec = h('section', {class: 'card', 'aria-labelledby': 'dy-h'}, secHead('dy-h', '每天花多少', `日常花費平均 ${fmt(avg)}／天（只算有記帳的日子）・${legend}`));
+  if (fixedSum) sec.append(h('p', {class: 'flex-desc', style: 'margin:-6px 0 10px'}, `不含房租、電信、訂閱這類固定支出（本月共 ${fmt(fixedSum)}）。`));
+  const box = h('div', {class: 'chart'});
+  sec.append(box);
+  const label = d => d.has_entry === false ? (d.est ? `估計補記 ${fmt(d.daily)}` : '沒有記帳') : d.expense === 0 ? '沒花錢' : fmt(d.daily) + (d.fixed ? `（另有固定支出 ${fmt(d.fixed)}）` : '');
+  const draw = () => {
+    box.replaceChildren();
+    const W = Math.max(280, box.clientWidth || 600), H = 200, L = 52, R = 8, T = 10, B = 26;
+    const max = Math.max(...days.map(d => d.daily), 1), nice = niceMax(max), y = v => T + (H - T - B) * (1 - Math.max(0, v) / nice);
+    const bw = (W - L - R) / days.length, gap = Math.min(2, bw * .25);
+    const svg = s('svg', {viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': `每日日常花費直條圖，${days.length} 天，最高 ${fmt(max)}`});
+    svg.append(s('defs', null, s('pattern', {id: 'hatch', width: 6, height: 6, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)'},
+      s('rect', {width: 6, height: 6, fill: 'transparent'}), s('line', {x1: 0, y1: 0, x2: 0, y2: 6, stroke: 'var(--hatch)', 'stroke-width': 1.5}))));
+    for (const v of [0, nice / 2, nice]) {
+      svg.append(s('line', {x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: v ? 'var(--grid)' : 'var(--axis)', 'stroke-width': 1}));
+      svg.append(s('text', {x: L - 6, y: y(v) + 4, 'text-anchor': 'end'}, short(v)));
+    }
+    days.forEach((d, i) => {
+      const x = L + i * bw + gap / 2, w = Math.max(1, bw - gap), day = i + 1;
+      if (d.has_entry === false && !d.est) svg.append(s('rect', {x, y: T, width: w, height: H - T - B, fill: 'url(#hatch)', rx: 2}));
+      else if (d.daily > 0) svg.append(s('path', {d: roundTop(x, y(d.daily), w, y(0) - y(d.daily)), fill: 'var(--s1)', 'fill-opacity': d.est ? .4 : null}));
+      if (day === 1 || day % 5 === 0) svg.append(s('text', {x: x + w / 2, y: H - 8, 'text-anchor': 'middle'}, String(day)));
+    });
+    if (avg > 0) svg.append(s('line', {x1: L, x2: W - R, y1: y(avg), y2: y(avg), stroke: 'var(--ink-3)', 'stroke-width': 1, 'stroke-dasharray': '4 4'}));
+    /* 整張圖一個感應層：用手指的 x 座標換算是哪一天，窄長條也點得到 */
+    const hit = s('rect', {x: L, y: 0, width: W - L - R, height: H, fill: 'transparent'});
+    hookTip(hit, e => {
+      const pt = svg.getBoundingClientRect(), i = Math.max(0, Math.min(days.length - 1, Math.floor(((e.clientX - pt.left) * W / pt.width - L) / bw)));
+      return [`${+days[i].date.slice(5, 7)}/${i + 1}`, label(days[i])];
+    });
+    svg.append(hit);
+    box.append(svg);
+  };
+  onResize(box, draw);
+  sec.append(tableView(['日期', '日常花費', '固定支出', '記帳'], days.map(d => [d.date, d.has_entry === false && !d.est ? '—' : fmt(d.daily), d.fixed ? fmt(d.fixed) : '—',
+    d.has_entry === false ? (d.est ? '估計' : '沒記帳') : d.expense === 0 ? '沒花錢' : '有']), [1, 2]));
+  return sec;
+}
+
+/* ── 跨月趨勢：各月消費支出依類別堆疊（同一套類別色） ── */
+function trendSec(){
+  const sec = h('section', {class: 'card', 'aria-labelledby': 'tr-h'}, secHead('tr-h', '每月趨勢', reports.length > 1 ? `${reports.length > 12 ? '最近 12' : reports.length} 個月` : ''));
+  if (reports.length < 2) { sec.append(h('p', {class: 'empty-an'}, '匯入兩個月以上的月報，就會出現每月比較。')); return sec; }
+  const months = reports.slice(-12), codes = [...new Set(months.flatMap(r => r.groups.map(g => g.code)))].sort();
+  const names = Object.fromEntries(months.flatMap(r => r.groups.map(g => [g.code, g.name])));
+  const amt = (r, c) => (r.groups.find(g => g.code === c) || {amount: 0}).amount;
+  /* 月份標籤：跨年、或同一個月出現兩次時加上年份 */
+  const multiYear = new Set(months.map(r => r.month.slice(0, 4))).size > 1;
+  const mLabel = r => multiYear ? `${r.month.slice(2, 4)}/${+r.month.slice(5)}` : `${+r.month.slice(5)}月`;
+  const box = h('div', {class: 'chart'});
+  const draw = () => {
+    box.replaceChildren();
+    const W = Math.max(280, box.clientWidth || 600), H = 220, L = 52, R = 8, T = 10, B = 26;
+    const max = Math.max(...months.map(r => r.groups.reduce((n, g) => n + Math.max(0, g.amount), 0)), 1), nice = niceMax(max);
+    const y = v => T + (H - T - B) * (1 - v / nice), slot = (W - L - R) / months.length, bw = Math.min(56, slot * .6);
+    const svg = s('svg', {viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': '每月消費支出依類別堆疊'});
+    for (const v of [0, nice / 2, nice]) {
+      svg.append(s('line', {x1: L, x2: W - R, y1: y(v), y2: y(v), stroke: v ? 'var(--grid)' : 'var(--axis)', 'stroke-width': 1}));
+      svg.append(s('text', {x: L - 6, y: y(v) + 4, 'text-anchor': 'end'}, short(v)));
+    }
+    months.forEach((r, i) => {
+      const cx = L + slot * i + slot / 2, x = cx - bw / 2; let acc = 0;
+      const parts = codes.map(c => [c, Math.max(0, amt(r, c))]).filter(p => p[1] > 0);
+      parts.forEach(([c, v], j) => {
+        const y1 = y(acc + v), top = j === parts.length - 1;
+        const hgt = Math.max(0, y(acc) - y1 - (top ? 0 : 2));
+        const seg = top ? s('path', {d: roundTop(x, y1, bw, hgt), fill: colorOf(c)}) : s('rect', {x, y: y1 + 2, width: bw, height: Math.max(0, hgt), fill: colorOf(c)});
+        hookTip(seg, () => [`${monthLabel(r.month)}・${names[c]}`, fmt(v)]);
+        svg.append(seg); acc += v;
+      });
+      if (slot >= 30 || i % 2 === 0 || i === months.length - 1) svg.append(s('text', {x: cx, y: H - 8, 'text-anchor': 'middle'}, mLabel(r)));
+    });
+    box.append(svg);
+  };
+  onResize(box, draw);
+  sec.append(box, h('div', {class: 'legend'}, codes.map(c => h('span', null, h('i', {class: 'sw', style: `background:${colorOf(c)}`, 'aria-hidden': 'true'}), names[c]))),
+    tableView(['月份', '消費支出', ...codes.map(c => names[c]), '收入', '淨儲蓄', '儲蓄率', '記帳天數'], months.map(r => [monthLabel(r.month), fmt(r.totals.expense),
+      ...codes.map(c => fmt(amt(r, c))), fmt(r.totals.income), fmt(r.totals.net_savings), r.totals.saving_rate == null ? '—' : pct(r.totals.saving_rate),
+      `${r.coverage.days_with_entry}／${r.coverage.days_in_month}`]), Array.from({length: codes.length + 5}, (_, i) => i + 1)));
+  return sec;
+}
+
+/* ── 圖表小工具 ── */
+function niceMax(v){ const p = Math.pow(10, Math.floor(Math.log10(v))); for (const m of [1, 2, 2.5, 5, 10]) if (m * p >= v) return m * p; return 10 * p; }
+function short(v){ const f = x => String(+x.toFixed(2)); return v >= 1e4 ? f(v / 1e4) + '萬' : v >= 1e3 ? f(v / 1e3) + '千' : String(v); }
+function roundTop(x, y, w, hgt){
+  const r = Math.min(4, w / 2, hgt);
+  if (hgt <= 0) return '';
+  return `M${x},${y + hgt}V${y + r}Q${x},${y} ${x + r},${y}H${x + w - r}Q${x + w},${y} ${x + w},${y + r}V${y + hgt}Z`;
+}
+const resizeFns = new Set();
+function onResize(box, draw){ resizeFns.add(draw); requestAnimationFrame(draw); }
+let rzT; addEventListener('resize', () => { clearTimeout(rzT); rzT = setTimeout(() => resizeFns.forEach(f => f()), 120); });
+const tip = $('tip');
+/* 提示框：滑鼠移上去顯示；手指點一下顯示並固定，點圖表外面才收起 */
+function hookTip(el, linesOf){
+  el.setAttribute('data-tip', '');
+  const show = e => {
+    const lines = linesOf(e);
+    tip.replaceChildren(h('b', null, lines[0]), lines[1]); tip.hidden = false;
+    const tw = tip.offsetWidth, th = tip.offsetHeight;
+    tip.style.left = Math.min(innerWidth - tw - 8, Math.max(8, e.clientX - tw / 2)) + 'px';
+    tip.style.top = Math.max(8, e.clientY - th - 12) + 'px';
+  };
+  el.addEventListener('pointermove', show); el.addEventListener('pointerdown', show);
+  el.addEventListener('pointerleave', e => { if (e.pointerType !== 'touch') hideTip(); });
+}
+function hideTip(){ tip.hidden = true; }
+addEventListener('scroll', hideTip, {passive: true});
+document.addEventListener('pointerdown', e => { if (!e.target.closest('[data-tip]')) hideTip(); });
+
+/* ══ 事件 ══ */
+$('importBtn').addEventListener('click', () => $('file').click());
+$('file').addEventListener('change', e => { const f = [...e.target.files]; e.target.value = ''; if (f.length) importFiles(f); });
+$('sampleBtn').addEventListener('click', enterSample);
+$('leaveSample').addEventListener('click', () => leaveSample());
+$('manageBtn').addEventListener('click', () => { const m = $('manage'), o = m.hidden; m.hidden = !o; $('manageBtn').setAttribute('aria-expanded', String(o)); });
+$('wipeBtn').addEventListener('click', async () => {
+  const b = $('wipeBtn');
+  if (b.dataset.armed !== '1') { b.dataset.armed = '1'; b.textContent = '再按一次：刪除這台裝置上的全部月報'; setTimeout(() => { b.dataset.armed = ''; b.textContent = '刪除全部月報'; }, 4000); return; }
+  b.dataset.armed = ''; b.textContent = '刪除全部月報';
+  try { await DB.clear(); } catch (e) { toast('刪除失敗，請重新整理頁面再試一次'); return; }
+  await load(); if (!sampleMode) cur = null; render(); toast('已刪除這台裝置上的全部月報');
+});
+let dragN = 0;
+addEventListener('dragenter', e => { if ([...(e.dataTransfer?.types || [])].includes('Files')) { dragN++; $('drop').hidden = false; } });
+addEventListener('dragleave', () => { if (--dragN <= 0) { dragN = 0; $('drop').hidden = true; } });
+addEventListener('dragover', e => e.preventDefault());
+addEventListener('drop', e => { e.preventDefault(); dragN = 0; $('drop').hidden = true; const f = [...(e.dataTransfer?.files || [])]; if (f.length) importFiles(f); });
+addEventListener('keydown', e => { if (e.key === 'Escape') hideTip(); });
+
+(async () => {
+  await DB.open(); await load();
+  cur = reports.length ? reports[reports.length - 1].month : null;
+  render();
+  if (!DB.ok) toast('這個瀏覽器不能長期儲存（可能是私密瀏覽），匯入的月報關掉頁面就會消失');
+})();
+</script>
+</body>
+</html>
