@@ -1,0 +1,957 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>勞報單產生器</title>
+<!-- 個資不寫在這個檔案的程式碼裡：基本資料只存在使用者自己的瀏覽器（localStorage）。私人版由 build.py 另外帶入 LR_SEED 當「第一次的預填值」。 -->
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* 版面：左欄是填寫區（固定寬），右欄是 A4 紙張預覽；窄螢幕上下堆疊。紙張本身永遠白底黑字，只有工作區跟著深淺色主題 */
+:root{
+  --desk: oklch(94.6% 0.008 245);
+  --panel: oklch(99.3% 0.003 245);
+  --ink: oklch(23% 0.025 255);
+  --ink-2: oklch(43% 0.02 255);
+  --ink-3: oklch(56% 0.016 255);
+  --rule: oklch(87.5% 0.012 250);
+  --field: oklch(97.6% 0.005 245);
+  --accent: oklch(44% 0.13 258);        /* 複寫紙藍：按鈕、焦點、選取 */
+  --accent-ink: oklch(99% 0 0);
+  --accent-soft: oklch(93.5% 0.03 258);
+  --seal: oklch(50% 0.17 25);           /* 印泥紅：只用在「已鎖定」印章 */
+  --seal-soft: oklch(95% 0.03 25);
+  --ok: oklch(47% 0.12 150);
+  --bad: oklch(50% 0.17 27);
+  --shadow: 0 1px 2px oklch(30% 0.03 255 / .10), 0 8px 24px oklch(30% 0.03 255 / .08);
+  --serif: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
+  --sans: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --desk: oklch(19% 0.012 255); --panel: oklch(23.5% 0.014 255); --ink: oklch(93% 0.008 250); --ink-2: oklch(78% 0.012 250);
+  --ink-3: oklch(66% 0.012 250); --rule: oklch(34% 0.014 255); --field: oklch(20.5% 0.012 255); --accent: oklch(72% 0.12 258);
+  --accent-ink: oklch(18% 0.02 258); --accent-soft: oklch(31% 0.05 258); --seal: oklch(70% 0.15 25); --seal-soft: oklch(30% 0.06 25);
+  --ok: oklch(74% 0.13 150); --bad: oklch(72% 0.15 27); --shadow: 0 1px 2px oklch(0% 0 0 / .4), 0 8px 24px oklch(0% 0 0 / .3); color-scheme: dark } }
+:root[data-theme="dark"]{
+  --desk: oklch(19% 0.012 255); --panel: oklch(23.5% 0.014 255); --ink: oklch(93% 0.008 250); --ink-2: oklch(78% 0.012 250);
+  --ink-3: oklch(66% 0.012 250); --rule: oklch(34% 0.014 255); --field: oklch(20.5% 0.012 255); --accent: oklch(72% 0.12 258);
+  --accent-ink: oklch(18% 0.02 258); --accent-soft: oklch(31% 0.05 258); --seal: oklch(70% 0.15 25); --seal-soft: oklch(30% 0.06 25);
+  --ok: oklch(74% 0.13 150); --bad: oklch(72% 0.15 27); --shadow: 0 1px 2px oklch(0% 0 0 / .4), 0 8px 24px oklch(0% 0 0 / .3); color-scheme: dark }
+*{box-sizing:border-box}
+[hidden]{display:none!important}   /* 元件的 display 不能蓋過 hidden（工作區、填表日期靠它切換） */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--desk);color:var(--ink);font:15px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+.top{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;padding-inline:20px;padding-block:18px 6px;max-width:1280px;margin:0 auto}
+.top h1{font:700 24px/1.2 var(--serif);margin:0;letter-spacing:.04em}
+.top p{margin:0;color:var(--ink-3);font-size:13px}
+main{max-width:1280px;margin:0 auto;padding-inline:20px;padding-block:12px 48px}
+.card{background:var(--panel);border:1px solid var(--rule);border-radius:10px;padding:18px 20px;min-width:0}
+.card h2{font:700 17px/1.35 var(--serif);margin:0 0 4px;text-wrap:balance}
+.card h3{font:700 13px/1.4 var(--sans);margin:16px 0 8px;color:var(--ink-2);letter-spacing:.06em}
+.lede{margin:0 0 12px;color:var(--ink-2);font-size:14px;max-width:62ch}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--ink-2);min-width:0}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px 14px}
+input[type=text],input[type=tel],input[type=date],input[type=search],select{font:15px/1.3 var(--sans);color:var(--ink);background:var(--field);
+  border:1px solid var(--rule);border-radius:7px;padding:9px 10px;width:100%;min-width:0}
+input:focus-visible,select:focus-visible,button:focus-visible,summary:focus-visible,.seg label:focus-within{outline:2px solid var(--accent);outline-offset:2px}
+input.num{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:17px;letter-spacing:.02em}
+button{font:500 14px/1 var(--sans);border-radius:7px;padding:10px 14px;cursor:pointer;border:1px solid var(--rule);background:var(--panel);color:var(--ink);
+  transition:background-color .15s ease,border-color .15s ease,transform .1s ease}
+button:hover{border-color:var(--accent)}
+button:active{transform:translateY(1px)}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+button.primary:hover{filter:brightness(1.08)}
+button:disabled{opacity:.55;cursor:default;transform:none}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.msg{font-size:13px;color:var(--ink-3);min-height:1.4em;margin:8px 0 0}
+.msg.ok{color:var(--ok)} .msg.bad{color:var(--bad)}
+.thumbs{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.thumb{border:1px dashed var(--rule);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--ink-2);min-width:0}
+.thumb img{width:100%;aspect-ratio:1.67;object-fit:contain;background:var(--field);border-radius:5px;max-width:100%}
+.thumb input{font-size:12px;max-width:100%}
+/* 工作區 */
+.work{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:980px){ .work{grid-template-columns:minmax(0,1fr)} }
+.stack{display:flex;flex-direction:column;gap:16px;min-width:0}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:var(--field);border:1px solid var(--rule);border-radius:9px;padding:4px}
+.seg label{display:flex;flex-direction:column;gap:1px;padding:8px 10px;border-radius:6px;cursor:pointer;font-size:14px;font-weight:700}
+.seg label small{font-weight:400;font-size:12px;color:var(--ink-3)}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--panel);box-shadow:var(--shadow);color:var(--accent)}
+.calc{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;font-size:14px;margin-top:4px}
+.calc dt{color:var(--ink-2)} .calc dd{margin:0;text-align:right;font:500 15px/1.5 var(--mono);font-variant-numeric:tabular-nums}
+.calc .note{grid-column:1/-1;font:12.5px/1.5 var(--sans);color:var(--ink-3);text-align:left}
+.calc .net dt,.calc .net dd{color:var(--ink);font-weight:700}
+/* 鎖定的基本資料 */
+.locked{position:relative}
+.seal{position:absolute;top:14px;right:16px;border:2px solid var(--seal);color:var(--seal);background:var(--seal-soft);border-radius:6px;
+  padding:3px 9px;font:700 13px/1.3 var(--serif);letter-spacing:.12em;transform:rotate(-4deg)}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:13.5px;margin:10px 0 0}
+.facts dt{color:var(--ink-3)} .facts dd{margin:0;overflow-wrap:anywhere}
+details{margin-top:12px;font-size:13px} summary{cursor:pointer;color:var(--ink-3)}
+details .row{margin-top:8px}
+/* 預覽 */
+.pv-card{padding:14px}
+.pv-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.pv-head span{font-size:13px;color:var(--ink-3)}
+.pv-wrap{position:relative;overflow:hidden;border-radius:4px;box-shadow:var(--shadow);background:#fff;max-width:100%}
+.pv-wrap iframe{position:absolute;top:0;left:0;width:794px;height:1123px;border:0;transform-origin:0 0;background:#fff}
+/* 紀錄 */
+.hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.hist li{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;border:1px solid var(--rule);border-radius:8px;padding:8px 10px;font-size:13.5px}
+.hist li b{font-weight:700} .hist li span{color:var(--ink-3);font-size:12.5px;display:block}
+.hist button{padding:7px 10px;font-size:13px}
+.empty{color:var(--ink-3);font-size:13px;margin:0}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="top"><h1>勞報單產生器</h1><p id="top-note">基本資料只存在這台瀏覽器，不會上傳</p></header>
+<main>
+
+<!-- 第一次使用：填基本資料，確認後鎖定 -->
+<section id="setup" class="card" hidden>
+  <h2>第一次使用：確認基本資料</h2>
+  <p class="lede">這些資料按下「確認並鎖定」後就固定下來，之後每張勞報單只需要改日期、專案名稱、金額。</p>
+  <div class="row"><label class="f" style="flex:1">從備份檔匯入（選填）<input type="file" id="s-import" accept="application/json,.json"></label></div>
+  <h3>領款人</h3>
+  <div class="grid2">
+    <label class="f">姓名 *<input type="text" id="s-name" autocomplete="off" maxlength="200"></label>
+    <label class="f">身分證／居留證號 *<input type="text" id="s-id" autocomplete="off" maxlength="10"></label>
+    <label class="f">出生日期<input type="date" id="s-dob"></label>
+    <label class="f">國籍<input type="text" id="s-nat" placeholder="本國人可留空" maxlength="200"></label>
+    <label class="f">護照號碼<input type="text" id="s-pass" autocomplete="off" maxlength="200"></label>
+    <label class="f">聯絡電話<input type="tel" id="s-phone" autocomplete="off" maxlength="200"></label>
+  </div>
+  <div class="grid2" style="margin-top:10px">
+    <label class="f">戶籍地址<input type="text" id="s-addr" autocomplete="off" maxlength="200"></label>
+    <label class="f">通訊地址<input type="text" id="s-mail" autocomplete="off" placeholder="留空＝同戶籍地址" maxlength="200"></label>
+  </div>
+  <h3>收款帳戶</h3>
+  <div class="grid2">
+    <label class="f">銀行名稱<input type="text" id="s-bank-name" placeholder="例如：元大銀行" maxlength="200"></label>
+    <label class="f">銀行代號<input type="text" id="s-bank-code" inputmode="numeric" maxlength="3"></label>
+    <label class="f">銀行帳號<input type="text" id="s-bank-acc" inputmode="numeric" autocomplete="off" maxlength="200"></label>
+    <label class="f">郵局帳號（局號＋帳號，14 碼）<input type="text" id="s-post-acc" inputmode="numeric" autocomplete="off" maxlength="200"></label>
+    <label class="f">勞報單上勾選<select id="s-payto"><option value="bank">銀行帳戶</option><option value="post">郵局帳戶</option></select></label>
+  </div>
+  <h3>證件影本（印在勞報單下方）</h3>
+  <div class="thumbs">
+    <label class="thumb">證件正面<img id="s-front-img" alt="證件正面預覽" hidden><input type="file" id="s-front" accept="image/*"></label>
+    <label class="thumb">證件反面<img id="s-back-img" alt="證件反面預覽" hidden><input type="file" id="s-back" accept="image/*"></label>
+  </div>
+  <h3>山上影像格式的固定欄位</h3>
+  <div class="grid2">
+    <label class="f">所得種類<select id="s-sa-cat">
+      <option value="salary50">薪資(50)</option><option value="9b">稿費、演講(9B)</option><option value="91">獎金(91)</option>
+      <option value="salbonus50">薪資/獎金(50)</option><option value="92">其他(92)</option></select></label>
+    <label class="f">活動名稱<input type="text" id="s-sa-act" maxlength="200"></label>
+    <label class="f">用途<select id="s-sa-use"><option value="work">工作費</option><option value="parttime">工讀費</option><option value="speech">演講費</option><option value="other">其他</option></select></label>
+  </div>
+  <h3>成為影像勞報單的固定欄位</h3>
+  <div class="grid2">
+    <label class="f">所得類別<select id="s-bl-cat"><option value="salary">薪資（非固定，例如接案）</option><option value="salaryFixed">薪資（固定）</option><option value="business">執行業務所得</option><option value="rent">租賃所得</option><option value="prize">機會中獎獎金(91)</option><option value="other">其他</option></select></label>
+    <label class="f">國籍身分<select id="s-bl-status"><option value="tw">本國籍</option><option value="fr183">外國籍（在台滿 183 天）</option><option value="fr">外國籍（在台未滿 183 天）</option></select></label>
+    <label class="f">職業工會加保<select id="s-bl-union"><option value="no">否</option><option value="yes">是</option></select></label>
+    <label class="f">健保資格（外籍人士才看這項）<select id="s-bl-nhi"><option value="yes">有健保</option><option value="no">沒有健保</option></select></label>
+  </div>
+  <div class="row" style="margin-top:18px"><button class="primary" id="s-lock">確認並鎖定</button></div>
+  <p class="msg" id="s-msg" role="status"></p>
+</section>
+
+<!-- 日常使用 -->
+<section id="work" class="work" hidden>
+  <div class="stack">
+    <div class="card">
+      <h2>這張勞報單</h2>
+      <div class="seg" role="radiogroup" aria-label="勞報單格式" style="margin:10px 0 14px">
+        <label><input type="radio" name="w-tpl" value="sanshang" id="w-tpl-sa">山上影像<small>收據（含居留證影本）</small></label>
+        <label><input type="radio" name="w-tpl" value="chengwei" id="w-tpl-bl">成為影像<small>勞務報酬單・自動算扣繳</small></label>
+      </div>
+      <div class="grid2">
+        <label class="f">工作日期<input type="date" id="w-start"></label>
+        <label class="f">結束日期（同一天可留空）<input type="date" id="w-end"></label>
+        <label class="f" id="w-fill-l">填表日期<input type="date" id="w-fill"></label>
+      </div>
+      <div class="grid2" style="margin-top:10px">
+        <label class="f">專案名稱<input type="text" id="w-project" placeholder="例如：Karzy Media" autocomplete="off" maxlength="200"></label>
+        <label class="f">金額（新台幣）<input type="text" id="w-amount" class="num" inputmode="numeric" placeholder="16,000" autocomplete="off" maxlength="30"></label>
+      </div>
+      <dl class="calc" id="w-calc"></dl>
+      <div class="row" style="margin-top:14px"><button class="primary" id="w-pdf">下載 PDF</button></div>
+      <p class="msg" id="w-msg" role="status"></p>
+    </div>
+    <div class="card">
+      <h2>開過的勞報單</h2>
+      <p class="lede" style="margin-bottom:10px">每次下載 PDF 都會記在這裡，點「載入」可以直接沿用。</p>
+      <ul class="hist" id="w-hist"></ul>
+    </div>
+    <div class="card locked" id="p-card">
+      <span class="seal" id="p-seal">已鎖定</span>
+      <h2>基本資料</h2>
+      <dl class="facts" id="p-facts"></dl>
+      <div class="row" style="margin-top:12px"><button id="p-export">下載備份檔</button></div>
+      <p class="msg" id="p-msg" role="status">備份檔可以在別台電腦或網站版「從備份檔匯入」。檔案含個資，請自己保管。</p>
+      <details>
+        <summary>資料有誤，需要重設</summary>
+        <p class="lede" style="margin:8px 0 0">重設會清掉鎖定的基本資料（開過的紀錄會保留）。在下面輸入「重設」兩個字才能按。</p>
+        <div class="row"><input type="text" id="p-confirm" aria-label="輸入重設確認" style="max-width:140px"><button id="p-reset" disabled>重設基本資料</button></div>
+      </details>
+    </div>
+  </div>
+  <div class="card pv-card">
+    <div class="pv-head"><h2 style="margin:0">預覽</h2><span id="pv-note">A4 直式・下載的 PDF 就長這樣</span></div>
+    <div class="pv-wrap" id="pv-wrap"><iframe id="pv" title="勞報單預覽" tabindex="-1"></iframe></div>
+  </div>
+</section>
+</main>
+
+<script>window.LR_SEED = /*__SEED__*/null;</script>
+
+<script id="lr-core">
+/* ====== 計算與排版核心（純函式；tests/core.test.mjs 直接抽這段來測）====== */
+// 扣繳與補充保費規則：照「成為影像勞務報酬單」表上印的 115 年度說明（表單是成為影像提供的）。國稅局／健保署公告不同時以公告為準
+const TH = {
+  salaryStart: 90501, salaryRate: 0.05,       // 非固定薪資(50)：起扣點 90,501，5%
+  bizStart: 20010, bizRate: 0.10,             // 執行業務(9A/9B)、租賃(51)：起扣點 20,010，10%
+  frLimit: 44251, frLowRate: 0.06, frHighRate: 0.18,   // 外籍在台未滿 183 天：未達 44,251 扣 6%，達到扣 18%
+  nhiRate: 0.0211, nhiSalaryStart: 29500, nhiBizStart: 20000,
+};
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const money = n => (n == null || n === '' || !isFinite(n)) ? '' : Number(n).toLocaleString('en-US');
+const pad2 = n => String(n).padStart(2, '0');
+// 西元 YYYY-MM-DD → 民國年月日；格式不對回 null
+function roc(iso){
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
+  if (!m) return null;
+  const d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
+  if (d.getUTCFullYear() !== +m[1] || d.getUTCMonth() !== +m[2] - 1 || d.getUTCDate() !== +m[3]) return null;
+  return { y: +m[1] - 1911, m: +m[2], d: +m[3] };
+}
+// 金額字串 → 正整數；空白回 null；不合法回 NaN
+function parseAmount(s){
+  let t = String(s == null ? '' : s).trim().replace(/^NT\$?\s*/i, '').replace(/\s*元$/, '').replace(/\s+/g, '');
+  if (!t) return null;
+  if (/[,，]/.test(t)){   // 有千分位就要逗號位置正確，例如 16,000；1,6 這種不收
+    if (!/^\d{1,3}([,，]\d{3})+$/.test(t)) return NaN;
+    t = t.replace(/[,，]/g, '');
+  }
+  if (!/^\d+$/.test(t)) return NaN;
+  const n = parseInt(t, 10);
+  return n > 0 && n <= 99999999 ? n : NaN;
+}
+// 讀瀏覽器存的資料：區分「沒有資料」和「讀不懂」（讀不懂時不能直接覆寫，見介面的 loadDB）
+function parseStored(raw){
+  if (raw == null || raw === '') return { state: 'empty', data: null };
+  try {
+    const d = JSON.parse(raw);
+    return d && typeof d === 'object' && !Array.isArray(d) ? { state: 'ok', data: d } : { state: 'bad', data: null };
+  } catch (e){ return { state: 'bad', data: null }; }
+}
+// 整理瀏覽器存的資料：舊格式升級（2026-10-09 blank→chengwei），結構不對的項目丟掉並回報 repaired（呼叫端要先另存原始內容）
+const TPL_IDS = ['sanshang', 'chengwei'];
+function normalizeDB(d){
+  const db = { v: 1, profile: null, history: [], last: null };
+  if (d == null) return { db, repaired: false };
+  if (typeof d !== 'object' || Array.isArray(d)) return { db, repaired: true };
+  let repaired = false;
+  const tpl = t => (t === 'blank' ? 'chengwei' : t);
+  const str = v => { if (v == null) return ''; if (typeof v !== 'string'){ repaired = true; return ''; } if (v.length > 200) repaired = true; return v.slice(0, 200); };   // 型別錯、截短都算改到原值
+  const amt = v => (Number.isInteger(v) && v > 0 && v <= 99999999 ? v : null);
+  if (d.history != null && !Array.isArray(d.history)) repaired = true;
+  (Array.isArray(d.history) ? d.history : []).forEach(r => {
+    if (r && typeof r === 'object' && TPL_IDS.includes(tpl(r.tpl)) && roc(r.start) && typeof r.project === 'string' && r.project.trim() && amt(r.amount)){
+      const dd = v => { const x = str(v); if (x && !roc(x)){ repaired = true; return ''; } return x; };
+      const pj = str(r.project), pt = pj.trim(); if (pt !== pj) repaired = true;
+      db.history.push({ tpl: tpl(r.tpl), start: r.start, end: dd(r.end), fill: dd(r.fill), project: pt, amount: r.amount, at: str(r.at) });
+    } else repaired = true;
+  });
+  if (d.last != null){
+    if (typeof d.last === 'object' && !Array.isArray(d.last)){
+      const L = d.last;
+      const ls = v => { if (v == null) return ''; if (typeof v !== 'string' || v.length > 200){ repaired = true; return typeof v === 'string' ? v.slice(0, 200) : ''; } return v; };
+      let lt = 'sanshang';
+      if (L.tpl != null){ if (TPL_IDS.includes(tpl(L.tpl))) lt = tpl(L.tpl); else repaired = true; }
+      let la = null;
+      if (L.amount != null){ la = amt(L.amount); if (la == null) repaired = true; }
+      const ld = v => { const x = ls(v); if (x && !roc(x)){ repaired = true; return ''; } return x; };   // 日期欄只收有效日期
+      const lp = v => { const x = ls(v), t = x.trim(); if (t !== x) repaired = true; return t; };
+      let at = ls(L.amountText); if (at.length > 30){ repaired = true; at = at.slice(0, 30); }   // 金額欄原文（可能是輸入到一半的 16,）
+      db.last = { tpl: lt, start: ld(L.start), end: ld(L.end), fill: ld(L.fill), project: lp(L.project), amount: la, amountText: at };
+    } else repaired = true;
+  }
+  if (d.profile != null){
+    const s = sanitizeProfile(d.profile);
+    if (s){
+      db.profile = s.p;
+      const la = d.profile.lockedAt;
+      if (typeof la === 'string'){ db.profile.lockedAt = la.slice(0, 20); if (la.length > 20) repaired = true; }
+      else if (la != null) repaired = true;   // 鎖定日期型別錯或超長：改掉前都要先備份
+      if (s.dropped || s.changed) repaired = true;
+    }
+    else repaired = true;
+  }
+  return { db, repaired };
+}
+// 載入計畫：整理後重新序列化，跟原始字串逐字比對；任何差異（型別修正、截短、預設值、舊格式改名…）都先備份原始內容，
+// 所以不用逐一列舉「哪些整理會改值」。介面每次存的就是這個整理後的形式，整理一次後兩者相同，不會重複備份。
+// warn：'bad'＝讀不懂、'repaired'＝有項目被丟掉或修正（要提醒使用者）、null＝只是格式升級（安靜備份）
+function planLoad(raw){
+  const r = parseStored(raw);
+  const n = normalizeDB(r.state === 'ok' ? r.data : null);
+  const warn = r.state === 'bad' ? 'bad' : (n.repaired ? 'repaired' : null);
+  const backup = r.state === 'bad' || (r.state === 'ok' && JSON.stringify(n.db) !== raw);
+  return { db: n.db, backup, warn };
+}
+// 備份檔或預填值 → 乾淨的基本資料。只收字串；選項只收已知值；證件影像只收本機產生的 data:image（擋外部網址）。
+// 有任何欄位因型別或值不對被清掉，回傳 changed=true（從瀏覽器載入時要先另存原始內容）
+const DATA_IMG = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/]+=*$/;
+const SA_CAT_IDS = ['salary50', '9b', '91', 'salbonus50', '92'], SA_USE_IDS = ['work', 'parttime', 'speech', 'other'];
+const CW_CAT_IDS = ['salary', 'salaryFixed', 'business', 'rent', 'prize', 'other'], CW_STATUS_IDS = ['tw', 'fr183', 'fr'];
+function sanitizeProfile(p){
+  if (!p || typeof p !== 'object' || Array.isArray(p)) return null;
+  let changed = false;
+  const str = v => { if (v == null) return ''; if (typeof v !== 'string'){ changed = true; return ''; } const t = v.trim().slice(0, 200); if (t !== v) changed = true; return t; };
+  const upper = v => { const t = str(v), u = t.toUpperCase(); if (u !== t) changed = true; return u; };
+  const obj = v => { if (v == null) return {}; if (typeof v === 'object' && !Array.isArray(v)) return v; changed = true; return {}; };
+  const pick = (v, list, missing, invalid) => { if (v == null || v === '') return missing; if (list.includes(v)) return v; changed = true; return invalid; };
+  const bool = (v, def) => { if (v == null) return def; if (typeof v === 'boolean') return v; changed = true; return def; };
+  const img = v => { if (v == null || v === '') return ''; if (typeof v === 'string' && v.length < 6e6 && DATA_IMG.test(v)) return v; changed = true; return ''; };
+  const tp = obj(p.tpl), bank = obj(p.bank), post = obj(p.post);
+  const sa = obj(tp.sanshang), cw = obj(tp.chengwei != null ? tp.chengwei : tp.blank);
+  const out = {
+    v: 1, name: str(p.name), idNo: upper(p.idNo), dob: str(p.dob), nationality: str(p.nationality), passport: upper(p.passport),
+    phone: str(p.phone), address: str(p.address), mailAddress: str(p.mailAddress),
+    bank: { name: str(bank.name), code: str(bank.code), account: str(bank.account) },
+    post: { code: str(post.code) || '700', account: str(post.account) },
+    payTo: pick(p.payTo, ['bank', 'post'], 'bank', 'bank'), arcFront: img(p.arcFront), arcBack: img(p.arcBack),
+    tpl: { sanshang: { cat: pick(sa.cat, SA_CAT_IDS, 'salary50', 'salary50'), activity: sa.activity == null ? '拍攝費' : str(sa.activity), use: pick(sa.use, SA_USE_IDS, 'work', 'work') },
+           // 認不得的所得類別改成「其他」：寧可顯示待確認，也不要算錯
+           chengwei: { cat: pick(cw.cat, CW_CAT_IDS, 'salary', 'other'), status: pick(cw.status, CW_STATUS_IDS, 'tw', 'tw'), union: bool(cw.union, false), nhi: bool(cw.nhi, true) } },
+  };
+  if (!out.name) return null;
+  const dropped = (!!p.arcFront && !out.arcFront) || (!!p.arcBack && !out.arcBack);
+  return { p: out, dropped, changed };
+}
+// 成為影像勞務報酬單：代扣所得稅（無條件捨去）與二代健保補充保費（四捨五入）
+function calcBlank(amount, s){
+  const a = Math.round(amount || 0);
+  let rate = 0, taxNote = '';
+  if (s.status === 'fr'){
+    rate = a < TH.frLimit ? TH.frLowRate : TH.frHighRate;
+    taxNote = a < TH.frLimit ? '外籍在台未滿 183 天：未達 44,251，扣 6%' : '外籍在台未滿 183 天：達 44,251，扣 18%';
+  } else if (s.cat === 'salary'){
+    rate = a >= TH.salaryStart ? TH.salaryRate : 0;
+    taxNote = rate ? '非固定薪資：達起扣點 90,501，扣 5%' : '非固定薪資：未達起扣點 90,501，不扣稅';
+  } else if (s.cat === 'salaryFixed'){
+    taxNote = '固定薪資：要查扣繳稅額表，這裡不計算，請付款方確認';
+  } else if (s.cat === 'business' || s.cat === 'rent' || s.cat === 'prize'){
+    rate = a >= TH.bizStart ? TH.bizRate : 0;
+    const k = { business: '執行業務所得', rent: '租賃所得', prize: '機會中獎獎金' }[s.cat];
+    taxNote = rate ? `${k}：達起扣點 20,010，扣 10%` : `${k}：未達起扣點 20,010，不扣稅`;
+  } else {
+    taxNote = '其他所得：表上沒有扣繳規則，這裡不計算，請付款方確認';
+  }
+  // 表上沒有規則或要查表的：稅額是 null（待付款方確認），不能當成 0 元。認不得的類別或身分也一樣
+  const valid = CW_CAT_IDS.includes(s.cat) && CW_STATUS_IDS.includes(s.status);
+  if (!valid) taxNote = '所得類別或身分認不得，這裡不計算，請付款方確認';
+  const taxKnown = valid && (s.status === 'fr' || !(s.cat === 'salaryFixed' || s.cat === 'other'));
+  const tax = taxKnown ? Math.floor(a * rate) : null;
+  let nhi = 0, nhiNote = '';
+  const foreign = s.status === 'fr183' || s.status === 'fr';
+  const nhiRuleCat = s.cat === 'salary' || s.cat === 'salaryFixed' || s.cat === 'business';   // 表上有補充保費規則的類別
+  if (!valid){
+    nhiNote = '所得類別或身分認不得，補充保費不計算';
+  } else if (foreign && s.nhi === false){
+    nhiNote = '外籍人士沒有健保資格：不扣補充保費';
+  } else if (!nhiRuleCat){
+    nhiNote = '表上沒有這類所得的補充保費規則，這裡不計算，請付款方確認';
+  } else if (s.union){
+    nhiNote = '有職業工會加保：不扣補充保費（要附加保證明）';
+  } else if (s.cat === 'salary' || s.cat === 'salaryFixed'){
+    if (a >= TH.nhiSalaryStart) nhi = Math.round(a * TH.nhiRate);
+    nhiNote = nhi ? '薪資類：達起扣點 29,500，扣 2.11%' : '薪資類：未達起扣點 29,500，不扣補充保費';
+  } else if (s.cat === 'business'){
+    if (a >= TH.nhiBizStart) nhi = Math.round(a * TH.nhiRate);
+    nhiNote = nhi ? '執行業務類：達起扣點 20,000，扣 2.11%' : '執行業務類：未達起扣點 20,000，不扣補充保費';
+  }
+  const nhiKnown = valid && ((foreign && s.nhi === false) || nhiRuleCat);
+  if (!nhiKnown) nhi = null;
+  const net = tax == null || nhi == null ? null : a - tax - nhi;
+  return { amount: a, tax, nhi, net, taxNote, nhiNote };
+}
+// 檢查這張單子能不能下載；回傳錯誤訊息，沒問題回空字串
+function checkReport(R){
+  if (!roc(R.start)) return '請選工作日期';
+  if (R.end && !roc(R.end)) return '結束日期格式不對';
+  if (R.end && R.end < R.start) return '結束日期不能早於工作日期';
+  if (R.tpl === 'chengwei' && !roc(R.fill)) return '請選填表日期';
+  if (!String(R.project || '').trim()) return '請填專案名稱';
+  if (R.amount == null) return '請填金額';
+  if (!(R.amount > 0)) return '金額只能填正整數，例如 16000';
+  return '';
+}
+const ck = on => on ? '■' : '□';
+const U = (v, cls) => `<span class="u${cls ? ' ' + cls : ''}">${v === '' || v == null ? '&nbsp;' : esc(v)}</span>`;
+
+/* ---- 格式一：山上影像有限公司 收據 ---- */
+const SA_CATS = [['salary50', '薪資(50)'], ['9b', '稿費、演講(9B)'], ['91', '獎金(91)'], ['salbonus50', '薪資/獎金(50)'], ['92', '其他(92)']];
+const SA_USES = [['work', '工作費'], ['parttime', '工讀費'], ['speech', '演講費'], ['other', '其他']];
+function renderSanshang(P, R){
+  const t = (P.tpl && P.tpl.sanshang) || {};
+  const s = roc(R.start) || { y: '', m: '', d: '' }, e = R.end && R.end !== R.start ? roc(R.end) : null;
+  const amt = R.amount > 0 ? money(R.amount) : '';
+  const id = String(P.idNo || '').toUpperCase().slice(0, 10).padEnd(10, ' ').split('');
+  const dob = String(P.dob || '').replace(/-/g, '').slice(0, 8).padEnd(8, ' ').split('');
+  const bankShort = String((P.bank && P.bank.name) || '').replace(/銀行$/, '');
+  const acc = (o) => o && o.account ? (o.code ? `(${o.code}) ` : '') + o.account : '';
+  const img = src => src ? `<img src="${esc(src)}" alt="">` : '';
+  const cats = SA_CATS.map(([k, v]) => `<span>${ck(t.cat === k)}${esc(v)}</span>`).join('');
+  return `<section class="sheet sa">
+<div class="hd"><span class="co">山上影像有限公司</span><span class="ti">收據</span></div>
+<div class="tb">
+ <div class="r" style="grid-template-columns:186px 176px 124px 1fr">
+  <div class="c l">領款人姓名<br>(Name)</div><div class="c v">${esc(P.name)}</div>
+  <div class="c l">所得種類<br>(Category of<br>Income)</div><div class="c ck">${cats}</div></div>
+ <div class="r" style="grid-template-columns:186px 176px 124px 1fr">
+  <div class="c l">活動名稱(Activity<br>Name)</div><div class="c">${esc(t.activity || '')}</div>
+  <div class="c l">案名(Program)</div><div class="c">${esc(R.project || '')}</div></div>
+ <div class="r" style="grid-template-columns:186px 1fr">
+  <div class="c l">用途(Used)</div><div class="c gap">${SA_USES.map(([k, v]) => `<span>${ck(t.use === k)}${esc(v)}</span>`).join('')}</div></div>
+ <div class="r" style="grid-template-columns:186px 1fr">
+  <div class="c l">工作期間(Working<br>Dates)</div><div class="c">${U(s.y)}年${U(s.m)}月${U(s.d)}日${e ? `　至${U(e.y)}年${U(e.m)}月${U(e.d)}日` : ''}</div></div>
+ <div class="r" style="grid-template-columns:186px 1fr">
+  <div class="c l">計價標準<br>(Valuation Standard)</div><div class="c">單位數:${U('')}　　單價${U(amt, 'uw')}元　　共${U(amt, 'uw')}元</div></div>
+ <div class="r k ids" style="grid-template-columns:286px repeat(10,1fr)">
+  <div class="c idl">身分證字號/統一證號 (ID Number)</div>${id.map(ch => `<div class="c dg">${esc(ch.trim())}</div>`).join('')}</div>
+ <div class="r k2 dobr" style="grid-template-columns:52px repeat(8,1fr) 262px">
+  <div class="c tw">本國<br>人<br>免填</div>
+  <div class="c dl" style="grid-column:2 / span 8">出生年月日(Date of Birth)</div>
+  <div class="c">國籍(Nationality): ${esc(P.nationality || '')}</div>
+  ${dob.map(ch => `<div class="c dg t">${esc(ch.trim())}</div>`).join('')}
+  <div class="c t sm">護照號碼(Passport No.)：${esc(P.passport || '')}</div></div>
+ <div class="r" style="grid-template-columns:186px 1fr">
+  <div class="c l">應領金額(Total<br>amount)</div><div class="c">新台幣NT$${U(amt, 'uw')}元整</div></div>
+ <div class="r" style="grid-template-columns:186px 1fr">
+  <div class="c l">代扣款(Withholding )</div><div class="c wh">稅額(Tax)NT$____勞保NT$____健保NT$____退職金NT$<br>補充保費(NHI Supplementary Premiums)NT$</div></div>
+ <div class="r" style="grid-template-columns:186px 1fr">
+  <div class="c l">實領金額(Net<br>Payment)</div><div class="c">新台幣NT$${U('', 'uw2')}元整</div></div>
+ <div class="r k" style="grid-template-columns:186px 222px 124px 1fr">
+  <div class="c l">領款人蓋(簽)章(Sign)</div><div class="c"></div><div class="c l">日期(Date)</div><div class="c"></div></div>
+ <div class="r k3" style="grid-template-columns:286px 52px 1fr">
+  <div class="c l">上列款項已向山上影像有限公司<br>如數領訖</div><div class="c l">備註</div><div class="c"></div></div>
+</div>
+<p class="pd">【個資宣告】此資料之蒐集僅限於會計與相關事務、憑證管理業務、協助公部門調查或執行業務及法令需求等目的使用，非經當事人同意，絕不轉做其他用途，亦不會公佈任何資訊，並遵循本公司資料保存與安全控管規定辦理。</p>
+<div class="bank">請填本人匯款帳戶(並勾選)：<br>
+${ck(P.payTo === 'post')} 郵局　　　帳號：${U(acc(P.post), 'acc')}<br>
+${ck(P.payTo === 'bank')}${U(bankShort, 'bk')}銀行　帳號：${U(acc(P.bank), 'acc')}</div>
+<p class="cl">影本欄位：</p>
+<div class="copy"><div>${img(P.arcFront)}</div><div>${img(P.arcBack)}</div></div>
+</section>`;
+}
+
+/* ---- 格式二：成為影像勞務報酬單（照成為影像給的 Excel 版面；使用者原稱「通用勞報單」） ---- */
+const BL_CATS = [['business', '執行業務所得'], ['rent', '租賃所得']];
+function renderChengwei(P, R){
+  const t = (P.tpl && P.tpl.chengwei) || {};
+  const C = R.amount > 0 ? calcBlank(R.amount, t) : null;
+  const s = roc(R.start), e = roc(R.end || R.start), f = roc(R.fill);
+  const ymd = (o, padDay) => o ? `${o.y} 年 ${o.m} 月 ${padDay ? pad2(o.d) : o.d} 日` : '　 年　 月　 日';
+  const foreign = t.status === 'fr183' || t.status === 'fr';
+  const pay = P.payTo === 'post' ? { name: '中華郵政', code: (P.post && P.post.code) || '700', acc: (P.post && P.post.account) || '' }
+    : { name: (P.bank && P.bank.name) || '', code: (P.bank && P.bank.code) || '', acc: (P.bank && P.bank.account) || '' };
+  const img = src => src ? `<img src="${esc(src)}" alt="">` : '';
+  const line = (on, text) => `<div>${ck(on)}　${text}</div>`;
+  const cell = v => v == null ? '待確認' : money(v);   // null＝這裡不計算，交付款方確認
+  const nhiOn = !t.union && !(foreign && t.nhi === false);
+  const rules = [
+    '<b>【本國籍應扣繳稅額】</b>',
+    line(t.cat === 'salaryFixed' && t.status !== 'fr', '固定薪資(50)：查表(起扣點115年度90,501)'),
+    line(t.cat === 'salary' && t.status !== 'fr', '非固定薪資(50)：5%查表(起扣點115年90,501)'),
+    line(t.cat === 'business' && t.status !== 'fr', '執行業務報酬/稿費(9A/9B)：10%（起扣點20,010）'),
+    line(t.cat === 'rent' && t.status !== 'fr', '租賃所得(51)：10%（起扣點20,010）'),
+    line(t.cat === 'prize' && t.status !== 'fr', '機會中獎獎金(91)：10%（起扣點20,010）'),
+    line(t.status === 'fr183', '外籍人士(在台滿183天)：依照一般本國人辦理'),
+    line(t.status === 'fr', '外籍人士(在台未滿183天)：給付所得未達44,251，扣繳6%；給付所得達44,251，扣繳18%。'),
+    '<br><b>【二代健保】</b>',
+    line(nhiOn && (t.cat === 'salary' || t.cat === 'salaryFixed'), '薪資類：個人提繳2.11% + 機關提繳2.11%（薪資類補充保費起扣點29,500）若有參加工會加保，須提出相關證明，則不用代扣二代健保。'),
+    line(nhiOn && t.cat === 'business', '執行業務類：個人提繳2.11% （起扣點20,000）若有參加工會加保，須提出相關證明，則不用代扣二代健保。'),
+    line(nhiOn && foreign && (t.cat === 'salary' || t.cat === 'salaryFixed' || t.cat === 'business'), '外籍人士：有健保資格，扣繳2.11%(起扣點比照本國人)。'),
+  ].join('');
+  const isSalary = t.cat === 'salary' || t.cat === 'salaryFixed';
+  const cats = `${ck(isSalary)}薪資　　` + BL_CATS.map(([k, v]) => `${ck(t.cat === k)}${v}`).join('　　')
+    + `　　${ck(t.cat === 'other' || t.cat === 'prize')}其他${t.cat === 'prize' ? '<u>機會中獎獎金(91)</u>' : '__________________'}`;
+  return `<section class="sheet bl"><table>
+<colgroup><col style="width:46px"><col style="width:56px"><col style="width:81px"><col style="width:44px"><col style="width:114px"><col style="width:44px"><col style="width:51px"><col style="width:65px"><col style="width:46px"><col style="width:135px"></colgroup>
+<tr><td colspan="10" class="t">勞務報酬單</td></tr>
+<tr><td colspan="8">${cats}</td><td class="mid">填表日期</td><td class="mid">${ymd(f, true)}</td></tr>
+<tr><td rowspan="4" class="lab">領款人<br>基本資料</td>
+  <td colspan="3" rowspan="4" class="nat">${ck(t.status === 'tw')}本國籍<br>${ck(t.status === 'fr183')}外國籍(在台滿183天)<br>${ck(t.status === 'fr')}外國籍(在台未滿183天)<br>是否有加保於職業工會<br>${ck(!t.union)}否<br>${ck(!!t.union)}是，請提供加保資料</td>
+  <td>姓名</td><td colspan="5">${esc(P.name)}</td></tr>
+<tr><td class="sm">身分證字號：<br>居留證 / 護照號No.：</td><td colspan="2">${esc(P.idNo)}${P.passport ? `<br><span class="pp">護照 ${esc(P.passport)}</span>` : ''}</td><td colspan="2">聯絡電話：</td><td>${esc(P.phone || '')}</td></tr>
+<tr><td>戶籍地址：</td><td colspan="5">${esc(P.address || '')}</td></tr>
+<tr><td>通訊地址：</td><td colspan="5">${esc(P.mailAddress || P.address || '')}</td></tr>
+<tr><td rowspan="2" class="lab">勞務<br>內容</td><td colspan="9">專案名稱：${esc(R.project || '')}</td></tr>
+<tr><td colspan="9">期間：自 ${ymd(s, true)}至 ${ymd(e, true)}</td></tr>
+<tr><td rowspan="10" class="lab">領款<br>資訊</td><td colspan="2">領款金額：</td><td colspan="2" class="num">${C ? money(C.amount) : ''}</td><td colspan="5" class="mid">匯款資訊</td></tr>
+<tr><td colspan="2">代扣所得稅：</td><td colspan="2" class="num">${C ? cell(C.tax) : ''}</td><td colspan="5" rowspan="9" class="rules">${rules}</td></tr>
+<tr><td colspan="2">二代健保補充保費(2.11%)：</td><td colspan="2" class="num">${C ? cell(C.nhi) : ''}</td></tr>
+<tr><td colspan="2">實領金額：</td><td colspan="2" class="num">${C ? cell(C.net) : ''}</td></tr>
+<tr><td colspan="4" class="blankrow"></td></tr>
+<tr><td colspan="4" class="sm">付款方式：□現金　□支票　■匯款<br>備註/附言：帳戶非台新銀行者,手續費皆費用內扣.</td></tr>
+<tr><td colspan="2">銀行：</td><td colspan="2">${esc(pay.name)}</td></tr>
+<tr><td colspan="2">分行/代號：</td><td colspan="2">${esc(pay.code)}</td></tr>
+<tr><td colspan="2">帳號：</td><td colspan="2">${esc(pay.acc)}</td></tr>
+<tr><td colspan="2">戶名：</td><td colspan="2">${esc(P.name)}</td></tr>
+<tr><td colspan="10" class="blankrow"></td></tr>
+<tr><td colspan="10" class="mid">身分證影本黏貼處<br>（外籍人士請附居留證/護照影本）</td></tr>
+<tr><td colspan="5" class="mid">正面</td><td colspan="5" class="mid">反面</td></tr>
+<tr><td colspan="5" class="photo">${img(P.arcFront)}</td><td colspan="5" class="photo">${img(P.arcBack)}</td></tr>
+</table></section>`;
+}
+
+const TPL = {
+  sanshang: { name: '山上影像', file: '山上影像勞報單', render: renderSanshang },
+  chengwei: { name: '成為影像', file: '成為影像勞報單', render: renderChengwei },
+};
+
+// 紙張樣式（預覽與 PDF 共用）。紙張永遠白底黑字
+const SHEET_CSS = `
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#fff}
+.sheet{width:794px;height:1123px;overflow:hidden;background:#fff;color:#111;-webkit-font-smoothing:antialiased}
+.u{display:inline-block;min-width:2.4em;border-bottom:1px solid #111;text-align:center;padding:0 5px;margin:0 3px;line-height:1.25}
+.u.uw{min-width:6.5em}.u.uw2{min-width:9em}.u.acc{min-width:14em;text-align:left}.u.bk{min-width:5em}
+/* 山上影像 */
+.sa{padding:36px 56px 20px;font:14px/1.35 "Noto Serif TC","Songti TC","PMingLiU",serif}
+.sa .hd{text-align:center;margin-bottom:8px}
+.sa .co{display:inline-block;font-size:23px;font-weight:700;letter-spacing:.08em;border-bottom:1.6px solid #111;padding:0 4px 1px}
+.sa .ti{display:block;width:max-content;margin:6px auto 0;font-size:19px;font-weight:700;letter-spacing:.6em;padding-left:.6em;border-bottom:1.6px solid #111}
+.sa .tb{border:1.4px solid #111}
+.sa .r{display:grid;border-top:1px solid #111}
+.sa .r:first-child{border-top:0}
+.sa .r.k,.sa .r.k+.r{border-top-width:2.6px}
+.sa .r.k3{border-top-width:2.6px}
+.sa .c{border-left:1px solid #111;padding:6px 9px;display:flex;align-items:center;min-height:42px;flex-wrap:wrap}
+.sa .c:first-child{border-left:0}
+.sa .c.l{justify-content:center;text-align:center;line-height:1.22}
+.sa .c.v{justify-content:center}
+.sa .c.ck{display:grid;grid-template-columns:auto auto;gap:1px 10px;font-size:12.6px;line-height:1.35;align-content:center}
+.sa .c.gap{gap:14px}
+.sa .ids .c{min-height:38px}
+.sa .c.idl{font-weight:700;font-size:14.5px;white-space:nowrap}
+.sa .c.dg{justify-content:center;padding:4px 0;font-size:15px}
+.sa .dobr .c{min-height:34px}
+.sa .dobr .c.t{border-top:1px solid #111}
+.sa .dobr .c.tw{grid-row:1 / span 2;background:#8c8c8c;justify-content:center;text-align:center;line-height:1.15;font-size:13px;padding:2px}
+.sa .dobr .c.dl{justify-content:center}
+.sa .dobr .c.tw + .c{border-left:1px solid #111}
+.sa .c.sm{font-size:12.4px;white-space:nowrap}
+.sa .c.wh{font-size:12.6px;line-height:1.45;display:block}
+.sa .pd{font-weight:700;font-size:12.4px;line-height:1.5;margin:6px 0 12px}
+.sa .bank{background:#c8c8c8;border:1px solid #8a8a8a;padding:8px 12px 12px;font-size:14px;line-height:1.55}
+.sa .cl{margin:14px 0 6px}
+.sa .copy{border:1px solid #b5b5b5;display:grid;grid-template-columns:1fr 1fr;height:198px}
+.sa .copy div{display:flex;align-items:center;justify-content:center;padding:8px;min-width:0}
+.sa .copy div+div{border-left:1px solid #b5b5b5}
+.sa .copy img{max-width:100%;max-height:100%;object-fit:contain}
+/* 成為影像勞務報酬單 */
+.bl{padding:40px 56px 30px;font:12.5px/1.42 "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif}
+.bl table{width:100%;border-collapse:collapse;table-layout:fixed}
+.bl td{border:1px solid #111;padding:4px 6px;vertical-align:middle;overflow-wrap:anywhere}
+.bl td.t{border:0;font-size:22px;font-weight:700;text-align:center;letter-spacing:.35em;padding:0 0 12px .35em}
+.bl td.lab{text-align:center;font-weight:700;line-height:1.5}
+.bl td.nat{font-size:12px;line-height:1.55}
+.bl td.mid{text-align:center}
+.bl td.num{text-align:right;font-variant-numeric:tabular-nums;padding-right:10px}
+.bl td.sm{font-size:11.6px;line-height:1.45}
+.bl .pp{font-size:10.5px;white-space:nowrap;letter-spacing:-.01em}
+.bl td.rules{vertical-align:top;font-size:10.8px;line-height:1.5;padding:6px 8px}
+.bl td.rules div{padding-left:1.6em;text-indent:-1.6em}
+.bl td.blankrow{height:18px}
+.bl td.photo{height:232px;text-align:center;padding:8px}
+.bl td.photo img{max-width:100%;max-height:214px;object-fit:contain}
+`;
+const SHEET_FONTS = '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Noto+Serif+TC:wght@500;700&display=swap">';
+function sheetDoc(tplId, P, R){
+  return `<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8">${SHEET_FONTS}<style>${SHEET_CSS}</style></head><body>${TPL[tplId].render(P, R)}</body></html>`;
+}
+// 安全檔名：各段清理後以 _ 相連，去掉檔名不能用的字元，連副檔名不超過 240 位元組
+function pdfSafeName(parts, fallback, ext){
+  const trim = t => t.replace(/^[\s.]+|[\s.]+$/g, '');
+  const clean = t => String(t == null ? '' : t).replace(/[​-‏‪-‮⁠-⁩﻿]/g, '')
+    .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDFFF]/g, m => m.length === 2 ? m : '').trim();
+  let s = parts.map(clean).filter(Boolean).join('_');
+  s = trim(s.replace(/[\\/:*?"<>|\u0000-\u001F\u007F-\u009F]/g, '_').replace(/\s+/g, ' '));
+  let cp = [...s].slice(0, 100);
+  const enc = new TextEncoder();
+  while (cp.length && enc.encode(cp.join('') + ext).length > 240) cp.pop();
+  return (trim(cp.join('')) || fallback) + ext;
+}
+function reportFileName(P, R){
+  return pdfSafeName([TPL[R.tpl].file, P.name, R.project, R.start], '勞報單', '.pdf');
+}
+</script>
+
+<script>
+/* ====== 介面 ====== */
+const $ = id => document.getElementById(id);
+const KEY = 'laborReport.v1';
+let writesBlocked = false;   // 讀不懂的舊資料沒能另存時，絕不覆寫它
+const store = {
+  write(d){ if (writesBlocked) return false; try { localStorage.setItem(KEY, JSON.stringify(d)); return true; } catch (e){ return false; } },
+};
+let startupWarning = '';
+function loadDB(){
+  let raw = null;
+  try { raw = localStorage.getItem(KEY); } catch (e){ startupWarning = '注意：這台瀏覽器不讓網頁存資料（可能是私密瀏覽），關掉頁面後資料不會留下'; }
+  const plan = planLoad(raw);
+  if (plan.backup){
+    const backupKey = `${KEY}.backup.${Date.now()}`;
+    const what = plan.warn === 'bad' ? '上次存的資料讀不懂' : '上次存的資料有部分格式不對，已略過或修正那些項目';
+    try {
+      localStorage.setItem(backupKey, raw);
+      // 備份最多留 3 份，避免塞滿瀏覽器儲存空間（刪最舊的）
+      const keys = Object.keys(localStorage).filter(k => k.startsWith(`${KEY}.backup.`)).sort();
+      keys.slice(0, Math.max(0, keys.length - 3)).forEach(k => { try { localStorage.removeItem(k); } catch (e){} });
+      if (plan.warn) startupWarning = `${what}；原始內容已另存在瀏覽器的「${backupKey}」`;
+    } catch (e){
+      writesBlocked = true;
+      startupWarning = `${plan.warn ? what : '資料需要更新格式'}，但沒辦法先另存一份，所以這次不會寫入任何資料（原資料保留不動）`;
+    }
+  }
+  return plan.db;
+}
+let DB = loadDB();
+let storageOk = (() => { if (writesBlocked) return false; try { localStorage.setItem(KEY + '.probe', '1'); localStorage.removeItem(KEY + '.probe'); return true; } catch (e){ return false; } })();
+const save = () => { storageOk = store.write(DB); if (!storageOk) note('bad', '這台瀏覽器不讓網頁存資料（可能是私密瀏覽），關掉頁面後資料不會留下'); return storageOk; };
+const note = (cls, text, id = 'w-msg') => { const m = $(id); if (!m) return; m.className = 'msg' + (cls ? ' ' + cls : ''); m.textContent = text; };
+const todayIso = () => { const d = new Date(); return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`; };
+
+/* ---- 第一次使用：基本資料 ---- */
+let draftImgs = { arcFront: '', arcBack: '' };
+function fillSetup(p){
+  p = p || {};
+  const set = (id, v) => { $(id).value = v == null ? '' : v; };
+  set('s-name', p.name); set('s-id', p.idNo); set('s-dob', p.dob); set('s-nat', p.nationality); set('s-pass', p.passport);
+  set('s-phone', p.phone); set('s-addr', p.address); set('s-mail', p.mailAddress);
+  set('s-bank-name', p.bank && p.bank.name); set('s-bank-code', p.bank && p.bank.code); set('s-bank-acc', p.bank && p.bank.account);
+  set('s-post-acc', p.post && p.post.account); set('s-payto', p.payTo || 'bank');
+  const sa = (p.tpl && p.tpl.sanshang) || {}, bl = (p.tpl && p.tpl.chengwei) || {};
+  set('s-sa-cat', sa.cat || 'salary50'); set('s-sa-act', sa.activity == null ? '拍攝費' : sa.activity); set('s-sa-use', sa.use || 'work');
+  set('s-bl-cat', bl.cat || 'salary'); set('s-bl-status', bl.status || 'tw'); set('s-bl-union', bl.union ? 'yes' : 'no'); set('s-bl-nhi', bl.nhi === false ? 'no' : 'yes');
+  draftImgs = { arcFront: p.arcFront || '', arcBack: p.arcBack || '' };
+  showThumb('s-front-img', draftImgs.arcFront); showThumb('s-back-img', draftImgs.arcBack);
+}
+function showThumb(id, src){ const im = $(id); if (src){ im.src = src; im.hidden = false; } else { im.removeAttribute('src'); im.hidden = true; } }
+function readSetup(){
+  const v = id => $(id).value.trim();
+  return {
+    v: 1, name: v('s-name'), idNo: v('s-id').toUpperCase(), dob: v('s-dob'), nationality: v('s-nat'), passport: v('s-pass').toUpperCase(),
+    phone: v('s-phone'), address: v('s-addr'), mailAddress: v('s-mail'),
+    bank: { name: v('s-bank-name'), code: v('s-bank-code'), account: v('s-bank-acc').replace(/[\s-]/g, '') },
+    post: { code: '700', account: v('s-post-acc').replace(/[\s-]/g, '') },
+    payTo: $('s-payto').value, arcFront: draftImgs.arcFront, arcBack: draftImgs.arcBack,
+    tpl: { sanshang: { cat: $('s-sa-cat').value, activity: v('s-sa-act'), use: $('s-sa-use').value },
+           chengwei: { cat: $('s-bl-cat').value, status: $('s-bl-status').value, union: $('s-bl-union').value === 'yes', nhi: $('s-bl-nhi').value !== 'no' } },
+  };
+}
+function checkProfile(p){
+  if (!p.name) return '請填姓名';
+  if (!/^[A-Z0-9]{8,10}$/.test(p.idNo)) return '身分證／居留證號格式不對（8–10 個英文或數字）';
+  if (p.dob && !roc(p.dob)) return '出生日期格式不對';
+  if (p.payTo === 'bank' && !p.bank.account) return '勾選的是銀行帳戶，但銀行帳號是空的';
+  if (p.payTo === 'post' && !p.post.account) return '勾選的是郵局帳戶，但郵局帳號是空的';
+  return '';
+}
+// 圖片縮到最長邊 1400px、存成 JPEG，避免塞爆瀏覽器儲存空間
+function loadImage(file){
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader();
+    fr.onerror = () => reject(new Error('讀不到這個檔案'));
+    fr.onload = () => {
+      const im = new Image();
+      im.onerror = () => reject(new Error('這個檔案不是圖片'));
+      im.onload = () => {
+        const k = Math.min(1, 1400 / Math.max(im.naturalWidth, im.naturalHeight));
+        const c = document.createElement('canvas');
+        c.width = Math.round(im.naturalWidth * k); c.height = Math.round(im.naturalHeight * k);
+        const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.drawImage(im, 0, 0, c.width, c.height);
+        resolve(c.toDataURL('image/jpeg', 0.86));
+      };
+      im.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  });
+}
+function bindSetup(){
+  [['s-front', 'arcFront', 's-front-img'], ['s-back', 'arcBack', 's-back-img']].forEach(([inp, key, thumb]) => {
+    $(inp).addEventListener('change', async e => {
+      const f = e.target.files && e.target.files[0]; if (!f) return;
+      try { draftImgs[key] = await loadImage(f); showThumb(thumb, draftImgs[key]); note('', '', 's-msg'); }
+      catch (err){ note('bad', err.message, 's-msg'); }
+    });
+  });
+  $('s-import').addEventListener('change', e => {
+    const f = e.target.files && e.target.files[0]; if (!f) return;
+    const fr = new FileReader();
+    fr.onload = () => {
+      try {
+        const j = JSON.parse(fr.result);
+        const r = sanitizeProfile(j && j.profile ? j.profile : j);
+        if (!r) throw new Error();
+        fillSetup(r.p);
+        note('ok', r.dropped ? '已從備份檔帶入；檔案裡的證件影像格式不對，已略過，請重新上傳' : '已從備份檔帶入，確認無誤後按「確認並鎖定」', 's-msg');
+      } catch (err){ note('bad', '這個檔案不是勞報單的備份檔', 's-msg'); }
+    };
+    fr.readAsText(f);
+  });
+  $('s-lock').addEventListener('click', () => {
+    const p = readSetup(), err = checkProfile(p);
+    if (err){ note('bad', err, 's-msg'); return; }
+    const clean = sanitizeProfile(p);   // 跟載入時同一套整理，存進去的就是標準形式
+    if (!clean){ note('bad', '請填姓名', 's-msg'); return; }
+    const prof = clean.p;
+    prof.lockedAt = todayIso();
+    const prev = DB.profile;
+    DB.profile = prof;
+    if (!store.write(DB)){
+      DB.profile = prev;
+      note('bad', '存不進這台瀏覽器（可能是私密瀏覽或儲存空間不足），所以還沒鎖定。請改用一般視窗開這個檔案，再按一次。', 's-msg');
+      return;
+    }
+    storageOk = true;
+    render();
+  });
+}
+
+/* ---- 日常使用 ---- */
+let previewTimer = 0;
+function currentReport(){
+  const tpl = (document.querySelector('input[name="w-tpl"]:checked') || {}).value || 'sanshang';
+  return { tpl, start: $('w-start').value, end: $('w-end').value, fill: $('w-fill').value, project: $('w-project').value.trim(), amount: parseAmount($('w-amount').value) };
+}
+function setReport(R){
+  const el = document.querySelector(`input[name="w-tpl"][value="${R.tpl === 'chengwei' ? 'chengwei' : 'sanshang'}"]`);
+  if (el) el.checked = true;
+  $('w-start').value = R.start || todayIso(); $('w-end').value = R.end || ''; $('w-fill').value = R.fill || todayIso();
+  $('w-project').value = R.project || ''; $('w-amount').value = typeof R.amountText === 'string' && R.amountText ? R.amountText : (R.amount > 0 ? money(R.amount) : '');
+}
+function renderCalc(R){
+  const box = $('w-calc'), P = DB.profile;
+  $('w-fill-l').hidden = R.tpl !== 'chengwei';
+  if (R.tpl !== 'chengwei'){
+    box.innerHTML = `<dt>應領金額</dt><dd>${R.amount > 0 ? money(R.amount) : '—'}</dd><p class="note">代扣款與實領金額照你給的範本留白，由山上影像填寫。</p>`;
+    return;
+  }
+  if (!(R.amount > 0)){ box.innerHTML = '<p class="note">填好金額後，這裡會算出代扣所得稅、補充保費和實領金額。</p>'; return; }
+  const C = calcBlank(R.amount, P.tpl.chengwei);
+  const v = n => n == null ? '待付款方確認' : money(n);
+  box.innerHTML = `<dt>領款金額</dt><dd>${money(C.amount)}</dd><dt>代扣所得稅</dt><dd>${v(C.tax)}</dd>`
+    + `<dt>補充保費</dt><dd>${v(C.nhi)}</dd><div class="net" style="display:contents"><dt>實領金額</dt><dd>${v(C.net)}</dd></div>`
+    + `<p class="note">${esc(C.taxNote)}；${esc(C.nhiNote)}。規則照表上印的 115 年度說明。</p>`;
+}
+function refresh(immediate){
+  const R = currentReport();
+  renderCalc(R);
+  DB.last = { tpl: R.tpl, start: R.start, end: R.end, fill: R.fill, project: R.project, amount: R.amount > 0 ? R.amount : null, amountText: $('w-amount').value.slice(0, 30) };
+  clearTimeout(previewTimer);
+  previewTimer = setTimeout(() => { store.write(DB); $('pv').srcdoc = sheetDoc(R.tpl, DB.profile, R); }, immediate ? 0 : 220);
+}
+function fitPreview(){
+  const wrap = $('pv-wrap'), w = wrap.clientWidth || 794, k = Math.min(1, w / 794);
+  $('pv').style.transform = `scale(${k})`;
+  wrap.style.height = Math.ceil(1123 * k) + 'px';
+}
+function renderHistory(){
+  const ul = $('w-hist');
+  if (!DB.history.length){ ul.innerHTML = '<li class="empty" style="border:0;padding:0;display:block">還沒有紀錄。下載第一張 PDF 後會出現在這裡。</li>'; return; }
+  ul.innerHTML = DB.history.map((h, i) => {
+    const r = roc(h.start), when = r ? `${r.y}/${r.m}/${r.d}` : '';
+    return `<li><div><b>${esc(h.project)}</b><span>${esc(TPL[h.tpl] ? TPL[h.tpl].name : '')}・${when}・NT$ ${money(h.amount)}</span></div>`
+      + `<button data-load="${i}">載入</button><button data-del="${i}" aria-label="刪除這筆紀錄">刪除</button></li>`;
+  }).join('');
+}
+function renderProfile(){
+  const p = DB.profile;
+  const acc = o => o && o.account ? `${o.code ? '(' + o.code + ') ' : ''}${o.account}` : '—';
+  const rows = [
+    ['姓名', p.name], ['證號', p.idNo], ['出生日期', p.dob || '—'], ['國籍', p.nationality || '—'], ['護照', p.passport || '—'],
+    ['戶籍地址', p.address || '—'], ['通訊地址', p.mailAddress || '同戶籍地址'], ['聯絡電話', p.phone || '—'],
+    [`${(p.bank && p.bank.name) || '銀行'}${p.payTo === 'bank' ? '（勾選）' : ''}`, acc(p.bank)],
+    [`郵局${p.payTo === 'post' ? '（勾選）' : ''}`, acc(p.post)],
+    ['證件影本', p.arcFront && p.arcBack ? '正反面都有' : (p.arcFront || p.arcBack ? '只有一面' : '沒有')],
+  ];
+  $('p-facts').innerHTML = rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('');
+  $('p-seal').textContent = `已鎖定 ${p.lockedAt || ''}`.trim();
+}
+function bindWork(){
+  ['w-start', 'w-end', 'w-fill', 'w-project', 'w-amount'].forEach(id => $(id).addEventListener('input', () => refresh()));
+  document.querySelectorAll('input[name="w-tpl"]').forEach(r => r.addEventListener('change', () => refresh(true)));
+  $('w-amount').addEventListener('blur', () => { const n = parseAmount($('w-amount').value); if (n > 0) $('w-amount').value = money(n); });
+  $('w-pdf').addEventListener('click', exportPdf);
+  $('w-hist').addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    if (b.dataset.load != null){ setReport(DB.history[+b.dataset.load]); refresh(true); note('', '已載入，改好日期或金額就可以下載'); }
+    if (b.dataset.del != null){ DB.history.splice(+b.dataset.del, 1); save(); renderHistory(); }
+  });
+  $('p-confirm').addEventListener('input', () => { $('p-reset').disabled = $('p-confirm').value.trim() !== '重設'; });
+  $('p-reset').addEventListener('click', () => {
+    const old = DB.profile; DB.profile = null; save(); $('p-confirm').value = ''; $('p-reset').disabled = true;
+    render(old);
+  });
+  $('p-export').addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify({ kind: 'labor-report-backup', v: 1, profile: DB.profile }, null, 1)], { type: 'application/json' });
+    saveBlob(blob, pdfSafeName(['勞報單基本資料備份', DB.profile.name], '勞報單基本資料備份', '.json'), 'p-msg');
+  });
+  new ResizeObserver(fitPreview).observe($('pv-wrap'));
+}
+function render(prefill){
+  const locked = !!DB.profile;
+  $('setup').hidden = locked; $('work').hidden = !locked;
+  if (!locked){ const seed = window.LR_SEED ? sanitizeProfile(window.LR_SEED) : null; fillSetup(prefill || (seed && seed.p) || null); if (window.LR_SEED && !prefill) note('', '已先帶入你的資料，請檢查一遍（聯絡電話可補上），再按「確認並鎖定」', 's-msg'); return; }
+  renderProfile(); renderHistory();
+  setReport(DB.last || { tpl: 'sanshang' });
+  fitPreview(); refresh(true);
+}
+
+/* ====== 下載 PDF：沿用報價計算機的做法（畫面外 iframe 原尺寸排版 → html2canvas-pro 畫成 JPEG → 自己組 A4 PDF） ====== */
+const PDF_LIB = {   // 限定精確版本＋SRI（與報價計算機同一個已稽核版本）；第一次按下載時才載入
+  src: 'https://cdn.jsdelivr.net/npm/html2canvas-pro@2.4.5/dist/html2canvas-pro.min.js',
+  sri: 'sha384-qpISIG3GeYccibLkLsLFyYlTHbXmLeV1MZZsOPGYw1S4INBU4nOH3Sdb+18D5K0o',
+};
+const PDF_W = 1654, PDF_A4 = [595.28, 841.89], PDF_PRODUCER = '勞報單產生器';
+const PDF_TIMEOUT = { decode: 5000, fonts: 10000, draw: 60000 };
+let pdfBusy = false, pdfLast = null;
+const pdfWait = (p, ms) => Promise.race([p, new Promise(r => setTimeout(r, ms))]);
+const pdfLimit = (p, ms, msg) => { let t = 0; return Promise.race([p, new Promise((_, j) => { t = setTimeout(() => j(new Error(msg)), ms); })]).finally(() => clearTimeout(t)); };
+const pdfFrame = () => new Promise(r => { requestAnimationFrame(() => r()); setTimeout(r, 250); });
+let pdfLibP = null;
+function pdfLoadLib(){
+  if (typeof window.html2canvas === 'function') return Promise.resolve(window.html2canvas);
+  if (!pdfLibP){
+    pdfLibP = new Promise((resolve, reject) => {
+      const s = document.createElement('script'); let timer = 0;
+      const end = err => { clearTimeout(timer); s.onload = s.onerror = null;
+        if (!err && typeof window.html2canvas === 'function') return resolve(window.html2canvas);
+        s.remove(); reject(new Error(err || '無法載入 PDF 元件（需要網路連線），請確認網路後再按一次')); };
+      timer = setTimeout(() => end('載入 PDF 元件逾時（超過 20 秒），請確認網路後再按一次'), 20000);
+      s.onload = () => end(); s.onerror = () => end();
+      s.crossOrigin = 'anonymous'; s.integrity = PDF_LIB.sri; s.src = PDF_LIB.src;
+      document.head.appendChild(s);
+    }).catch(e => { pdfLibP = null; throw e; });
+  }
+  return pdfLibP;
+}
+async function pdfRenderDoc(docHtml, h2c){
+  const fr = document.createElement('iframe');
+  fr.setAttribute('aria-hidden', 'true'); fr.tabIndex = -1;
+  fr.style.cssText = 'position:fixed;left:-12000px;top:0;width:900px;height:1300px;border:0;pointer-events:none';
+  document.body.appendChild(fr);
+  try {
+    const doc = fr.contentDocument;
+    doc.open(); doc.write(docHtml); doc.close();
+    const links = [...doc.querySelectorAll('link[rel="stylesheet"]')].map(l => l.sheet ? null : new Promise(r => { l.onload = l.onerror = r; }));
+    void doc.body.offsetHeight;
+    await pdfWait(Promise.all([...doc.images].map(img => img.decode ? img.decode().catch(() => {}) : null)), PDF_TIMEOUT.decode);
+    await pdfWait(Promise.all(links).then(() => { void doc.body.offsetHeight; return doc.fonts && doc.fonts.ready; }), PDF_TIMEOUT.fonts);
+    await pdfFrame(); await pdfFrame();
+    const sheet = doc.querySelector('.sheet');
+    if (!sheet) throw new Error('勞報單沒有內容可以輸出');
+    const cw = Math.ceil(sheet.getBoundingClientRect().width);
+    const canvas = await pdfLimit(h2c(sheet, { scale: (PDF_W + 1e-6) / cw, backgroundColor: '#ffffff', logging: false, useCORS: false, allowTaint: false,
+      imageTimeout: 15000, scrollX: 0, scrollY: 0, windowWidth: doc.documentElement.scrollWidth }), PDF_TIMEOUT.draw, '畫勞報單逾時，請再按一次');
+    try {
+      const w = canvas.width, h = canvas.height;
+      const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.92));
+      if (!blob) throw new Error('瀏覽器無法把勞報單轉成圖片，請關掉其他分頁再試一次');
+      const jpg = new Uint8Array(await blob.arrayBuffer());
+      if (jpg[0] !== 0xFF || jpg[1] !== 0xD8) throw new Error('瀏覽器不支援 JPEG 圖片輸出');
+      return [{ jpg, w, h }];
+    } finally { canvas.width = 0; canvas.height = 0; }
+  } finally { fr.remove(); }
+}
+const pdfNum = v => (Math.abs(v) < 0.005 ? 0 : v).toFixed(2);
+const pdfText = s => '<FEFF' + [...Array(s.length)].map((_, i) => s.charCodeAt(i).toString(16).toUpperCase().padStart(4, '0')).join('') + '>';
+function pdfDate(d){ const p = v => String(v).padStart(2, '0'), off = -d.getTimezoneOffset(), a = Math.abs(off);
+  return `D:${d.getFullYear()}${p(d.getMonth() + 1)}${p(d.getDate())}${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}${off < 0 ? '-' : '+'}${p(Math.floor(a / 60))}'${p(a % 60)}'`; }
+function pdfId(){ const b = new Uint8Array(16); try { crypto.getRandomValues(b); } catch (e){ for (let i = 0; i < 16; i++) b[i] = Math.floor(Math.random() * 256); }
+  return [...b].map(x => x.toString(16).toUpperCase().padStart(2, '0')).join(''); }
+// 最小 PDF：每頁一張 JPEG（DCTDecode），整張等比縮進 A4、置中靠上
+function pdfBuild(pages, title){
+  const enc = new TextEncoder(), parts = [], offs = []; let pos = 0;
+  const put = x => { const b = typeof x === 'string' ? enc.encode(x) : x; parts.push(b); pos += b.length; };
+  const obj = (n, dict, stream) => { offs[n] = pos; put(`${n} 0 obj\n${dict}\n`); if (stream){ put('stream\n'); put(stream); put('\nendstream\n'); } put('endobj\n'); };
+  const [W, H] = PDF_A4, n = pages.length, size = 4 + n * 3;
+  put('%PDF-1.4\n'); put(new Uint8Array([0x25, 0xE2, 0xE3, 0xCF, 0xD3, 0x0A]));
+  obj(1, '<< /Type /Catalog /Pages 2 0 R >>');
+  obj(2, `<< /Type /Pages /Kids [${pages.map((_, i) => `${4 + i * 3} 0 R`).join(' ')}] /Count ${n} >>`);
+  obj(3, `<< /Title ${pdfText(title)} /Creator ${pdfText(PDF_PRODUCER)} /Producer ${pdfText(PDF_PRODUCER)} /CreationDate (${pdfDate(new Date())}) >>`);
+  pages.forEach((p, i) => {
+    const pg = 4 + i * 3, s = Math.min(W / p.w, H / p.h), dw = p.w * s, dh = p.h * s;
+    const cs = enc.encode(`q ${pdfNum(dw)} 0 0 ${pdfNum(dh)} ${pdfNum(Math.max(0, (W - dw) / 2))} ${pdfNum(Math.max(0, H - dh))} cm /Im0 Do Q\n`);
+    obj(pg, `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pdfNum(W)} ${pdfNum(H)}] /Resources << /XObject << /Im0 ${pg + 2} 0 R >> /ProcSet [/PDF /ImageC] >> /Contents ${pg + 1} 0 R >>`);
+    obj(pg + 1, `<< /Length ${cs.length} >>`, cs);
+    obj(pg + 2, `<< /Type /XObject /Subtype /Image /Width ${p.w} /Height ${p.h} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${p.jpg.length} >>`, p.jpg);
+  });
+  const xref = pos; let x = `xref\n0 ${size}\n0000000000 65535 f \n`;
+  for (let i = 1; i < size; i++) x += `${String(offs[i]).padStart(10, '0')} 00000 n \n`;
+  put(x); const id = pdfId();
+  put(`trailer\n<< /Size ${size} /Root 1 0 R /Info 3 0 R /ID [<${id}> <${id}>] >>\nstartxref\n${xref}\n%%EOF\n`);
+  const out = new Uint8Array(pos); let o = 0; parts.forEach(b => { out.set(b, o); o += b.length; }); return out;
+}
+// 存檔：一般瀏覽器用暫時的下載連結；在 claude.ai 裡改走平台的 downloads 能力
+async function saveBlob(blob, name, msgId){
+  if (window.claude != null){
+    const dl = typeof window.claude.use === 'function' ? await Promise.resolve(window.claude.use('downloads')).catch(() => null) : null;
+    if (!dl){ note('bad', '這個畫面不能下載檔案', msgId); return false; }
+    try {
+      const r = await dl.save({ filename: name, data: blob });
+      if ((r && r.status) === 'saved' || r === 'saved') return true;
+      note('bad', '下載沒有完成，可以再按一次', msgId); return false;
+    }
+    catch (e){ note('bad', e && e.code === 'declined' ? '已取消下載' : '這個畫面不能下載檔案', msgId); return false; }
+  }
+  const url = URL.createObjectURL(blob), a = document.createElement('a');
+  a.href = url; a.download = name; a.rel = 'noopener'; a.style.display = 'none';
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 60000);
+  return true;
+}
+async function exportPdf(){
+  if (pdfBusy || !DB.profile) return;   // 沒有鎖定的基本資料（例如剛按重設）就不產生
+  const R = currentReport(), err = checkReport(R);
+  if (err){ note('bad', err); return; }
+  const btn = $('w-pdf'), P = DB.profile, name = reportFileName(P, R);   // 先算好檔名，再上鎖：任何例外都不會讓按鈕卡住
+  pdfBusy = true;
+  btn.disabled = true; btn.textContent = '產生中…';
+  try {
+    note('', '載入 PDF 元件…');
+    const h2c = await pdfLoadLib();
+    note('', '排版中…');
+    const pages = await pdfRenderDoc(sheetDoc(R.tpl, P, R), h2c);
+    const blob = new Blob([pdfBuild(pages, name.replace(/\.pdf$/, ''))], { type: 'application/pdf' });
+    pdfLast = { name, bytes: blob.size, w: pages[0].w, h: pages[0].h };
+    const ok = await saveBlob(blob, name, 'w-msg');
+    if (ok !== false){
+      const rec = { tpl: R.tpl, start: R.start, end: R.end, fill: R.fill, project: R.project, amount: R.amount, at: new Date().toISOString() };
+      DB.history = [rec, ...DB.history.filter(h => !(h.tpl === rec.tpl && h.start === rec.start && h.project === rec.project && h.amount === rec.amount))].slice(0, 60);
+      save(); renderHistory();
+      note('ok', `✓ 已下載「${name}」`);
+    }
+  } catch (e){
+    note('bad', (e && e.message) || String(e));
+  } finally {
+    pdfBusy = false; btn.disabled = false; btn.textContent = '下載 PDF';
+  }
+}
+
+bindSetup(); bindWork(); render();
+if (startupWarning) $('top-note').textContent = startupWarning;
+else if (!storageOk) $('top-note').textContent = '注意：這台瀏覽器不讓網頁存資料，關掉頁面後資料不會留下';
+</script>
+</body>
+</html>
