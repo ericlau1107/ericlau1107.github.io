@@ -76,7 +76,8 @@ main{display:flex;flex-direction:column;min-width:0;min-height:0}
   aside{flex-direction:row;align-items:center;gap:12px;border-right:0;border-bottom:1px solid var(--rule);overflow-x:auto;overflow-y:hidden;
     padding-block:calc(10px + env(safe-area-inset-top, 0px)) 10px}
   .brand{font-size:16px;white-space:nowrap}
-  .group{flex-direction:row;align-items:center;gap:8px}
+  .group{flex-direction:row;align-items:center;gap:8px;flex:none}
+  .tape{flex:none;white-space:nowrap}   /* 分類變多時橫排會擠，膠帶標籤不能被壓成直排 */
   .tape{font-size:13px;padding:6px 12px 5px}
   nav ul{flex-direction:row}
   .item{padding:6px 10px;white-space:nowrap}
