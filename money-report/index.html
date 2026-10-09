@@ -5,15 +5,51 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-oKTW6FTzx1drVZaZiQ0P/IRif7b5F7ckFS6q74UzWxg='; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-wLQ7QwkjKplrkfKYG0YGf6dZI7AVUl1DTofkEZkWIFs='; style-src 'unsafe-inline'; img-src data:; connect-src https://open.er-api.com/v6/latest/TWD; base-uri 'none'; form-action 'none'">
 <title>收支日常 · Eric 的記帳本</title>
 <style>
 :root{--bg:oklch(97.3% .007 85);--paper:#fff;--ink:oklch(25% .028 230);--muted:oklch(49% .018 230);--line:oklch(90% .01 85);--green:oklch(43% .07 175);--soft:oklch(95% .026 165);--red:oklch(46% .13 27);--amber:oklch(45% .085 65);--radius:16px;color-scheme:light;font-family:"PingFang TC","Microsoft JhengHei",sans-serif}
 *{box-sizing:border-box}html{-webkit-text-size-adjust:100%}body{margin:0;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.65}button,input,select,textarea{font:inherit;color:inherit}button,a,input,select,textarea{-webkit-tap-highlight-color:transparent}button,a{touch-action:manipulation}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}a{color:inherit;text-decoration:none}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid #7bad9f;outline-offset:3px}h1,h2,h3,p{margin:0}h1{font-size:30px;letter-spacing:-.035em;line-height:1.35;font-weight:650}h2{font-size:18px;line-height:1.5;font-weight:600}h3{font-size:15px;font-weight:600}small{font-size:12px}[hidden]{display:none!important}.sr-only,.skip-link:not(:focus){position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)}.skip-link:focus{position:fixed;top:10px;left:10px;background:white;padding:10px;z-index:100}.app-shell{max-width:1180px;margin:auto;padding:0 34px}.app-header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:28px 0 23px}.brand{display:flex;align-items:center;gap:11px;font-size:20px;letter-spacing:.06em;font-weight:650}.brand-mark{display:grid;place-items:center;background:var(--green);color:white;border-radius:11px;width:42px;height:45px;font-size:22px;font-family:"Songti TC",serif}.brand small{display:block;font-family:ui-monospace,monospace;font-size:9px;letter-spacing:.13em;font-weight:400;color:var(--muted);margin-top:2px}.header-tools{display:flex;align-items:center;gap:17px}.local-badge{font-size:11px;color:var(--green);background:var(--soft);padding:4px 9px;border-radius:20px;white-space:nowrap}.back-link{font-size:12px;color:var(--muted)}.back-link:hover{color:var(--green)}.icon-button{display:inline-grid;place-items:center;background:none;border:0;border-radius:8px;min-width:36px;min-height:36px;font-size:23px;line-height:1}.icon-button:hover{background:#e7ece7}.icon-button:active{transform:translateY(1px)}.navigation{display:flex;align-items:center;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line);padding:0 0 17px}.navigation nav{display:flex;gap:6px}.nav-button{border:0;background:none;color:var(--muted);padding:10px 17px;border-radius:8px;font-size:14px;white-space:nowrap}.nav-button:hover{background:#ebeee8}.nav-button:active{background:#e1e8e1}.nav-button[aria-current=page]{color:var(--green);background:var(--soft);font-weight:650}.nav-button svg{width:16px;height:16px;vertical-align:-3px;margin-right:7px}.button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;border:1px solid var(--line);border-radius:9px;background:white;padding:9px 15px;font-size:13px;font-weight:550;line-height:1.5;white-space:nowrap}.button:hover{background:#f4f6f1}.button:active{transform:translateY(1px)}.button.primary{background:var(--green);border-color:var(--green);color:white}.button.primary:hover{background:#1b5549}.button.small{min-height:33px;padding:6px 10px;font-size:12px}.button.danger{color:var(--red);border-color:#e9c3bd;background:#fff9f7}.text-button{border:0;background:none;padding:4px 0;font-size:12px;color:var(--green);text-align:left}.text-button:hover{text-decoration:underline}.text-button:active{opacity:.7}.page-heading{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:30px 0 25px}.eyebrow{font-size:10px;font-weight:550;letter-spacing:.14em;color:var(--muted);margin-bottom:6px}.muted{color:var(--muted);font-size:13px}.page-heading .muted{margin-top:8px}.month-picker{display:flex;align-items:center;gap:1px;background:white;border:1px solid var(--line);border-radius:9px;padding:2px}.month-picker input{border:0;background:none;padding:7px 5px;font-size:13px;width:143px}.month-picker .icon-button{font-size:25px;min-width:29px}.panel{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:23px;min-width:0}.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}.section-head .muted{margin-top:4px}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:23px}.stat{padding:20px;border-radius:12px;background:white;border:1px solid var(--line);min-width:0}.stat .label{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}.stat .value{font-size:clamp(20px,2.5vw,29px);font-weight:550;letter-spacing:-.04em;white-space:nowrap;margin:9px 0 6px;font-variant-numeric:tabular-nums}.stat .caption{font-size:11px;color:var(--muted)}.stat.accent{background:var(--green);color:white;border-color:var(--green)}.stat.accent .label,.stat.accent .caption{color:#d5e8e1}.money{font-variant-numeric:tabular-nums;letter-spacing:-.025em}.income{color:var(--green)}.expense{color:var(--red)}.grid-main{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(270px,1fr);gap:20px;margin-bottom:20px}.grid-equal{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}.empty{text-align:center;padding:46px 24px}.empty p{font-size:13px;color:var(--muted);max-width:390px;margin:10px auto 21px}.empty-symbol{width:55px;height:55px;display:grid;place-items:center;border-radius:50%;background:var(--soft);color:var(--green);margin:0 auto 14px}.empty-symbol svg{width:24px;height:24px}.onboarding{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:24px;background:#eef4ee;border:1px solid #dbe7dc;border-radius:14px;margin-bottom:22px}.onboarding p{color:var(--muted);font-size:13px;margin-top:6px}.onboarding .step{font-family:ui-monospace,monospace;font-size:10px;color:var(--green);letter-spacing:.1em;margin-bottom:7px}.distribution{display:grid;grid-template-columns:160px 1fr;gap:22px;align-items:center}.donut{position:relative;width:160px;height:160px;margin:auto}.donut svg{transform:rotate(-90deg);width:100%;height:100%;overflow:visible}.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:10px;color:var(--muted);pointer-events:none}.donut-center strong{font-size:19px;color:var(--ink);font-weight:550;max-width:130px;overflow-wrap:anywhere}.legend{display:flex;flex-direction:column;gap:12px}.legend-row{display:grid;grid-template-columns:9px minmax(52px,1fr) auto;gap:8px;align-items:center;font-size:12px;line-height:1.4;text-align:left;width:100%;background:none;border:0;padding:0}.legend-row:hover .legend-name{text-decoration:underline}.swatch{width:7px;height:7px;border-radius:50%}.legend-row small{color:var(--muted);font-size:10px;margin-left:6px}.legend-amount{font-variant-numeric:tabular-nums}.note{font-size:11px;color:var(--muted);margin-top:18px;line-height:1.7}.budget-number{display:flex;justify-content:space-between;align-items:baseline;margin:7px 0 12px}.budget-number strong{font-size:27px;font-weight:550}.progress-track{height:7px;background:#edf0e9;border-radius:10px;overflow:hidden}.progress-track span{display:block;height:100%;background:var(--green);border-radius:10px}.progress-track.over span{background:var(--red)}.budget-detail{display:flex;justify-content:space-between;gap:8px;font-size:11px;color:var(--muted);margin-top:8px}.budget-list{display:flex;flex-direction:column;gap:18px}.budget-list .budget-number{font-size:12px;margin:0 0 8px}.budget-list .budget-number strong{font-size:12px}.insight-mini{padding:15px 16px;margin-top:22px;border-radius:10px;background:var(--soft);font-size:12px;color:var(--green)}.insight-mini strong{display:block;margin-bottom:4px}.transaction-list{display:flex;flex-direction:column}.transaction-row{display:grid;grid-template-columns:35px minmax(0,1fr) auto 25px;align-items:center;gap:11px;padding:14px 0;border-top:1px solid var(--line)}.transaction-row:first-child{border-top:0}.transaction-icon{width:34px;height:34px;border-radius:10px;background:#f1f2ed;color:var(--muted);display:grid;place-items:center}.transaction-icon svg{width:17px;height:17px}.transaction-description{min-width:0}.transaction-description strong{display:block;font-size:13px;font-weight:550;overflow-wrap:anywhere}.transaction-description small{font-size:11px;color:var(--muted);display:block}.transaction-amount{font-size:14px;font-weight:550;white-space:nowrap}.transaction-row .icon-button{min-width:25px;min-height:31px;font-size:18px}.filters{display:grid;grid-template-columns:2fr repeat(3,1fr);gap:10px;margin-bottom:18px}.filters label{min-width:0}.field-label{display:block;font-size:11px;color:var(--muted);margin-bottom:5px}.filters input,.filters select,input,select,textarea{border:1px solid var(--line);border-radius:8px;padding:10px 11px;background:white;min-width:0;width:100%;font-size:13px}.checkbox-line{display:flex;align-items:center;gap:8px;font-size:12px;line-height:1.6}.checkbox-line input{width:16px;height:16px;flex-shrink:0;accent-color:var(--green)}.list-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.list-summary{color:var(--muted);font-size:12px}.date-heading{font-size:11px;color:var(--muted);background:#f5f6f1;padding:6px 10px;border-radius:6px;margin-top:13px}.pagination{display:flex;justify-content:center;gap:15px;align-items:center;margin-top:20px;font-size:12px}.accounts-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;margin-bottom:24px}.account-card{padding:21px;border-radius:13px;border:1px solid var(--line);background:white;min-width:0}.account-card.archived{background:#f0f1eb}.account-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:18px}.account-title h3{overflow-wrap:anywhere}.account-type{font-size:10px;color:var(--muted);margin-top:4px}.account-balance{font-size:26px;font-variant-numeric:tabular-nums;letter-spacing:-.03em}.account-card .note{margin-top:4px}.account-actions{display:flex;gap:12px;margin-top:18px;border-top:1px solid var(--line);padding-top:13px}.account-actions .text-button{font-size:11px}.as-of{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap}.as-of input{width:160px;padding:7px 10px}.as-of .button{margin-left:auto}.tips{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:15px;margin-bottom:20px}.tip{padding:21px;border:1px solid #d9e5dc;background:#f0f5ef;border-radius:12px}.tip.warning{background:#fff6eb;border-color:#ecdfc9}.tip h3{font-size:14px;margin-bottom:8px}.tip p{font-size:12px;line-height:1.8;color:var(--muted)}.tip .tip-number{font-family:ui-monospace,monospace;font-size:10px;color:var(--green);display:block;margin-bottom:12px}.trend-chart{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:18px;height:180px;padding-top:20px;margin-bottom:12px}.trend-column{min-width:0;display:flex;align-items:center;flex-direction:column;justify-content:flex-end}.trend-bars{display:flex;align-items:flex-end;justify-content:center;gap:5px;width:100%;height:145px;border-bottom:1px solid var(--line)}.trend-bar{width:17px;max-width:35%;border-radius:4px 4px 0 0;min-height:0}.trend-bar.in{background:#8daf9d}.trend-bar.out{background:#2a6153}.trend-month{font-family:ui-monospace,monospace;font-size:10px;color:var(--muted);padding-top:8px}.chart-key{display:flex;gap:20px;font-size:11px;color:var(--muted);justify-content:center}.chart-key i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px}details.data-table{margin-top:16px;font-size:12px;color:var(--muted)}summary{cursor:pointer}.data-table table{width:100%;border-collapse:collapse;font-size:11px;margin-top:10px;text-align:right}.data-table th:first-child,.data-table td:first-child{text-align:left}.data-table th,.data-table td{padding:7px 5px;border-bottom:1px solid var(--line)}.analysis-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:25px 0 15px}.top-spends{counter-reset:rank}.top-spends .transaction-row{grid-template-columns:30px minmax(0,1fr) auto 25px}.top-spends .transaction-icon{font-size:11px;background:none;width:25px}.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.settings-grid p{margin-top:8px;font-size:13px;color:var(--muted)}.settings-grid .button-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}.facts{margin-top:16px;display:grid;gap:10px}.facts div{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:9px;font-size:12px}.alert{padding:14px 17px;margin:10px 0;border:1px solid #e2b9ae;border-radius:9px;background:#fff4ed;color:#8a3225;font-size:13px}.alert a{text-decoration:underline}.app-footer{display:flex;justify-content:space-between;gap:15px;border-top:1px solid var(--line);padding:23px 0 30px;margin-top:28px;font-size:11px;color:var(--muted)}dialog{width:min(560px,calc(100% - 24px));max-height:calc(100dvh - 40px);padding:26px;border:1px solid var(--line);border-radius:18px;color:var(--ink);background:var(--paper);overflow-y:auto;box-shadow:0 25px 100px #152c2733}dialog::backdrop{background:#162d2859;backdrop-filter:blur(3px)}.dialog-heading{display:flex;align-items:center;justify-content:space-between;margin-bottom:23px}.dialog-heading h2{font-size:23px}.dialog-heading .eyebrow{margin-bottom:3px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.field{display:block;min-width:0}.field.wide,.wide{grid-column:1/-1}.field>span{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}.field small{font-size:11px;color:var(--muted);display:block;margin-top:6px;line-height:1.6}.amount-input{font-size:29px;letter-spacing:-.03em;font-variant-numeric:tabular-nums;padding:12px 14px}.form-hint{font-size:12px;line-height:1.7;color:var(--muted);padding:12px 14px;border-radius:8px;background:#f4f6f0;margin-bottom:16px}.dialog-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:24px;padding-top:17px;border-top:1px solid var(--line)}.form-error{font-size:12px;color:var(--red);background:#fff3ee;padding:10px 13px;border-radius:7px;margin-top:16px}.danger-zone{margin-top:20px;border-top:1px solid var(--line);padding-top:15px}.restore-summary{display:grid;gap:9px;margin:20px 0;font-size:13px}.category-budgets{display:grid;grid-template-columns:1fr 1fr;gap:12px}.subheading{font-size:13px;margin:22px 0 12px}#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:12px 21px;color:white;background:#203f36;box-shadow:0 8px 28px #203f3628;border-radius:11px;max-width:90vw;font-size:13px;z-index:100}main:focus{outline:none}svg{fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+.fx-panel{min-width:0;margin-bottom:22px;padding:22px 23px;border:1px solid #dce6de;border-radius:var(--radius);background:#f5f8f2}
+.fx-panel-head{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:14px 20px;min-width:0}
+.fx-panel-head>div{min-width:0;flex:1 1 240px}
+.fx-panel-head h2{font-size:18px;line-height:1.5}
+.fx-panel-head p{margin-top:5px;color:var(--muted);font-size:12px;line-height:1.8;overflow-wrap:anywhere}
+.fx-panel .note,.fx-panel small{font-size:12px;line-height:1.8;overflow-wrap:anywhere}
+.fx-panel .note{margin-top:14px}
+.fx-panel a{color:var(--green);text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere}
+.fx-meta{display:flex;align-items:center;flex-wrap:wrap;gap:5px 17px;min-width:0;margin-top:12px;color:var(--muted);font-size:12px;line-height:1.8}
+.fx-meta>*{max-width:100%;min-width:0;overflow-wrap:anywhere}
+.fx-meta time{font-variant-numeric:tabular-nums;white-space:normal}
+.fx-meta strong{color:var(--ink);font-weight:550}
+.fx-rate-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr));gap:10px;min-width:0;margin-top:17px}
+.fx-rate-item{display:flex;flex-direction:column;align-items:flex-start;gap:5px;min-width:0;padding:13px 15px;border:1px solid #e0e7dc;border-radius:10px;background:var(--paper);color:var(--muted);font-size:12px;line-height:1.7;overflow-wrap:anywhere}
+.fx-rate-item>strong{max-width:100%;color:var(--ink);font-size:18px;line-height:1.5;font-weight:550;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.fx-rate-item small{max-width:100%;font-size:12px;line-height:1.7}
+.fx-warning{min-width:0;margin-top:13px;padding:12px 14px;border:1px solid #e6d9c5;border-radius:9px;background:#fff6eb;color:var(--amber);font-size:12px;line-height:1.85;overflow-wrap:anywhere}
+.fx-warning strong{font-weight:600}
+.fx-warning small{font-size:12px}
+.fx-preview{min-width:0;padding:12px 14px;border:1px solid #dce7dc;border-radius:9px;background:var(--soft);color:var(--green);font-size:13px;line-height:1.8;overflow-wrap:anywhere}
+.fx-preview.note{margin-top:0;font-size:12px}
+.fx-preview p+p{margin-top:6px}
+.fx-preview strong{font-size:14px;font-weight:600;font-variant-numeric:tabular-nums}
+.fx-preview small{display:block;margin-top:5px;color:var(--muted);font-size:12px;line-height:1.8}
+.fx-amount-native{display:block;max-width:100%;min-width:0;font-variant-numeric:tabular-nums;line-height:1.45;white-space:normal;overflow-wrap:anywhere}
+.fx-amount-base{display:block;max-width:100%;min-width:0;margin-top:4px;color:var(--muted);font-size:12px;font-weight:400;font-variant-numeric:tabular-nums;letter-spacing:0;line-height:1.7;white-space:normal;overflow-wrap:anywhere}
+.transaction-amount .fx-amount-native,.transaction-amount .fx-amount-base{max-width:230px;text-align:right}
+.fx-controls{display:flex;align-items:flex-end;flex-wrap:wrap;gap:10px;min-width:0;margin-top:16px}
+.fx-controls .field{flex:1 1 170px;min-width:0}
+.fx-controls .field>span,.fx-controls .field small{font-size:12px}
+.fx-controls input,.fx-controls select{min-height:44px}
+.fx-controls .button,.fx-panel-head>.button{min-height:44px;white-space:normal;overflow-wrap:anywhere}
+.currency-badge{display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;max-width:100%;padding:3px 7px;border:1px solid #dce7de;border-radius:6px;background:var(--soft);color:var(--green);font-family:ui-monospace,monospace;font-size:12px;font-weight:500;letter-spacing:.035em;line-height:1.5;vertical-align:middle}
+@media(max-width:680px){.fx-panel{padding:18px;margin-bottom:17px}.fx-panel-head{gap:12px}.fx-panel-head>div{flex-basis:100%}.fx-panel-head h2{font-size:17px}.fx-meta{gap:6px 13px}.fx-rate-grid{gap:9px;margin-top:14px}.fx-rate-item{padding:12px 14px}.fx-warning{padding:11px 13px}.fx-controls{gap:10px;margin-top:14px}.fx-controls .field{flex-basis:100%}.fx-controls .button{flex:1 1 auto}.transaction-amount .fx-amount-native,.transaction-amount .fx-amount-base{max-width:125px}.fx-preview{padding:11px 13px}}
 @media(max-width:1000px){.app-shell{padding:0 24px}.header-tools{gap:10px}.local-badge{display:none}.stats{gap:10px}.stat{padding:17px}.grid-main{grid-template-columns:1.2fr 1fr;gap:15px}.distribution{grid-template-columns:1fr;gap:22px}.legend{display:grid;grid-template-columns:1fr 1fr;column-gap:15px}.accounts-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.nav-button{padding:9px 12px}.tips{grid-template-columns:1fr}.tip{padding:17px;display:grid;grid-template-columns:25px 1fr;gap:0 10px}.tip p{grid-column:2}.tip .tip-number{grid-row:1/3;margin-top:2px}}
 @media(max-width:680px){.app-shell{padding:0 17px}.app-header{padding:21px 0 17px;align-items:flex-start}.brand{font-size:18px;gap:9px}.brand-mark{width:35px;height:39px;font-size:20px}.brand small{font-size:8px}.header-tools{gap:5px;flex-wrap:wrap;justify-content:flex-end}.back-link{font-size:10px;padding-top:5px}.header-tools .icon-button{min-width:27px;min-height:28px;font-size:19px}.navigation{padding-bottom:13px;align-items:center}.navigation nav{gap:0;overflow-x:auto;min-width:0}.nav-button{font-size:12px;padding:9px 10px}.nav-button svg{display:none}.add-button{min-height:35px;padding:8px 10px;font-size:12px}.page-heading{padding:24px 0 20px;align-items:flex-start;flex-wrap:wrap;gap:15px}h1{font-size:26px}.page-heading .muted{font-size:12px}.month-picker{margin-left:auto}.month-picker input{font-size:12px;width:133px}.stats{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}.stat{padding:16px}.stat .value{font-size:24px}.stat .caption{font-size:10px}.grid-main,.grid-equal,.settings-grid{grid-template-columns:1fr;gap:16px;margin-bottom:16px}.panel{padding:19px}.distribution{grid-template-columns:130px 1fr;gap:18px}.donut{width:130px;height:130px}.donut-center strong{font-size:16px;max-width:105px}.legend{display:flex;gap:12px}.legend-row{font-size:11px;gap:6px;grid-template-columns:7px minmax(36px,1fr) auto}.legend-row small{font-size:9px;margin-left:2px}.section-head{margin-bottom:17px}h2{font-size:17px}.onboarding{align-items:flex-start;flex-direction:column;gap:16px;padding:21px}.filters{grid-template-columns:1fr 1fr}.filters label:first-child{grid-column:1/-1}.filters label:last-child{grid-column:1/-1}.accounts-grid{grid-template-columns:1fr;gap:12px}.account-card{padding:20px}.account-title{margin-bottom:9px}.account-actions{margin-top:13px}.account-balance{font-size:27px}.transaction-row{gap:9px;grid-template-columns:30px minmax(0,1fr) auto 22px}.transaction-icon{width:30px;height:30px}.transaction-description strong{font-size:12px}.transaction-description small{font-size:10px}.transaction-amount{font-size:13px}.as-of{gap:7px}.as-of input{width:143px}.app-footer{flex-direction:column;gap:6px;padding-bottom:22px}.app-footer .text-button{font-size:11px}.month-picker .icon-button{min-width:25px}.trend-chart{gap:10px}.tip{padding:18px}.list-toolbar{flex-wrap:wrap}.dialog-heading{margin-bottom:20px}dialog{padding:21px;max-height:calc(100dvh - 24px)}.form-grid{gap:13px}.field>span{font-size:11px}.category-budgets{gap:10px}.amount-input{font-size:27px}.settings-grid .button{font-size:12px}.empty{padding:32px 18px}.local-badge{display:none}}
 @media(max-width:360px){.distribution{grid-template-columns:1fr}.legend{display:grid;grid-template-columns:1fr 1fr}.stat .value{font-size:21px}.nav-button{padding:8px;font-size:11px}.brand small{display:none}.form-grid{grid-template-columns:1fr}.field.wide{grid-column:auto}.header-tools .back-link{max-width:90px;text-align:right}.trend-chart{gap:6px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
+
+#tx-rate-fields .note,#tx-target-field .note,#account-fx-preview,.form-grid .field small{font-size:12px;line-height:1.8}#tx-rate-fields .text-button,#tx-target-field .text-button{min-height:44px}#tx-rate-fields .note a,dialog .note a{text-decoration:underline;text-underline-offset:3px}.stat .value,.account-balance{white-space:normal;overflow-wrap:anywhere}.account-actions{flex-wrap:wrap}
 
 </style>
 </head>
@@ -28,7 +64,7 @@
 <div class="navigation"><nav aria-label="記帳本導覽" id="nav"></nav><button class="button primary add-button" data-action="add-transaction" disabled id="quick-add">＋ 記一筆</button></div>
 <div class="page-heading"><div><p class="eyebrow" id="page-eyebrow">讓每一筆，都有著落</p><h1 id="page-title">財務總覽</h1><p id="page-subtitle" class="muted">收入、支出和餘額，放在同一個地方。</p></div><div class="month-picker" id="month-picker"><button class="icon-button" data-action="previous-month" aria-label="上一個月">‹</button><label><span class="sr-only">選擇月份</span><input type="month" id="month" min="1900-01" required></label><button class="icon-button" data-action="next-month" aria-label="下一個月">›</button></div></div>
 <main id="main" tabindex="-1"><section class="panel empty"><h2>正在開啟本機帳本…</h2><p>第一次使用時，可以先新增常用帳戶。</p></section></main>
-<footer class="app-footer"><span>帳目只儲存在這個瀏覽器 · 新台幣 TWD</span><button class="text-button" data-action="backup">備份我的帳本 ↗</button></footer>
+<footer class="app-footer"><span>帳目只儲存在這個瀏覽器 · 原幣記帳，台幣彙總</span><button class="text-button" data-action="backup">備份我的帳本 ↗</button></footer>
 </div>
 <div id="toast" role="status" aria-live="polite" hidden></div>
 <dialog id="dialog" aria-labelledby="dialog-title"><div class="dialog-heading"><div><p class="eyebrow">收支日常</p><h2 id="dialog-title"></h2></div><button class="icon-button" data-action="close-dialog" aria-label="關閉視窗">×</button></div><form id="dialog-form"><div id="dialog-body"></div><p id="dialog-error" class="form-error" role="alert" hidden></p><div id="dialog-actions" class="dialog-actions"><button type="button" class="button" data-action="close-dialog">取消</button><button type="submit" class="button primary" id="save-button">儲存</button></div></form></dialog>
@@ -38,9 +74,37 @@
 (function (root) {
   'use strict';
 
-  const SCHEMA = 'eric-ledger/1';
+  const SCHEMA = 'eric-ledger/2';
   const LIMIT = 1e12;
-  const MAX_STATE_BYTES = 20 * 1024 * 1024;
+  const MAX_STATE_BYTES = 40 * 1024 * 1024;
+  const currencies = [
+    { code: 'TWD', name: '新台幣', decimals: 2 },
+    { code: 'USD', name: '美元', decimals: 2 },
+    { code: 'HKD', name: '港幣', decimals: 2 },
+    { code: 'JPY', name: '日圓', decimals: 0 },
+    { code: 'EUR', name: '歐元', decimals: 2 },
+    { code: 'GBP', name: '英鎊', decimals: 2 },
+    { code: 'CNY', name: '人民幣', decimals: 2 },
+    { code: 'KRW', name: '韓元', decimals: 0 },
+    { code: 'SGD', name: '新加坡元', decimals: 2 },
+    { code: 'AUD', name: '澳幣', decimals: 2 },
+    { code: 'CAD', name: '加拿大元', decimals: 2 },
+    { code: 'NZD', name: '紐西蘭元', decimals: 2 },
+    { code: 'CHF', name: '瑞士法郎', decimals: 2 },
+    { code: 'THB', name: '泰銖', decimals: 2 },
+    { code: 'MYR', name: '馬來西亞令吉', decimals: 2 },
+    { code: 'VND', name: '越南盾', decimals: 0 },
+    { code: 'IDR', name: '印尼盾', decimals: 2 },
+    { code: 'PHP', name: '菲律賓披索', decimals: 2 },
+    { code: 'INR', name: '印度盧比', decimals: 2 },
+    { code: 'AED', name: '阿聯酋迪拉姆', decimals: 2 },
+    { code: 'SAR', name: '沙烏地里亞爾', decimals: 2 },
+    { code: 'KWD', name: '科威特第納爾', decimals: 3 },
+    { code: 'BHD', name: '巴林第納爾', decimals: 3 },
+    { code: 'OMR', name: '阿曼里亞爾', decimals: 3 },
+  ];
+  const currenciesByCode = new Map(currencies.map(currency => [currency.code, Object.freeze(currency)]));
+  Object.freeze(currencies);
   const categories = {
     expense: [
       { id: 'food', name: '餐飲', color: '#ce805d' },
@@ -72,6 +136,7 @@
     { id: 'cash', name: '現金', liability: false },
     { id: 'bank', name: '銀行存款', liability: false },
     { id: 'savings', name: '儲蓄存款', liability: false },
+    { id: 'forex', name: '外幣帳戶', liability: false },
     { id: 'credit', name: '信用卡', liability: true },
     { id: 'investment', name: '投資資產', liability: false },
     { id: 'loan', name: '借款', liability: true },
@@ -80,7 +145,7 @@
   const incomeIds = new Set(categories.income.map(c => c.id));
   const typeIds = new Set(accountTypes.map(a => a.id));
   const kinds = new Set(['expense', 'income', 'refund', 'transfer', 'adjustment']);
-  const cashTypes = new Set(['cash', 'bank', 'savings']);
+  const cashTypes = new Set(['cash', 'bank', 'savings', 'forex']);
 
   function fail(message) { throw new Error(message); }
   function object(value, label) {
@@ -99,7 +164,7 @@
     return value;
   }
   function money(value, label, signed = false, zero = true) {
-    if (!Number.isSafeInteger(value) || Math.abs(value) > LIMIT || (!signed && value < 0) || (!zero && value === 0)) fail(label + '必須為有效金額，且不可超過 100 億元');
+    if (!Number.isSafeInteger(value) || Math.abs(value) > LIMIT || (!signed && value < 0) || (!zero && value === 0)) fail(label + '格式不正確或金額超過上限');
     return value === 0 ? 0 : value;
   }
   function safeAdd(a, b) {
@@ -126,79 +191,167 @@
     if (typeof value !== 'string' || value.length > 40 || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,3})?(?:Z|[+-]\d{2}:\d{2})$/.test(value) || !validDate(value.slice(0, 10)) || !Number.isFinite(Date.parse(value))) fail(label + '格式不正確');
     return new Date(value).toISOString();
   }
-  function parseAmount(text, { signed = false } = {}) {
+  function currencyInfo(code) {
+    const currency = currenciesByCode.get(code);
+    if (!currency) fail('不支援此幣別');
+    return currency;
+  }
+  function parseAmount(text, { signed = false, currency = 'TWD' } = {}) {
     if (typeof text !== 'string' || text.length > 40) fail('請輸入有效金額');
+    const { decimals } = currencyInfo(currency);
     const input = text.trim();
-    const pattern = signed ? /^[+-]?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d{1,2})?$/ : /^(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d{1,2})?$/;
-    if (!pattern.test(input)) fail('金額最多可輸入兩位小數');
+    const pattern = new RegExp('^' + (signed ? '[+-]?' : '') + '(?:\\d+|\\d{1,3}(?:,\\d{3})+)' + (decimals ? '(?:\\.\\d{1,' + decimals + '})?' : '') + '$');
+    if (!pattern.test(input)) fail(decimals ? currency + ' 金額最多可輸入 ' + decimals + ' 位小數' : currency + ' 金額必須為整數');
     const clean = input.replace(/,/g, '');
     const negative = clean.startsWith('-');
     const [whole, fraction = ''] = clean.replace(/^[+-]/, '').split('.');
-    const value = Number(whole) * 100 + Number(fraction.padEnd(2, '0'));
+    const value = Number(whole) * (10 ** decimals) + Number(fraction.padEnd(decimals, '0'));
     return money(negative ? -value : value, '金額', signed);
   }
-  function formatMoney(cents) {
-    if (!Number.isSafeInteger(cents)) fail('金額格式不正確');
-    return new Intl.NumberFormat('zh-TW', { style: 'currency', currency: 'TWD', currencyDisplay: 'narrowSymbol', minimumFractionDigits: cents % 100 ? 2 : 0, maximumFractionDigits: 2 }).format(cents / 100);
+  function formatMoney(minor, currency = 'TWD') {
+    if (!Number.isSafeInteger(minor)) fail('金額格式不正確');
+    const { decimals } = currencyInfo(currency);
+    const factor = 10 ** decimals;
+    return new Intl.NumberFormat('zh-TW', { style: 'currency', currency, currencyDisplay: currency === 'TWD' ? 'narrowSymbol' : 'code', minimumFractionDigits: minor % factor ? decimals : 0, maximumFractionDigits: decimals }).format(minor / factor);
+  }
+  function validRate(rate) { return typeof rate === 'number' && Number.isFinite(rate) && rate >= 1e-9 && rate <= 1e9; }
+  function rateFraction(rate) {
+    if (!validRate(rate)) fail('缺少有效匯率，請更新匯率或輸入實際匯率');
+    const [mantissa, exponent = '0'] = String(rate).toLowerCase().split('e');
+    const [whole, fraction = ''] = mantissa.split('.');
+    const scale = fraction.length - Number(exponent);
+    let numerator = BigInt(whole + fraction);
+    let denominator = 1n;
+    if (scale >= 0) denominator = 10n ** BigInt(scale);
+    else numerator *= 10n ** BigInt(-scale);
+    return { numerator, denominator };
+  }
+  function convertToTwd(nativeAmount, currency, rate) {
+    if (!Number.isSafeInteger(nativeAmount)) fail('原幣金額格式不正確');
+    const { decimals } = currencyInfo(currency);
+    if (currency === 'TWD') return nativeAmount === 0 ? 0 : nativeAmount;
+    const fraction = rateFraction(rate);
+    const numerator = BigInt(Math.abs(nativeAmount)) * 100n * fraction.numerator;
+    const denominator = (10n ** BigInt(decimals)) * fraction.denominator;
+    const rounded = (numerator * 2n + denominator) / (denominator * 2n);
+    const result = Number(nativeAmount < 0 ? -rounded : rounded);
+    if (!Number.isSafeInteger(result)) fail('換算後金額超過安全計算範圍');
+    return result === 0 ? 0 : result;
+  }
+  function cleanRateSnapshot(value, currency, now) {
+    const snapshot = object(value, '入帳匯率');
+    if (snapshot.currency !== currency || currency === 'TWD' || !validRate(snapshot.rate)) fail('入帳匯率或幣別不正確');
+    if (!validDate(snapshot.rateDate) || snapshot.rateDate > now) fail('入帳匯率日期不正確');
+    if (!['open.er-api.com', 'manual'].includes(snapshot.source)) fail('入帳匯率來源不正確');
+    return { currency, rate: snapshot.rate, rateDate: snapshot.rateDate, fetchedAt: isoTimestamp(snapshot.fetchedAt, '匯率取得時間'), source: snapshot.source };
+  }
+  function rateSnapshot(currency, rateTable) {
+    currencyInfo(currency);
+    if (currency === 'TWD') return null;
+    object(rateTable, '匯率資料');
+    const rate = rateTable.ratesTwd && rateTable.ratesTwd[currency];
+    return cleanRateSnapshot({ currency, rate, rateDate: rateTable.rateDate, fetchedAt: rateTable.fetchedAt, source: rateTable.source }, currency, today());
+  }
+  function makeActualRateSnapshot(fromCurrency, toCurrency, fromMinor, toMinor) {
+    const from = currencyInfo(fromCurrency);
+    const to = currencyInfo(toCurrency);
+    money(fromMinor, '轉出原幣金額', false, false);
+    money(toMinor, '轉入原幣金額', false, false);
+    if (fromCurrency === toCurrency) {
+      if (fromMinor !== toMinor) fail('同幣轉帳的轉出與轉入金額必須相同，手續費請另記支出');
+      return null;
+    }
+    let numerator = BigInt(toMinor) * (10n ** BigInt(from.decimals));
+    let denominator = BigInt(fromMinor) * (10n ** BigInt(to.decimals));
+    let a = numerator, b = denominator;
+    while (b) { const remainder = a % b; a = b; b = remainder; }
+    numerator /= a;
+    denominator /= a;
+    return { fromCurrency, toCurrency, numerator: String(numerator), denominator: String(denominator) };
   }
   function emptyState() {
     return { schema: SCHEMA, revision: 0, accounts: [], transactions: [], budgets: {}, settings: { defaultAccountId: '', lastBackupAt: '' } };
   }
-  function cleanTransaction(transaction, accounts, now) {
+  function cleanTransaction(transaction, accounts, now, legacy = false) {
     const t = object(transaction, '交易');
     const id = identifier(t.id, '交易');
     if (!validDate(t.date) || t.date > now) fail('交易日期不正確或晚於今天');
     if (!kinds.has(t.kind)) fail('交易種類不正確');
-    const amount = money(t.amount, '交易金額', t.kind === 'adjustment', false);
     const accountId = identifier(t.accountId, '帳戶');
     const account = accounts.get(accountId);
     if (!account) fail('交易使用的帳戶不存在');
     if (t.date < account.openingDate) fail('交易日期不可早於帳戶期初日期');
+    const nativeAmount = money(legacy ? t.amount : t.nativeAmount, '原幣交易金額', t.kind === 'adjustment', false);
     const toAccountId = t.toAccountId == null ? '' : string(t.toAccountId, '轉入帳戶', 80, true);
     const categoryId = t.categoryId == null ? '' : string(t.categoryId, '分類', 80, true);
+    let amount = null, toNativeAmount = null, snapshot = null, actualRateSnapshot = null;
     if (t.kind === 'transfer') {
       const target = accounts.get(toAccountId);
       if (!target || toAccountId === accountId) fail('轉帳需要兩個不同的有效帳戶');
       if (t.date < target.openingDate) fail('交易日期不可早於轉入帳戶期初日期');
+      toNativeAmount = money(legacy ? t.amount : t.toNativeAmount, '轉入原幣金額', false, false);
+      actualRateSnapshot = makeActualRateSnapshot(account.currency, target.currency, nativeAmount, toNativeAmount);
+      if (!legacy && t.actualRateSnapshot != null) {
+        const actual = object(t.actualRateSnapshot, '實際轉帳匯率');
+        if (!actualRateSnapshot || Object.keys(actualRateSnapshot).some(key => actual[key] !== actualRateSnapshot[key])) fail('實際转帳匯率與雙邊入帳金額不符');
+      }
     } else if (toAccountId) fail('此交易種類不應設定轉入帳戶');
+    if (!legacy && t.kind !== 'transfer' && (t.toNativeAmount != null || t.actualRateSnapshot != null)) fail('此交易種類不應設定轉入金額或轉帳匯率');
+    if (['expense', 'income', 'refund'].includes(t.kind)) {
+      amount = money(t.amount, '台幣入帳金額');
+      if (account.currency === 'TWD') {
+        if (amount !== nativeAmount) fail('台幣帳戶的入帳金額必須等於原幣金額');
+        if (!legacy && t.rateSnapshot != null) fail('台幣交易不應設定外幣匯率');
+      } else {
+        snapshot = cleanRateSnapshot(t.rateSnapshot, account.currency, now);
+        if (amount !== convertToTwd(nativeAmount, account.currency, snapshot.rate)) fail('台幣入帳金額與保存匯率不符');
+      }
+    } else if (!legacy && (t.amount != null || t.rateSnapshot != null)) fail('轉帳與餘額校正不設定台幣收支金額或入帳匯率');
     if (['expense', 'refund'].includes(t.kind) && !expenseIds.has(categoryId)) fail('請選擇有效的支出分類');
     if (t.kind === 'income' && !incomeIds.has(categoryId)) fail('請選擇有效的收入分類');
     if (['transfer', 'adjustment'].includes(t.kind) && categoryId) fail('轉帳與餘額校正不應設定收支分類');
-    return { id, date: t.date, kind: t.kind, amount, accountId, toAccountId, categoryId, note: string(t.note == null ? '' : t.note, '備註', 2000, true), createdAt: isoTimestamp(t.createdAt, '建立時間') };
+    return { id, date: t.date, kind: t.kind, amount, nativeAmount, toNativeAmount, rateSnapshot: snapshot, actualRateSnapshot, accountId, toAccountId, categoryId, note: string(t.note == null ? '' : t.note, '備註', 2000, true), createdAt: isoTimestamp(t.createdAt, '建立時間') };
   }
   function validateTransaction(transaction, state) {
     object(state, '帳本');
     if (!Array.isArray(state.accounts)) fail('帳戶格式不正確');
-    return cleanTransaction(transaction, new Map(state.accounts.map(a => [a.id, a])), today());
+    const legacy = state.schema === 'eric-ledger/1';
+    return cleanTransaction(transaction, new Map(state.accounts.map(a => [a.id, { ...a, currency: legacy ? 'TWD' : a.currency }])), today(), legacy);
   }
   function validateState(input) {
     const state = object(input, '帳本');
-    if (state.schema !== SCHEMA) fail('不支援此帳本版本');
+    const legacy = state.schema === 'eric-ledger/1';
+    if (!legacy && state.schema !== SCHEMA) fail('不支援此帳本版本');
     if (!Number.isSafeInteger(state.revision) || state.revision < 0) fail('帳本修訂版本不正確');
     if (!Array.isArray(state.accounts) || state.accounts.length > 100) fail('帳戶數量不得超過 100 個');
     if (!Array.isArray(state.transactions) || state.transactions.length > 100000) fail('交易數量不得超過 100,000 筆');
     const now = today();
     const seenAccounts = new Set();
     let magnitude = 0;
+    let reportMagnitude = 0;
     const accounts = state.accounts.map(value => {
       const a = object(value, '帳戶');
       const id = identifier(a.id, '帳戶');
       if (seenAccounts.has(id)) fail('帳戶識別碼重複');
       seenAccounts.add(id);
       if (!typeIds.has(a.type)) fail('帳戶類型不正確');
+      if (legacy && a.type === 'forex') fail('舊版帳本不支援外幣帳戶');
+      const currency = currencyInfo(legacy ? 'TWD' : a.currency).code;
       if (!validDate(a.openingDate) || a.openingDate > now) fail('期初日期不正確或晚於今天');
       if (typeof a.archived !== 'boolean') fail('帳戶封存狀態不正確');
       const openingBalance = money(a.openingBalance, '期初餘額', true);
       magnitude = safeAdd(magnitude, Math.abs(openingBalance));
-      return { id, name: string(a.name, '帳戶名稱', 80), type: a.type, openingDate: a.openingDate, openingBalance, archived: a.archived };
+      return { id, name: string(a.name, '帳戶名稱', 80), type: a.type, currency, openingDate: a.openingDate, openingBalance, archived: a.archived };
     });
     const byId = new Map(accounts.map(a => [a.id, a]));
     const seenTransactions = new Set();
     const transactions = state.transactions.map(t => {
-      const clean = cleanTransaction(t, byId, now);
+      const clean = cleanTransaction(t, byId, now, legacy);
       if (seenTransactions.has(clean.id)) fail('交易識別碼重複');
       seenTransactions.add(clean.id);
-      magnitude = safeAdd(magnitude, Math.abs(clean.amount) * (clean.kind === 'transfer' ? 2 : 1));
+      magnitude = safeAdd(magnitude, Math.abs(clean.nativeAmount));
+      if (clean.toNativeAmount !== null) magnitude = safeAdd(magnitude, clean.toNativeAmount);
+      if (clean.amount !== null) reportMagnitude = safeAdd(reportMagnitude, clean.amount);
       return clean;
     });
     const budgets = {};
@@ -219,10 +372,10 @@
     const defaultAccountId = settings.defaultAccountId == null ? '' : string(settings.defaultAccountId, '預設帳戶', 80, true);
     if (defaultAccountId && !byId.has(defaultAccountId)) fail('預設帳戶不存在');
     const clean = { schema: SCHEMA, revision: state.revision, accounts, transactions, budgets, settings: { defaultAccountId, lastBackupAt: isoTimestamp(settings.lastBackupAt == null ? '' : settings.lastBackupAt, '備份時間', true) } };
-    if (new TextEncoder().encode(JSON.stringify(clean)).byteLength > MAX_STATE_BYTES) fail('帳本容量不可超過 20 MiB，請先備份並縮減備註或交易資料');
+    if (new TextEncoder().encode(JSON.stringify(clean)).byteLength > MAX_STATE_BYTES) fail('帳本容量不可超過 40 MiB，請先備份並縮減備註或交易資料');
     return clean;
   }
-  function balances(state, asOf = today()) {
+  function balances(state, asOf = today(), rateTable = null) {
     if (!validDate(asOf)) fail('查詢日期不正確');
     const result = state.accounts.map(a => ({ ...a, balance: a.openingDate <= asOf ? a.openingBalance : 0 }));
     const byId = new Map(result.map(a => [a.id, a]));
@@ -230,24 +383,41 @@
       if (t.date > asOf) continue;
       const account = byId.get(t.accountId);
       if (!account) fail('交易使用的帳戶不存在');
-      const change = t.kind === 'expense' || t.kind === 'transfer' ? -t.amount : t.amount;
+      const change = t.kind === 'expense' || t.kind === 'transfer' ? -t.nativeAmount : t.nativeAmount;
       account.balance = safeAdd(account.balance, change);
       if (t.kind === 'transfer') {
         const target = byId.get(t.toAccountId);
         if (!target) fail('轉入帳戶不存在');
-        target.balance = safeAdd(target.balance, t.amount);
+        target.balance = safeAdd(target.balance, t.toNativeAmount);
       }
     }
-    return result;
+    return result.map(account => {
+      const rate = account.currency === 'TWD' ? 1 : rateTable && rateTable.ratesTwd && rateTable.ratesTwd[account.currency];
+      const missingRate = account.balance !== 0 && !validRate(rate);
+      const balanceTwd = missingRate ? null : account.balance === 0 ? 0 : convertToTwd(account.balance, account.currency, rate);
+      return { ...account, balanceTwd, missingRate, valuationDate: account.currency === 'TWD' || !validRate(rate) ? null : rateTable.rateDate || null };
+    });
   }
-  function totals(state, asOf = today()) {
-    return balances(state, asOf).reduce((sum, a) => {
-      sum.assets = safeAdd(sum.assets, Math.max(0, a.balance));
-      sum.liabilities = safeAdd(sum.liabilities, Math.max(0, -a.balance));
-      sum.net = safeAdd(sum.net, a.balance);
-      if (cashTypes.has(a.type)) sum.cash = safeAdd(sum.cash, Math.max(0, a.balance));
-      return sum;
-    }, { assets: 0, liabilities: 0, net: 0, cash: 0 });
+  function totals(state, asOf = today(), rateTable = null) {
+    const known = { assets: 0, liabilities: 0, net: 0, cash: 0 };
+    const missingCurrencies = new Set();
+    let missingAssets = false, missingLiabilities = false, missingCash = false;
+    for (const account of balances(state, asOf, rateTable)) {
+      if (account.missingRate) {
+        missingCurrencies.add(account.currency);
+        if (account.balance > 0) {
+          missingAssets = true;
+          if (cashTypes.has(account.type)) missingCash = true;
+        } else missingLiabilities = true;
+        continue;
+      }
+      known.assets = safeAdd(known.assets, Math.max(0, account.balanceTwd));
+      known.liabilities = safeAdd(known.liabilities, Math.max(0, -account.balanceTwd));
+      known.net = safeAdd(known.net, account.balanceTwd);
+      if (cashTypes.has(account.type)) known.cash = safeAdd(known.cash, Math.max(0, account.balanceTwd));
+    }
+    const incomplete = missingCurrencies.size > 0;
+    return { assets: missingAssets ? null : known.assets, liabilities: missingLiabilities ? null : known.liabilities, net: incomplete ? null : known.net, cash: missingCash ? null : known.cash, known, missingCurrencies: [...missingCurrencies].sort(), incomplete, valuationDate: rateTable ? rateTable.rateDate || null : null };
   }
   function moveMonth(month, offset) {
     const [year, m] = month.split('-').map(Number);
@@ -334,18 +504,260 @@
     });
   }
 
-  const api = Object.freeze({ categories, accountTypes, emptyState, parseAmount, formatMoney, today, validDate, validateState, validateTransaction, balances, totals, monthReport, trend });
+  const api = Object.freeze({ categories, accountTypes, currencies, currencyInfo, emptyState, parseAmount, formatMoney, convertToTwd, rateSnapshot, makeActualRateSnapshot, today, validDate, validateState, validateTransaction, balances, totals, monthReport, trend });
   root.MoneyCore = api;
   if (typeof module === 'object' && module.exports) module.exports = api;
+})(typeof globalThis === 'object' ? globalThis : this);
+
+;
+(function (root) {
+  'use strict';
+
+  const endpoint = 'https://open.er-api.com/v6/latest/TWD';
+  const attributionUrl = 'https://www.exchangerate-api.com';
+  const provider = 'ExchangeRate-API';
+  const storageKey = 'eric-money-fx-market-v1';
+  const maxBytes = 200 * 1024;
+  const requestTimeout = 10000;
+  const minimumInterval = 60000;
+  const rateLimitDelay = 60 * 60000;
+  const maximumSchedule = 7 * 86400000;
+  const maximumFreshAge = 48 * 60 * 60000;
+  let memory = null;
+  let inFlight = null;
+  let lastAttemptAt = 0;
+  let blockedUntil = 0;
+
+  function failure(message, code = 'invalid-data', retryAt) {
+    const error = new Error(message);
+    error.code = code;
+    if (retryAt) error.retryAt = new Date(retryAt).toISOString();
+    return error;
+  }
+
+  function record(value) {
+    return value !== null && typeof value === 'object' && !Array.isArray(value) &&
+      [Object.prototype, null].includes(Object.getPrototypeOf(value));
+  }
+
+  function currencyCodes() {
+    const catalog = root.MoneyCore?.currencies;
+    if (!Array.isArray(catalog)) throw failure('幣別資料尚未就緒。', 'unavailable');
+    const codes = new Set(catalog.map(currency => currency?.code).filter(code => typeof code === 'string' && /^[A-Z]{3}$/.test(code)));
+    if (!codes.has('TWD')) throw failure('幣別資料缺少新台幣。', 'unavailable');
+    return codes;
+  }
+
+  function validRate(value) {
+    return typeof value === 'number' && Number.isFinite(value) && value >= 1e-9 && value <= 1e9;
+  }
+
+  function timestamp(value) {
+    if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value)) {
+      throw failure('匯率資料的時間格式不正確。');
+    }
+    const parsed = Date.parse(value);
+    if (!Number.isFinite(parsed) || new Date(parsed).toISOString() !== value) throw failure('匯率資料的時間格式不正確。');
+    return parsed;
+  }
+
+  function normalizeSnapshot(value, now = Date.now()) {
+    if (!record(value) || value.provider !== provider || !record(value.rates)) throw failure('匯率資料格式不正確。');
+    const updated = timestamp(value.updatedAt);
+    const next = timestamp(value.nextUpdateAt);
+    const fetched = timestamp(value.fetchedAt);
+    if (updated <= 0 || updated > now || fetched > now || fetched < updated || next <= updated || next - updated > maximumSchedule) {
+      throw failure('匯率資料的更新時間不合理。');
+    }
+    if (value.rates.TWD !== 1) throw failure('匯率資料的新台幣基準不正確。');
+    const rates = { TWD: 1 };
+    for (const code of currencyCodes()) {
+      if (code === 'TWD' || !Object.hasOwn(value.rates, code)) continue;
+      if (!validRate(value.rates[code])) throw failure('匯率資料含有無效匯率。');
+      rates[code] = value.rates[code];
+    }
+    return {
+      provider, updatedAt: new Date(updated).toISOString(), nextUpdateAt: new Date(next).toISOString(),
+      fetchedAt: new Date(fetched).toISOString(), rates,
+    };
+  }
+
+  function copy(value) {
+    return value ? { ...value, rates: { ...value.rates } } : null;
+  }
+
+  function newer(first, second) {
+    return !first || second.updatedAt > first.updatedAt ||
+      (second.updatedAt === first.updatedAt && second.fetchedAt > first.fetchedAt);
+  }
+
+  function load() {
+    // 只讀本模組的市場匯率 key；不讀帳本、帳戶或交易資料。
+    const now = Date.now();
+    if (memory) {
+      try { memory = normalizeSnapshot(memory, now); } catch { memory = null; }
+    }
+    try {
+      const text = root.localStorage?.getItem(storageKey);
+      if (text && text.length <= maxBytes && new TextEncoder().encode(text).byteLength <= maxBytes) {
+        const saved = normalizeSnapshot(JSON.parse(text), now);
+        if (newer(memory, saved)) memory = saved;
+      }
+    } catch {
+      // 瀏覽器拒絕 storage、格式錯誤或幣別模組未就緒時，仍保留有效記憶體快取。
+    }
+    return copy(memory);
+  }
+
+  function save(snapshot) {
+    memory = copy(snapshot);
+    try { root.localStorage?.setItem(storageKey, JSON.stringify(memory)); } catch {
+      // 私密瀏覽、容量限制或儲存遭拒，不影響這次工作階段的匯率使用。
+    }
+  }
+
+  function status(snapshot = load()) {
+    try {
+      const clean = normalizeSnapshot(snapshot);
+      const stale = Date.now() >= Date.parse(clean.nextUpdateAt) || Date.now() - Date.parse(clean.updatedAt) > maximumFreshAge;
+      return { stale, label: (stale ? '較舊的參考匯率' : '每日參考匯率') + ' · ' + clean.updatedAt.slice(0, 10) };
+    } catch {
+      return { stale: true, label: '尚未取得參考匯率' };
+    }
+  }
+
+  function quote(currency, snapshot = load()) {
+    try {
+      if (typeof currency !== 'string' || !currencyCodes().has(currency)) return null;
+      const clean = normalizeSnapshot(snapshot);
+      if (!Object.hasOwn(clean.rates, currency)) return null;
+      return { rate: clean.rates[currency], date: clean.updatedAt.slice(0, 10), source: 'api', fetchedAt: clean.fetchedAt };
+    } catch {
+      return null;
+    }
+  }
+
+  function unixTime(value) {
+    if (!Number.isSafeInteger(value) || value <= 0 || !Number.isSafeInteger(value * 1000)) throw failure('匯率來源的時間格式不正確。');
+    const date = new Date(value * 1000);
+    if (!Number.isFinite(date.getTime())) throw failure('匯率來源的時間格式不正確。');
+    return date.toISOString();
+  }
+
+  function normalizeResponse(data, fetchedAt) {
+    if (!record(data) || data.result !== 'success') throw failure('匯率來源目前無法提供資料。', 'provider-error');
+    if (data.base_code !== 'TWD' || !record(data.rates) || data.rates.TWD !== 1) throw failure('匯率來源的新台幣基準不正確。');
+    if (data.time_eol_unix !== undefined && (!Number.isSafeInteger(data.time_eol_unix) || data.time_eol_unix < 0)) {
+      throw failure('匯率來源的服務期限格式不正確。');
+    }
+    if (data.time_eol_unix && data.time_eol_unix <= Math.floor(Date.now() / 1000)) throw failure('匯率來源已停止支援此端點。', 'provider-error');
+    const rates = { TWD: 1 };
+    for (const code of currencyCodes()) {
+      if (code === 'TWD' || !Object.hasOwn(data.rates, code)) continue;
+      const foreignPerTWD = data.rates[code];
+      if (typeof foreignPerTWD !== 'number' || !Number.isFinite(foreignPerTWD) || foreignPerTWD <= 0) throw failure('匯率來源含有無效匯率。');
+      // 來源是每 1 TWD 換多少外幣；帳本統一使用每 1 外幣折合多少 TWD。
+      const twdPerForeign = 1 / foreignPerTWD;
+      if (!validRate(twdPerForeign)) throw failure('匯率來源含有超出範圍的匯率。');
+      rates[code] = twdPerForeign;
+    }
+    return normalizeSnapshot({
+      provider, updatedAt: unixTime(data.time_last_update_unix), nextUpdateAt: unixTime(data.time_next_update_unix), fetchedAt, rates,
+    });
+  }
+
+  async function readLimitedJSON(response) {
+    const type = (response.headers.get('Content-Type') || '').split(';')[0].trim().toLowerCase();
+    if (type !== 'application/json' && !/^application\/[a-z0-9.+-]+\+json$/.test(type)) throw failure('匯率來源沒有回傳 JSON 資料。');
+    const length = response.headers.get('Content-Length');
+    if (length && /^\d+$/.test(length) && Number(length) > maxBytes) throw failure('匯率資料超過 200 KB，已停止讀取。');
+    if (!response.body || typeof response.body.getReader !== 'function') throw failure('這個瀏覽器不支援安全讀取匯率資料。', 'unavailable');
+    const reader = response.body.getReader();
+    const chunks = [];
+    let size = 0;
+    try {
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        size += value.byteLength;
+        if (size > maxBytes) throw failure('匯率資料超過 200 KB，已停止讀取。');
+        chunks.push(value);
+      }
+    } catch (error) {
+      try { await reader.cancel(); } catch { /* 原始讀取錯誤優先。 */ }
+      throw error;
+    } finally {
+      reader.releaseLock();
+    }
+    const bytes = new Uint8Array(size);
+    let offset = 0;
+    for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.byteLength; }
+    try { return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes)); } catch {
+      throw failure('匯率來源回傳的 JSON 無法讀取。');
+    }
+  }
+
+  async function requestSnapshot() {
+    if (typeof root.fetch !== 'function' || typeof root.AbortController !== 'function') throw failure('這個瀏覽器無法取得網路匯率。', 'unavailable');
+    const controller = new root.AbortController();
+    const timer = setTimeout(() => controller.abort(), requestTimeout);
+    try {
+      const response = await root.fetch(endpoint, {
+        method: 'GET', mode: 'cors', credentials: 'omit', cache: 'no-cache',
+        referrerPolicy: 'no-referrer', redirect: 'error', signal: controller.signal,
+      });
+      if (response.status === 429) throw failure('匯率來源暫時限制請求，請一小時後再試。', 'rate-limit');
+      if (!response.ok) throw failure('匯率來源暫時無法連線，請稍後再試。', 'http-error');
+      const data = await readLimitedJSON(response);
+      return normalizeResponse(data, new Date().toISOString());
+    } catch (error) {
+      if (controller.signal.aborted) throw failure('取得匯率超過 10 秒，請稍後再試。', 'timeout');
+      if (error && typeof error.code === 'string') throw error;
+      throw failure('無法取得匯率，請確認網路後再試。', 'network');
+    } finally {
+      clearTimeout(timer);
+      controller.abort();
+    }
+  }
+
+  function refresh({ force = false } = {}) {
+    if (typeof force !== 'boolean') return Promise.reject(failure('匯率更新選項不正確。'));
+    if (inFlight) return inFlight;
+    const cached = load();
+    const now = Date.now();
+    if (!force && cached && !status(cached).stale) return Promise.resolve(cached);
+    const retryAt = Math.max(blockedUntil, lastAttemptAt ? lastAttemptAt + minimumInterval : 0,
+      cached ? Date.parse(cached.fetchedAt) + minimumInterval : 0);
+    if (now < retryAt) return Promise.reject(failure('匯率更新過於頻繁，請稍後再試。', 'cooldown', retryAt));
+    lastAttemptAt = now;
+    inFlight = requestSnapshot().then(snapshot => {
+      const current = load();
+      if (current && snapshot.updatedAt < current.updatedAt) throw failure('來源回傳較舊的匯率，已保留原有快取。');
+      save(snapshot);
+      blockedUntil = 0;
+      return copy(snapshot);
+    }).catch(error => {
+      const delay = error.code === 'rate-limit' ? rateLimitDelay :
+        ['http-error', 'provider-error'].includes(error.code) ? 5 * 60000 : minimumInterval;
+      blockedUntil = Date.now() + delay;
+      error.retryAt = new Date(blockedUntil).toISOString();
+      throw error;
+    }).finally(() => { inFlight = null; });
+    return inFlight;
+  }
+
+  root.MoneyFX = Object.freeze({ load, refresh, quote, status, endpoint, attributionUrl });
 })(typeof globalThis === 'object' ? globalThis : this);
 
 ;
 (() => {
 'use strict';
 const M = globalThis.MoneyCore;
+const F = globalThis.MoneyFX;
 const $ = id => document.getElementById(id);
 const e = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const money = value => M.formatMoney(value || 0);
+const money = value => value === null || value === undefined ? '—' : M.formatMoney(value);
+const nativeMoney = (value,currency='TWD') => M.formatMoney(value,currency);
 const uid = () => crypto.randomUUID();
 let today = M.today();
 let currentMonth = today.slice(0,7);
@@ -356,21 +768,81 @@ const icon = name => `<svg viewBox="0 0 24 24" aria-hidden="true">${paths[name]|
 let state, db, ready=false, busy=false, view='overview', month=currentMonth, asOf=today, page=1, toastTimer, dialogSubmit=null;
 let filter={query:'',kind:'',account:'',category:'',all:false};
 let channel;
+let fx = F.load(), fxBusy=false, fxError='', txDraft=null, fxPromise=null, lastAutoFx=0;
 const dialog=$('dialog'), form=$('dialog-form');
 function notify(message){$('toast').textContent=message;$('toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').hidden=true,4500);}
 function error(message){$('global-error').textContent=message;$('global-error').hidden=false;}
 function endOfMonth(m){const [y,n]=m.split('-').map(Number);return `${m}-${new Date(y,n,0).getDate()}`;}
 function shiftMonth(m,delta){const [y,n]=m.split('-').map(Number);const d=new Date(y,n-1+delta,1);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;}
 function monthName(m){return `${m.slice(0,4)} 年 ${Number(m.slice(5))} 月`;}
-function rawAmount(c){return (c/100).toFixed(2).replace(/\.00$/,'');}
+function rawAmount(c,currency='TWD'){if(c===null||c===undefined)return '';const d=M.currencyInfo(currency).decimals;return (c/(10**d)).toFixed(d);}
 function category(id){return [...M.categories.expense,...M.categories.income].find(x=>x.id===id);}
 function account(id){return state.accounts.find(x=>x.id===id);}
 function accountName(id){return account(id)?.name||'帳戶';}
 function activeAccounts(extraId){return state.accounts.filter(a=>!a.archived||a.id===extraId);}
 function option(value,label,selected){return `<option value="${e(value)}"${value===selected?' selected':''}>${e(label)}</option>`;}
-function accountOptions(selected){return activeAccounts(selected).map(a=>option(a.id,a.name+(a.archived?'（已封存）':''),selected)).join('');}
+function accountOptions(selected){return activeAccounts(selected).map(a=>option(a.id,a.name+' · '+a.currency+(a.archived?'（已封存）':''),selected)).join('');}
 function accountType(id){return M.accountTypes.find(x=>x.id===id);}
 function isLiability(type){return !!accountType(type)?.liability;}
+
+function rateTable(){return fx?{ratesTwd:fx.rates,rateDate:fx.updatedAt.slice(0,10),fetchedAt:fx.fetchedAt,source:'open.er-api.com'}:undefined;}
+function latestQuote(currency){const q=F.quote(currency,fx);return q?{currency,rate:q.rate,rateDate:q.date,fetchedAt:q.fetchedAt,source:'open.er-api.com'}:null;}
+function hasForeign(){return state?.accounts.some(a=>a.currency!=='TWD');}
+function quoteText(q){return `1 ${q.currency} ≈ NT$ ${Number(q.rate).toLocaleString('zh-TW',{maximumSignificantDigits:8})}`;}
+function fxAttribution(){return `<a href="${F.attributionUrl}" target="_blank" rel="noopener noreferrer">Rates By Exchange Rate API</a>`;}
+function fxPanel(){
+ const codes=[...new Set(state.accounts.filter(a=>a.currency!=='TWD').map(a=>a.currency))];
+ const status=F.status(fx);
+ return `<section class="panel fx-panel"><div class="fx-panel-head"><div><h2>外幣與匯率</h2><p class="fx-meta">原幣記帳 · 新臺幣估值</p></div><button class="button small" data-action="refresh-fx" ${fxBusy?'disabled':''}>${fxBusy?'更新中…':'更新參考匯率'}</button></div><p class="fx-meta">${fx?`報價日期 ${e(fx.updatedAt.slice(0,10))}（UTC） · 取得於 ${e(new Date(fx.fetchedAt).toLocaleString('zh-TW'))} · ${e(status.label)}`:'新增外幣帳戶後，會自動取得最新可用參考匯率。'}</p>${fxError?`<p class="fx-warning" role="status">${e(fxError)}${fx?'；目前保留上次匯率。':'；可手動填寫交易入帳匯率。'}</p>`:status.stale&&fx?'<p class="fx-warning">目前使用較早的參考價，請更新後再確認資產估值。</p>':''}${codes.length?`<div class="fx-rate-grid">${codes.map(code=>{const q=latestQuote(code);return `<div class="fx-rate-item"><strong>${e(code)}</strong><span>${q?e(quoteText(q)):'尚無匯率，暫不估值'}</span></div>`;}).join('')}</div>`:''}<p class="note">來源每日更新，非銀行即時買賣價；換匯成交價與手續費以銀行為準。${fxAttribution()}</p></section>`;
+}
+function refreshFx(force=false){
+ if(fxPromise)return fxPromise;fxBusy=true;fxError='';if(ready)render();
+ fxPromise=(async()=>{try{fx=await F.refresh({force});}catch(err){fxError=(err.message||'匯率暫時無法更新')+(err.retryAt?' 可重試時間：'+new Date(err.retryAt).toLocaleTimeString('zh-TW'):'');}
+ finally{fxBusy=false;fxPromise=null;if(ready)render();if(dialog.open&&$('tx-amount')){if(!$('tx-rate').value&&txDraft&&!txDraft.rateTouched)selectLatestRate();if(!txDraft.targetTouched)suggestTransferAmount();updateTransactionPreview();}if(dialog.open&&$('account-currency'))updateAccountPreview();}})();return fxPromise;
+}
+function maybeRefreshFx(){if(hasForeign()){lastAutoFx=Date.now();void refreshFx();}}
+function currencyOptions(selected){return M.currencies.map(c=>option(c.code,`${c.code} · ${c.name}`,selected)).join('');}
+function txContext(){return ['tx-account','tx-to','tx-kind','tx-amount','tx-target-amount','tx-rate','tx-rate-date'].map(id=>$(id)?.value||'').join('|');}
+function selectedTxAccount(){return account(form.elements.accountId?.value);}
+function selectLatestRate(){
+ const a=selectedTxAccount(),q=a&&latestQuote(a.currency);if(!txDraft)return;
+ txDraft.quote=q;txDraft.rateTouched=false;$('tx-rate').value=q?String(q.rate):'';$('tx-rate-date').value=q?.rateDate||today;
+}
+function transactionQuote(){
+ const a=selectedTxAccount();if(a.currency==='TWD')return null;
+ const value=$('tx-rate').value.trim(),rate=Number(value),rateDate=$('tx-rate-date').value;
+ if(!value||!Number.isFinite(rate)||rate<=0)throw new Error('請等待匯率載入，或輸入有效的入帳匯率。');
+ if(txDraft.quote&&rate===txDraft.quote.rate&&rateDate===txDraft.quote.rateDate)return {...txDraft.quote};
+ return {currency:a.currency,rate,rateDate,fetchedAt:new Date().toISOString(),source:'manual'};
+}
+function suggestTransferAmount(){
+ const a=selectedTxAccount(),b=account($('tx-to').value);if(!a||!b)return;
+ try{const n=M.parseAmount($('tx-amount').value,{currency:a.currency});if(a.currency===b.currency){$('tx-target-amount').value=rawAmount(n,b.currency);return;}
+ const from=latestQuote(a.currency),to=latestQuote(b.currency);if(!from||!to){if(!txDraft.targetTouched)$('tx-target-amount').value='';return;}
+ const units=n/(10**M.currencyInfo(a.currency).decimals)*from.rate/to.rate;$('tx-target-amount').value=units.toFixed(M.currencyInfo(b.currency).decimals);
+ }catch{if(!txDraft.targetTouched)$('tx-target-amount').value='';}
+}
+function updateTransactionPreview(){
+ if(!$('tx-amount'))return;const a=selectedTxAccount(),kind=$('tx-kind').value,b=account($('tx-to').value);if(!a)return;
+ const financial=['expense','income','refund'].includes(kind),foreign=a.currency!=='TWD',cross=kind==='transfer'&&b&&a.currency!==b.currency;
+ $('tx-amount-label').textContent=`${kind==='adjustment'?'校正差額（可正負）':kind==='transfer'?'轉出金額':'原幣金額'} · ${a.currency}`;
+ $('tx-rate-fields').hidden=!financial||!foreign;$('tx-rate').disabled=!financial||!foreign;$('tx-rate-date').disabled=!financial||!foreign;
+ $('tx-target-field').hidden=!cross;$('tx-target-amount').disabled=!cross;$('tx-target-amount').required=!!cross;
+ $('tx-target-label').textContent=`實際轉入金額 · ${b?.currency||''}`;
+ let text='';
+ try{const n=M.parseAmount($('tx-amount').value,{signed:kind==='adjustment',currency:a.currency});
+ if(financial){const q=transactionQuote(),v=M.convertToTwd(n,a.currency,q?.rate||1);text=`入帳折合 ${money(v)}`+(q?` · ${quoteText(q)} · ${q.rateDate} ${q.source==='manual'?'手動匯率':'參考價'}`:'');}
+ else if(kind==='transfer')text=cross?'轉出、轉入分別以原幣記錄，不列入月收支。請核對銀行實際入帳數字。':'相同幣別以相同金額轉入，不列入月收支。';
+ else text='原幣餘額校正，不列入月收支。';
+ }catch(err){text=$('tx-amount').value.trim()?err.message:'輸入原幣金額，即可查看換算。';}
+ $('tx-preview').textContent=text;
+ $('tx-rate-help').textContent=txDraft?.quote?.source==='open.er-api.com'?`目前使用 ${txDraft.quote.rateDate} 的參考價${F.status(fx).stale?'（快取可能較舊）':''}。補記舊交易時，可改填當天實際匯率；儲存後月報金額固定。`:'可填銀行實際入帳匯率與日期；儲存後月報金額固定。';
+}
+function updateAccountPreview(){
+ const code=$('account-currency').value,input=$('account-opening'),q=latestQuote(code);$('account-opening-label').textContent=`期初餘額／欠款 · ${code}`;
+ try{const n=M.parseAmount(input.value,{signed:true,currency:code});$('account-fx-preview').textContent=code==='TWD'?'以新臺幣記帳。':q?`${quoteText(q)} · 參考折合 ${money(M.convertToTwd(n,code,q.rate))} · ${q.rateDate}${F.status(fx).stale?'（較舊參考價）':''}`:'原幣餘額可先儲存，匯率取得後自動換算；目前尚無參考價。';}catch(err){$('account-fx-preview').textContent=err.message;}
+}
+
 async function openDB(){return new Promise((resolve,reject)=>{const request=indexedDB.open('eric-money-ledger',1);request.onupgradeneeded=()=>request.result.createObjectStore('ledger');request.onsuccess=()=>resolve(request.result);request.onerror=()=>reject(request.error);request.onblocked=()=>reject(new Error('請先關閉其他舊版記帳分頁，再重新整理。'));});}
 async function readDB(){return new Promise((resolve,reject)=>{const tx=db.transaction('ledger','readonly');const q=tx.objectStore('ledger').get('main');q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error);});}
 function syncClock(){const next=M.today();if(next===today)return false;const old=today,oldMonth=currentMonth;today=next;currentMonth=next.slice(0,7);if(asOf===old)asOf=next;if(month===oldMonth)month=currentMonth;document.querySelectorAll('input[type=date][max]').forEach(input=>input.max=today);return true;}
@@ -390,37 +862,47 @@ function distribution(r){
  return `<div class="distribution"><div class="donut" role="img" aria-label="支出分佈，完整數值見右側分類"><svg viewBox="0 0 160 160">${rings}</svg><div class="donut-center">原始支出<strong class="money">${e(money(r.grossExpense))}</strong></div></div><div class="legend">${groups.map(g=>`<button class="legend-row" data-action="filter-category" data-id="${e(g.id)}"><i class="swatch" style="background:${e(g.color)}"></i><span class="legend-name">${e(g.name)}<small>${Math.round(g.share*100)}%</small></span><span class="legend-amount">${e(money(g.amount))}</span></button>`).join('')}</div></div><p class="note">${r.refunds?`本月退款 ${e(money(r.refunds))}；淨支出 ${e(money(r.expense))}。`:''}分佈以原始支出計算，退款與轉帳不列入占比。</p>`;
 }
 function budgetPanel(r){const total=r.budget.total||0;if(!total)return `<p class="muted">給這個月一個舒服的花費範圍。</p><div class="budget-number"><strong>尚未設定</strong></div><div class="progress-track"><span style="width:0"></span></div><p class="note">設定總預算或分類上限，記帳時就會同步追蹤。</p><button class="button small" data-action="budget" style="margin-top:16px">設定本月預算</button>`;const over=r.budget.remaining<0;return `<p class="muted">${over?'已超出預算':'本月還可以花'}</p><div class="budget-number"><strong class="money ${over?'expense':''}">${e(money(Math.abs(r.budget.remaining)))}</strong><span class="muted">${Math.round((r.budget.ratio||0)*100)}% 已使用</span></div><div class="progress-track ${over?'over':''}" role="progressbar" aria-label="本月預算使用" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(Math.max(0,Math.min(1,r.budget.ratio||0))*100)}"><span style="width:${Math.max(0,Math.min(100,(r.budget.ratio||0)*100))}%"></span></div><div class="budget-detail"><span>已用 ${e(money(r.expense))}</span><span>預算 ${e(money(total))}</span></div>${r.budget.dailyAllowance!==null?`<div class="insight-mini"><strong>把預算留給每一天</strong>依目前餘額與剩餘天數，平均每日可用 ${e(money(Math.max(0,r.budget.dailyAllowance)))}。</div>`:`<p class="note">預算依當月淨支出計算，退款會恢復可用額度。</p>`}`;}
-function txRow(t,rank){const cat=category(t.categoryId);const title=t.note||cat?.name||typeNames[t.kind];const desc=t.kind==='transfer'?`${accountName(t.accountId)} → ${accountName(t.toAccountId)}`:`${cat?.name||typeNames[t.kind]} · ${accountName(t.accountId)}`;const sign=t.kind==='expense'?'−':t.kind==='income'||t.kind==='refund'?'+':t.kind==='adjustment'?(t.amount>0?'+':'−'):'';const color=t.kind==='expense'?'expense':t.kind==='income'||t.kind==='refund'?'income':'';return `<div class="transaction-row"><span class="transaction-icon">${rank?String(rank).padStart(2,'0'):icon(t.kind)}</span><div class="transaction-description"><strong>${e(title)}</strong><small>${e(t.date.slice(5).replace('-','/'))} · ${e(desc)}</small></div><span class="transaction-amount money ${color}">${sign}${e(money(Math.abs(t.amount)))}</span><button class="icon-button" data-action="edit-transaction" data-id="${e(t.id)}" aria-label="編輯 ${e(title)}">›</button></div>`;}
-function overview(){const r=M.monthReport(state,month,today),tot=M.totals(state,today);const recent=state.transactions.filter(t=>t.date.startsWith(month)).sort((a,b)=>b.date.localeCompare(a.date)||b.createdAt.localeCompare(a.createdAt)).slice(0,5);return `${onboarding()}<div class="stats">${stat('本月結餘',money(r.net),'收入減去淨支出',true)}${stat('本月收入',money(r.income),'不含轉帳與期初餘額')}${stat('本月支出',money(r.expense),r.refunds?'已扣除退款 '+money(r.refunds):'依已登錄消費')}${stat('今日淨資產',money(tot.net),'總資產減去負債')}</div><div class="grid-main"><section class="panel"><div class="section-head"><div><h2>消費分佈</h2><p class="muted">日常花費的樣子</p></div><button class="text-button" data-view="analysis">完整分析 ↗</button></div>${distribution(r)}</section><section class="panel"><div class="section-head"><h2>本月預算</h2><button class="text-button" data-action="budget">編輯</button></div>${budgetPanel(r)}</section></div><section class="panel"><div class="section-head"><h2>最近的紀錄</h2><button class="text-button" data-view="records">查看全部 ↗</button></div>${recent.length?`<div class="transaction-list">${recent.map(t=>txRow(t)).join('')}</div>`:empty('第一筆，就從今天開始','收入、支出與帳戶間轉帳，都能在這裡記下。','add-transaction','＋ 記一筆')}</section>`;}
-function filtered(){return state.transactions.filter(t=>(filter.all||t.date.startsWith(month))&&(!filter.kind||t.kind===filter.kind)&&(!filter.account||t.accountId===filter.account||t.toAccountId===filter.account)&&(!filter.category||t.categoryId===filter.category)&&(!filter.query||[t.note,category(t.categoryId)?.name,accountName(t.accountId),t.toAccountId?accountName(t.toAccountId):'',typeNames[t.kind],t.date,rawAmount(t.amount)].join(' ').toLowerCase().includes(filter.query.toLowerCase()))).sort((a,b)=>b.date.localeCompare(a.date)||b.createdAt.localeCompare(a.createdAt));}
+function txRow(t,rank){const a=account(t.accountId),b=account(t.toAccountId),cat=category(t.categoryId),title=t.note||cat?.name||typeNames[t.kind],desc=t.kind==='transfer'?`${accountName(t.accountId)} → ${accountName(t.toAccountId)}`:`${cat?.name||typeNames[t.kind]} · ${accountName(t.accountId)}`;const sign=t.kind==='expense'?'−':['income','refund'].includes(t.kind)?'+':t.kind==='adjustment'?(t.nativeAmount>0?'+':'−'):'';const color=t.kind==='expense'?'expense':['income','refund'].includes(t.kind)?'income':'';return `<div class="transaction-row"><span class="transaction-icon">${rank?String(rank).padStart(2,'0'):icon(t.kind)}</span><div class="transaction-description"><strong>${e(title)}</strong><small>${e(t.date.slice(5).replace('-','/'))} · ${e(desc)}</small></div><span class="transaction-amount money ${color}"><span class="fx-amount-native">${sign}${e(nativeMoney(Math.abs(t.nativeAmount),a.currency))}</span>${t.kind==='transfer'?`<small class="fx-amount-base">→ ${e(nativeMoney(t.toNativeAmount,b.currency))}</small>`:a.currency!=='TWD'&&t.amount!==null?`<small class="fx-amount-base">入帳 ${e(money(t.amount))}</small>`:''}</span><button class="icon-button" data-action="edit-transaction" data-id="${e(t.id)}" aria-label="編輯 ${e(title)}">›</button></div>`;}
+function overview(){const r=M.monthReport(state,month,today),tot=M.totals(state,today,rateTable());const recent=state.transactions.filter(t=>t.date.startsWith(month)).sort((a,b)=>b.date.localeCompare(a.date)||b.createdAt.localeCompare(a.createdAt)).slice(0,5);return `${onboarding()}${hasForeign()?fxPanel():''}<div class="stats">${stat('本月結餘',money(r.net),'收入減去淨支出',true)}${stat('本月收入',money(r.income),'不含轉帳與期初餘額')}${stat('本月支出',money(r.expense),r.refunds?'已扣除退款 '+money(r.refunds):'依已登錄消費')}${stat('今日淨資產',money(tot.net),tot.incomplete?'缺少匯率，總額暫不完整':hasForeign()?'依最新可得參考價折合 TWD':'總資產減去負債')}</div><div class="grid-main"><section class="panel"><div class="section-head"><div><h2>消費分佈</h2><p class="muted">日常花費的樣子</p></div><button class="text-button" data-view="analysis">完整分析 ↗</button></div>${distribution(r)}</section><section class="panel"><div class="section-head"><h2>本月預算</h2><button class="text-button" data-action="budget">編輯</button></div>${budgetPanel(r)}</section></div><section class="panel"><div class="section-head"><h2>最近的紀錄</h2><button class="text-button" data-view="records">查看全部 ↗</button></div>${recent.length?`<div class="transaction-list">${recent.map(t=>txRow(t)).join('')}</div>`:empty('第一筆，就從今天開始','收入、支出與帳戶間轉帳，都能在這裡記下。','add-transaction','＋ 記一筆')}</section>`;}
+function filtered(){return state.transactions.filter(t=>(filter.all||t.date.startsWith(month))&&(!filter.kind||t.kind===filter.kind)&&(!filter.account||t.accountId===filter.account||t.toAccountId===filter.account)&&(!filter.category||t.categoryId===filter.category)&&(!filter.query||[t.note,category(t.categoryId)?.name,accountName(t.accountId),t.toAccountId?accountName(t.toAccountId):'',typeNames[t.kind],t.date,rawAmount(t.amount),account(t.accountId)?.currency,rawAmount(t.nativeAmount,account(t.accountId)?.currency)].join(' ').toLowerCase().includes(filter.query.toLowerCase()))).sort((a,b)=>b.date.localeCompare(a.date)||b.createdAt.localeCompare(a.createdAt));}
 function recordsContent(){const rows=filtered(),pages=Math.max(1,Math.ceil(rows.length/40));page=Math.min(page,pages);const slice=rows.slice((page-1)*40,page*40);let last='';return `<div class="list-toolbar"><span class="list-summary">找到 ${rows.length.toLocaleString()} 筆紀錄${filter.all?' · 全部月份':''}</span><button class="text-button" data-action="export-filtered">匯出篩選結果 CSV ↗</button></div><section class="panel">${slice.length?slice.map(t=>{let out='';if(t.date!==last){last=t.date;out=`<p class="date-heading">${e(t.date.replaceAll('-',' / '))}</p>`;}return out+txRow(t);}).join(''):empty('沒有符合的紀錄','試著調整篩選條件，或新增一筆收支。','add-transaction','＋ 記一筆')}</section>${pages>1?`<div class="pagination"><button class="button small" data-action="page-prev" ${page===1?'disabled':''}>上一頁</button><span>${page} / ${pages}</span><button class="button small" data-action="page-next" ${page===pages?'disabled':''}>下一頁</button></div>`:''}`;}
 function records(){return `<div class="filters"><label><span class="field-label">搜尋</span><input id="filter-query" type="search" maxlength="120" placeholder="備註、分類、金額或帳戶" value="${e(filter.query)}"></label><label><span class="field-label">類型</span><select id="filter-kind">${option('','全部類型',filter.kind)}${Object.entries(typeNames).map(([id,name])=>option(id,name,filter.kind)).join('')}</select></label><label><span class="field-label">帳戶</span><select id="filter-account">${option('','所有帳戶',filter.account)}${state.accounts.map(a=>option(a.id,a.name,filter.account)).join('')}</select></label><label><span class="field-label">分類</span><select id="filter-category">${option('','所有分類',filter.category)}${[...M.categories.expense,...M.categories.income].map(c=>option(c.id,c.name,filter.category)).join('')}</select></label></div><label class="checkbox-line" style="margin-bottom:18px"><input id="filter-all" type="checkbox" ${filter.all?'checked':''}>跨所有月份查詢</label><div id="records-region">${recordsContent()}</div>`;}
-function accounts(){const t=M.totals(state,asOf),rows=M.balances(state,asOf);return `<div class="as-of"><span class="muted">餘額截止日</span><input id="as-of" aria-label="餘額截止日" type="date" max="${today}" value="${asOf}" required><button class="button primary small" data-action="add-account">＋ 新增帳戶</button></div><div class="stats">${stat('淨資產',money(t.net),'資產 − 負債',true)}${stat('總資產',money(t.assets),'所有帳戶的正餘額')}${stat('總負債',money(t.liabilities),'所有帳戶的負餘額')}${stat('存款與現金',money(t.cash),'現金、銀行與儲蓄餘額')}</div>${rows.length?`<div class="accounts-grid">${rows.map(a=>`<article class="account-card${a.archived?' archived':''}"><div class="account-title"><div><h3>${e(a.name)}</h3><p class="account-type">${e(accountType(a.type)?.name||a.type)}${a.archived?' · 已封存':''}</p></div><span class="transaction-icon">${icon('wallet')}</span></div><p class="account-balance ${a.balance<0?'expense':''}">${e(money(Math.abs(a.balance)))}</p><p class="note">${a.openingDate>asOf?'此截止日尚未建立':a.balance<0?'待償還餘額':isLiability(a.type)&&a.balance>0?'預付／溢繳餘額':'帳戶餘額'} · ${e(asOf)}</p><div class="account-actions"><button class="text-button" data-action="edit-account" data-id="${e(a.id)}">編輯</button>${!a.archived?`<button class="text-button" data-action="adjust-account" data-id="${e(a.id)}">校正目前餘額</button>`:''}<button class="text-button" data-action="account-records" data-id="${e(a.id)}">交易明細 ↗</button></div></article>`).join('')}</div>`:`<section class="panel">${empty('把常用帳戶放在一起','先新增銀行存款、現金或信用卡，並填入期初餘額。','add-account','＋ 新增帳戶')}</section>`}<p class="note">餘額由你輸入的期初金額與後續交易計算，尚未連線銀行。投資帳戶顯示手動帳面餘額，並非即時市價。封存帳戶仍保留餘額與歷史。</p>`;}
+function accounts(){const t=M.totals(state,asOf,rateTable()),rows=M.balances(state,asOf,rateTable());return `<div class="as-of"><span class="muted">餘額截止日</span><input id="as-of" aria-label="餘額截止日" type="date" max="${today}" value="${asOf}" required><button class="button primary small" data-action="add-account">＋ 新增帳戶</button></div>${fxPanel()}${t.incomplete?`<p class="fx-warning" role="status">缺少 ${e(t.missingCurrencies.join('、'))} 匯率，相關資產總額暫不顯示；原幣餘額仍完整保留。</p>`:''}<div class="stats">${stat('淨資產 · TWD',money(t.net),'資產 − 負債',true)}${stat('總資產 · TWD',money(t.assets),'所有帳戶的正餘額')}${stat('總負債 · TWD',money(t.liabilities),'所有帳戶的負餘額')}${stat('存款與現金 · TWD',money(t.cash),'含外幣帳戶換算餘額')}</div>${rows.length?`<div class="accounts-grid">${rows.map(a=>`<article class="account-card${a.archived?' archived':''}"><div class="account-title"><div><h3>${e(a.name)}</h3><p class="account-type">${e(accountType(a.type)?.name||a.type)} <span class="currency-badge">${e(a.currency)}</span>${a.archived?' · 已封存':''}</p></div><span class="transaction-icon">${icon('wallet')}</span></div><p class="account-balance ${a.balance<0?'expense':''}">${e(nativeMoney(Math.abs(a.balance),a.currency))}</p>${a.currency!=='TWD'?`<p class="fx-amount-base">${a.balanceTwd===null?'尚無匯率，暫不估值':'參考折合 '+e(money(Math.abs(a.balanceTwd)))}</p>`:''}<p class="note">${a.openingDate>asOf?'此截止日尚未建立':a.balance<0?'待償還餘額':isLiability(a.type)&&a.balance>0?'預付／溢繳餘額':'帳戶餘額'} · ${e(asOf)}</p><div class="account-actions"><button class="text-button" data-action="edit-account" data-id="${e(a.id)}">編輯</button>${!a.archived?`<button class="text-button" data-action="adjust-account" data-id="${e(a.id)}">校正目前餘額</button>`:''}<button class="text-button" data-action="account-records" data-id="${e(a.id)}">交易明細 ↗</button></div></article>`).join('')}</div>`:`<section class="panel">${empty('把常用帳戶放在一起','新增銀行、外匯、現金或信用卡帳戶，選擇幣別並填入期初餘額。','add-account','＋ 新增帳戶')}</section>`}<p class="note">原幣餘額截至選定日期；外幣按目前可得參考價換算，並非該截止日的歷史估值。未連線銀行；投資帳戶仍為手動帳面餘額。封存帳戶保留餘額與歷史。</p>`;}
 function trendPanel(){const rows=M.trend(state,month,6),max=Math.max(1,...rows.flatMap(x=>[x.income,Math.max(0,x.expense)]));return `<div class="trend-chart" role="img" aria-label="最近六個月收入與淨支出，展開下方表格可查看完整金額">${rows.map(r=>`<div class="trend-column"><div class="trend-bars"><div class="trend-bar in" style="height:${r.income/max*100}%" title="${e(r.month)} 收入 ${e(money(r.income))}"></div><div class="trend-bar out" style="height:${Math.max(0,r.expense)/max*100}%" title="${e(r.month)} 淨支出 ${e(money(r.expense))}"></div></div><span class="trend-month">${r.month.slice(5)} 月</span></div>`).join('')}</div><div class="chart-key"><span><i style="background:#8daf9d"></i>收入</span><span><i style="background:#2a6153"></i>淨支出</span></div><details class="data-table"><summary>查看每月完整數字</summary><table><thead><tr><th>月份</th><th>收入</th><th>淨支出</th><th>結餘</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${e(r.month)}</td><td>${e(money(r.income))}</td><td>${e(money(r.expense))}</td><td>${e(money(r.net))}</td></tr>`).join('')}</tbody></table><p class="note">當月為目前累積值；退款高於支出時，負淨支出只列在表格。</p></details>`;}
-function analysis(){const r=M.monthReport(state,month,today);const configured=state.budgets[month]?.categories||{};const limits=M.categories.expense.filter(c=>configured[c.id]>0);const biggest=state.transactions.filter(t=>t.date.startsWith(month)&&t.kind==='expense').sort((a,b)=>b.amount-a.amount).slice(0,5);return `<div class="stats">${stat('本月收入',money(r.income),'依已登錄收入')}${stat('本月淨支出',money(r.expense),'支出扣除退款')}${stat('本月結餘',money(r.net),'收入 − 淨支出',true)}${stat('收支結餘率',r.savingRate===null?'—':(r.savingRate*100).toFixed(1)+'%',r.savingRate===null?'沒有收入，暫不計算':'本月結餘 ÷ 收入')}</div>${r.count?`<div class="tips">${r.tips.map((t,i)=>`<article class="tip ${t.tone==='warning'||t.tone==='warn'?'warning':''}"><span class="tip-number">0${i+1}</span><h3>${e(t.title)}</h3><p>${e(t.detail)}</p></article>`).join('')}</div>`:`<section class="panel" style="margin-bottom:20px">${empty('先記錄，再看見變化','這個月還沒有收支資料，不會產生推測的分析或建議。','add-transaction','＋ 記一筆')}</section>`}<p class="note" style="margin:-2px 0 20px">分析依已登錄紀錄自動計算，不代表完整財務狀況。${r.comparison?.label?e(r.comparison.label):''}</p><div class="grid-equal"><section class="panel"><div class="section-head"><h2>消費分佈</h2><span class="muted">${r.count} 筆收支</span></div>${distribution(r)}</section><section class="panel"><div class="section-head"><h2>六個月收支趨勢</h2></div>${trendPanel()}</section></div><div class="grid-equal"><section class="panel"><div class="section-head"><h2>預算追蹤</h2><button class="text-button" data-action="budget">設定預算</button></div>${budgetPanel(r)}${limits.length?`<h3 class="subheading">分類上限</h3><div class="budget-list">${limits.map(c=>{const used=r.groups.find(g=>g.id===c.id)?.net||0,limit=configured[c.id];return `<div><div class="budget-number"><span>${e(c.name)}</span><strong>${e(money(used))} / ${e(money(limit))}</strong></div><div class="progress-track ${used>limit?'over':''}"><span style="width:${Math.max(0,Math.min(100,used/limit*100))}%"></span></div><p class="note" style="margin-top:5px">${used>limit?'超出 '+e(money(used-limit)):'剩餘 '+e(money(limit-used))}</p></div>`;}).join('')}</div>`:''}</section><section class="panel"><div class="section-head"><h2>本月較大的支出</h2><button class="text-button" data-view="records">看明細 ↗</button></div><div class="top-spends">${biggest.length?biggest.map((t,i)=>txRow(t,i+1)).join(''):empty('尚無支出紀錄','有消費紀錄後，這裡會列出金額最高的五筆。')}</div></section></div>`;}
-function settings(){return `<div class="settings-grid"><section class="panel"><h2>備份與還原</h2><p>帳目只存在這個瀏覽器。換裝置前、清除瀏覽資料前，請先下載一份備份。</p><div class="facts"><div><span>帳戶</span><strong>${state.accounts.length} 個</strong></div><div><span>交易紀錄</span><strong>${state.transactions.length.toLocaleString()} 筆</strong></div><div><span>最近備份</span><strong>${state.settings.lastBackupAt?e(new Date(state.settings.lastBackupAt).toLocaleString('zh-TW')):'尚未備份'}</strong></div></div><div class="button-row"><button class="button primary" data-action="backup">下載完整備份</button><button class="button" data-action="restore">還原備份</button><button class="button" data-action="export-all">匯出明細 CSV</button></div><p class="note">完整備份包含帳戶、所有交易與預算。CSV 適合查閱，還原請使用 JSON 備份。</p></section><section class="panel"><h2>原本的月報，也留在這裡</h2><p>先前匯入的月報與分析繼續保留。月報是摘要資料，不會自動變成交易，也不會加入新帳本餘額。</p><div class="button-row"><a class="button" href="report-viewer.html">開啟月報檢視器 ↗</a></div><p class="note">月報檢視器支援原本的 money-report/1 月報檔與虛構示範資料。</p></section><section class="panel"><h2>資料保存</h2><p>這份帳本沒有銀行連線，也不會把帳目上傳到伺服器。不同瀏覽器、裝置之間不會自動同步。</p><div class="button-row"><button class="button" data-action="persist">申請瀏覽器持久保存</button></div><p class="note" id="persist-status">持久保存可降低瀏覽器自動清除的機會，仍需要定期備份。</p></section><section class="panel"><h2>記帳方式</h2><div class="facts"><div><span>日常消費</span><strong>記「支出」</strong></div><div><span>信用卡還款、帳戶互轉</span><strong>記「轉帳」</strong></div><div><span>退貨退款</span><strong>記「退款」</strong></div><div><span>對帳差異、投資估值</span><strong>「校正目前餘額」</strong></div></div><p class="note">信用卡與借款以欠款管理。餘額校正不算收入或支出，請保留原因。</p></section></div>`;}
+function analysis(){const r=M.monthReport(state,month,today);const configured=state.budgets[month]?.categories||{};const limits=M.categories.expense.filter(c=>configured[c.id]>0);const biggest=state.transactions.filter(t=>t.date.startsWith(month)&&t.kind==='expense').sort((a,b)=>b.amount-a.amount).slice(0,5);return `<p class="note">分析與預算以新臺幣計算；外幣收支採各筆儲存時的入帳匯率，後續行情不會改寫歷史。</p><div class="stats">${stat('本月收入',money(r.income),'依已登錄收入')}${stat('本月淨支出',money(r.expense),'支出扣除退款')}${stat('本月結餘',money(r.net),'收入 − 淨支出',true)}${stat('收支結餘率',r.savingRate===null?'—':(r.savingRate*100).toFixed(1)+'%',r.savingRate===null?'沒有收入，暫不計算':'本月結餘 ÷ 收入')}</div>${r.count?`<div class="tips">${r.tips.map((t,i)=>`<article class="tip ${t.tone==='warning'||t.tone==='warn'?'warning':''}"><span class="tip-number">0${i+1}</span><h3>${e(t.title)}</h3><p>${e(t.detail)}</p></article>`).join('')}</div>`:`<section class="panel" style="margin-bottom:20px">${empty('先記錄，再看見變化','這個月還沒有收支資料，不會產生推測的分析或建議。','add-transaction','＋ 記一筆')}</section>`}<p class="note" style="margin:-2px 0 20px">分析依已登錄紀錄自動計算，不代表完整財務狀況。${r.comparison?.label?e(r.comparison.label):''}</p><div class="grid-equal"><section class="panel"><div class="section-head"><h2>消費分佈</h2><span class="muted">${r.count} 筆收支</span></div>${distribution(r)}</section><section class="panel"><div class="section-head"><h2>六個月收支趨勢</h2></div>${trendPanel()}</section></div><div class="grid-equal"><section class="panel"><div class="section-head"><h2>預算追蹤</h2><button class="text-button" data-action="budget">設定預算</button></div>${budgetPanel(r)}${limits.length?`<h3 class="subheading">分類上限</h3><div class="budget-list">${limits.map(c=>{const used=r.groups.find(g=>g.id===c.id)?.net||0,limit=configured[c.id];return `<div><div class="budget-number"><span>${e(c.name)}</span><strong>${e(money(used))} / ${e(money(limit))}</strong></div><div class="progress-track ${used>limit?'over':''}"><span style="width:${Math.max(0,Math.min(100,used/limit*100))}%"></span></div><p class="note" style="margin-top:5px">${used>limit?'超出 '+e(money(used-limit)):'剩餘 '+e(money(limit-used))}</p></div>`;}).join('')}</div>`:''}</section><section class="panel"><div class="section-head"><h2>本月較大的支出</h2><button class="text-button" data-view="records">看明細 ↗</button></div><div class="top-spends">${biggest.length?biggest.map((t,i)=>txRow(t,i+1)).join(''):empty('尚無支出紀錄','有消費紀錄後，這裡會列出金額最高的五筆。')}</div></section></div>`;}
+function settings(){return `<div class="settings-grid"><section class="panel"><h2>備份與還原</h2><p>帳目只存在這個瀏覽器。換裝置前、清除瀏覽資料前，請先下載一份備份。</p><div class="facts"><div><span>帳戶</span><strong>${state.accounts.length} 個</strong></div><div><span>交易紀錄</span><strong>${state.transactions.length.toLocaleString()} 筆</strong></div><div><span>最近備份</span><strong>${state.settings.lastBackupAt?e(new Date(state.settings.lastBackupAt).toLocaleString('zh-TW')):'尚未備份'}</strong></div></div><div class="button-row"><button class="button primary" data-action="backup">下載完整備份</button><button class="button" data-action="restore">還原備份</button><button class="button" data-action="export-all">匯出明細 CSV</button></div><p class="note">完整備份包含幣別、原幣金額、交易入帳匯率、所有帳戶與預算。CSV 適合查閱，還原請使用 JSON 備份。</p></section><section class="panel"><h2>原本的月報，也留在這裡</h2><p>先前匯入的月報與分析繼續保留。月報是摘要資料，不會自動變成交易，也不會加入新帳本餘額。</p><div class="button-row"><a class="button" href="report-viewer.html">開啟月報檢視器 ↗</a></div><p class="note">月報檢視器支援原本的 money-report/1 月報檔與虛構示範資料。</p></section><section class="panel"><h2>資料保存</h2><p>這份帳本沒有銀行連線，也不會把帳目上傳到伺服器。不同瀏覽器、裝置之間不會自動同步。只有外幣匯率會向公開來源取得；請求不包含你的帳戶、金額或交易。</p><div class="button-row"><button class="button" data-action="persist">申請瀏覽器持久保存</button></div><p class="note" id="persist-status">持久保存可降低瀏覽器自動清除的機會，仍需要定期備份。</p></section><section class="panel"><h2>記帳方式</h2><div class="facts"><div><span>日常消費</span><strong>記「支出」</strong></div><div><span>信用卡還款、帳戶互轉</span><strong>記「轉帳」</strong></div><div><span>退貨退款</span><strong>記「退款」</strong></div><div><span>對帳差異、投資估值</span><strong>「校正目前餘額」</strong></div></div><p class="note">信用卡與借款以欠款管理。餘額校正不算收入或支出，請保留原因。</p></section></div>`;}
 function render(){if(!ready)return;syncClock();const v=views.find(x=>x.id===view);$('nav').innerHTML=views.map(x=>`<button class="nav-button" data-view="${x.id}"${x.id===view?' aria-current="page"':''}>${icon(x.icon)}${x.label}</button>`).join('');$('page-title').textContent=v?.title||'資料與設定';$('page-subtitle').textContent=v?.sub||'把帳本留在自己手上，也把資料照顧好。';$('page-eyebrow').textContent=view==='analysis'?monthName(month)+' · 月度回顧':'讓每一筆，都有著落';$('month-picker').hidden=view==='accounts'||view==='settings';$('month').value=month;$('month').max=currentMonth;document.querySelector('[data-action="previous-month"]').disabled=month<='1900-01';document.querySelector('[data-action="next-month"]').disabled=month>=currentMonth;$('quick-add').disabled=false;$('main').innerHTML=view==='overview'?overview():view==='records'?records():view==='accounts'?accounts():view==='analysis'?analysis():settings();}
 function showDialog(title,body,handler,submitLabel='儲存'){if(dialog.open)dialog.close();$('dialog-title').textContent=title;$('dialog-body').innerHTML=body;$('dialog-error').hidden=true;$('save-button').textContent=submitLabel;dialogSubmit=handler;dialog.showModal();}
 function confirmAction(title,description,handler,label='確認'){showDialog(title,`<p class="muted">${e(description)}</p>`,async()=>{await handler();},label);}
 function field(label,content,wide=false,hint=''){return `<label class="field${wide?' wide':''}"><span>${label}</span>${content}${hint?`<small>${hint}</small>`:''}</label>`;}
-function openTransaction(id){const t=state.transactions.find(x=>x.id===id);if(!t&&!activeAccounts().length){openAccount();notify('先建立第一個帳戶，就能開始記帳');return;}const kind=t?.kind||'expense',selected=t?.accountId||activeAccounts().find(a=>a.id===state.settings.defaultAccountId)?.id||activeAccounts()[0]?.id;const date=t?.date||(month===currentMonth?today:endOfMonth(month));showDialog(t?'編輯這筆紀錄':'記下這一筆',`<div class="form-grid">${field('類型',`<select name="kind" id="tx-kind">${(kind==='adjustment'?['adjustment']:['expense','income','transfer','refund']).map(k=>option(k,typeNames[k],kind)).join('')}</select>`)}${field('日期',`<input type="date" name="date" value="${e(date)}" max="${today}" required>`)}${field(kind==='adjustment'?'校正差額（可正負）':'金額 · NT$',`<input class="amount-input" name="amount" inputmode="decimal" type="text" placeholder="0" value="${t?e(rawAmount(t.amount)):''}" maxlength="20" autocomplete="off" required>`,true)}${field('帳戶',`<select name="accountId" required>${accountOptions(selected)}</select>`)}<label class="field" id="tx-category-field"><span>分類</span><select name="categoryId" id="tx-category"></select></label><label class="field wide" id="tx-to-field"><span>轉入帳戶</span><select name="toAccountId" id="tx-to"><option value="">選擇轉入帳戶</option>${accountOptions(t?.toAccountId)}</select></label>${field('備註',`<input name="note" maxlength="300" value="${e(t?.note||'')}" placeholder="例如：午餐、十月薪資" autocomplete="off">`,true)}</div><p class="note" id="tx-hint"></p>${t?`<div class="danger-zone"><button type="button" class="text-button expense" data-action="delete-transaction" data-id="${e(t.id)}">刪除這筆紀錄</button></div>`:''}`,async fd=>{const k=fd.get('kind');const value={id:t?.id||uid(),date:fd.get('date'),kind:k,amount:M.parseAmount(fd.get('amount'),{signed:k==='adjustment'}),accountId:fd.get('accountId'),toAccountId:k==='transfer'?fd.get('toAccountId'):'',categoryId:['expense','income','refund'].includes(k)?fd.get('categoryId'):'',note:fd.get('note').trim(),createdAt:t?.createdAt||new Date().toISOString()};M.validateTransaction(value,state);await update(s=>{const i=s.transactions.findIndex(x=>x.id===value.id);if(i>=0)s.transactions[i]=value;else s.transactions.push(value);if(!s.accounts.find(a=>a.id===value.accountId)?.archived)s.settings.defaultAccountId=value.accountId;});notify(t?'已更新這筆紀錄':'已記下一筆');});updateTransactionFields(kind,t?.categoryId);}
-function updateTransactionFields(kind,selected){const categories=kind==='income'?M.categories.income:M.categories.expense;const hasCategory=['expense','income','refund'].includes(kind);$('tx-category-field').hidden=!hasCategory;$('tx-category').disabled=!hasCategory;$('tx-category').required=hasCategory;$('tx-category').innerHTML=categories.map(c=>option(c.id,c.name,selected)).join('');$('tx-to-field').hidden=kind!=='transfer';$('tx-to').disabled=kind!=='transfer';$('tx-to').required=kind==='transfer';$('tx-hint').textContent=kind==='transfer'?'帳戶互轉與信用卡還款請選「轉帳」，不會計入收入或消費。':kind==='refund'?'退款會加回收款帳戶，並沖減退款當月的分類支出。':kind==='adjustment'?'這是帳戶對帳差額，不會計入月收入或支出。':'交易日期須在帳戶期初日期之後，且不得晚於今天。';}
-function openAccount(id){const a=state.accounts.find(x=>x.id===id),used=a&&state.transactions.some(t=>t.accountId===id||t.toAccountId===id);showDialog(a?'編輯帳戶':'新增常用帳戶',`<p class="form-hint">期初餘額請填「尚未包含之後要登錄交易」的金額。信用卡與借款填欠款金額。</p><div class="form-grid">${field('帳戶名稱',`<input name="name" maxlength="60" placeholder="例如：日常銀行、錢包" value="${e(a?.name||'')}" required>`,true)}${field('類型',`<select name="type" id="account-type" ${used?'disabled':''}>${M.accountTypes.map(t=>option(t.id,t.name,a?.type||'bank')).join('')}</select>`)}${field('期初日期',`<input name="openingDate" type="date" value="${a?.openingDate||today}" max="${today}" ${used?'disabled':''} required>`)}${field('期初餘額／欠款 · NT$',`<input name="openingBalance" inputmode="decimal" type="text" value="${a?e(rawAmount(isLiability(a.type)?-a.openingBalance:a.openingBalance)):'0'}" maxlength="20" ${used?'disabled':''} required>`,true,used?'已有交易，期初資料已鎖定。請使用「校正目前餘額」對帳。':'資產帳戶填存款；負債帳戶填欠款。負數代表透支或信用卡溢繳。')}</div>${a?`<div class="danger-zone"><button type="button" class="text-button" data-action="archive-account" data-id="${e(a.id)}">${a.archived?'重新啟用帳戶':'封存這個帳戶'}</button>${!used?`<button type="button" class="text-button expense" style="margin-left:20px" data-action="delete-account" data-id="${e(a.id)}">刪除未使用帳戶</button>`:''}</div>`:''}`,async fd=>{const type=used?a.type:fd.get('type'),amount=used?a.openingBalance:M.parseAmount(fd.get('openingBalance'),{signed:true})*(isLiability(type)?-1:1);const value={id:a?.id||uid(),name:fd.get('name').trim(),type,openingDate:used?a.openingDate:fd.get('openingDate'),openingBalance:amount,archived:a?.archived||false};await update(s=>{const i=s.accounts.findIndex(x=>x.id===value.id);if(i>=0)s.accounts[i]=value;else s.accounts.push(value);if(!s.settings.defaultAccountId)s.settings.defaultAccountId=value.id;});notify(a?'已更新帳戶':'帳戶已建立，可以開始記帳');});}
-function adjustAccount(id){const a=account(id),balance=M.balances(state,today).find(x=>x.id===id)?.balance||0;const debt=isLiability(a.type);showDialog('校正目前餘額',`<p class="form-hint">${e(a.name)} · 目前${debt?'欠款':'餘額'} ${e(money(debt?-balance:balance))}。填入今天對帳後的實際金額，差額會留下一筆校正紀錄。</p><div class="form-grid">${field(debt?'實際欠款 · NT$':'實際餘額 · NT$',`<input class="amount-input" name="balance" inputmode="decimal" maxlength="20" value="${e(rawAmount(debt?-balance:balance))}" required>`,true)}${field('校正原因',`<input name="note" maxlength="300" placeholder="例如：核對銀行餘額、投資估值更新" required>`,true)}</div><p class="note">只改變資產餘額，不算收入或支出。${debt?'信用卡溢繳可輸入負數。':''}</p>`,async fd=>{const desired=M.parseAmount(fd.get('balance'),{signed:true})*(debt?-1:1),delta=desired-balance;if(!delta)throw new Error('餘額沒有變動，不需要校正。');await update(s=>s.transactions.push({id:uid(),date:today,kind:'adjustment',amount:delta,accountId:id,toAccountId:'',categoryId:'',note:fd.get('note').trim(),createdAt:new Date().toISOString()}));notify('已儲存餘額校正');});}
+function openTransaction(id){
+ const t=state.transactions.find(x=>x.id===id);if(!t&&!activeAccounts().length){openAccount();notify('先建立第一個帳戶，就能開始記帳');return;}
+ const kind=t?.kind||'expense',selected=t?.accountId||activeAccounts().find(a=>a.id===state.settings.defaultAccountId)?.id||activeAccounts()[0]?.id,a=account(selected),date=t?.date||(month===currentMonth?today:endOfMonth(month));
+ txDraft={quote:t?.rateSnapshot||latestQuote(a.currency),rateTouched:!!t,targetTouched:!!t,sourceCurrency:a.currency,targetCurrency:account(t?.toAccountId)?.currency||''};
+ showDialog(t?'編輯這筆紀錄':'記下這一筆',`<div class="form-grid">${field('類型',`<select name="kind" id="tx-kind">${(kind==='adjustment'?['adjustment']:['expense','income','transfer','refund']).map(k=>option(k,typeNames[k],kind)).join('')}</select>`)}${field('日期',`<input type="date" name="date" value="${e(date)}" max="${today}" required>`)}${field('帳戶',`<select name="accountId" id="tx-account" required>${accountOptions(selected)}</select>`)}<label class="field" id="tx-category-field"><span>分類</span><select name="categoryId" id="tx-category"></select></label><label class="field wide"><span id="tx-amount-label">原幣金額 · ${a.currency}</span><input class="amount-input" id="tx-amount" name="amount" inputmode="decimal" type="text" placeholder="0" value="${t?e(rawAmount(t.nativeAmount,a.currency)):''}" maxlength="20" autocomplete="off" required></label><div class="field wide" id="tx-rate-fields"><div class="form-grid">${field('入帳匯率 · 1 原幣 = 多少 TWD',`<input id="tx-rate" name="rate" inputmode="decimal" maxlength="30" value="${txDraft.quote?e(txDraft.quote.rate):''}" placeholder="自動載入，可改填銀行匯率">`)}${field('匯率日期',`<input id="tx-rate-date" type="date" value="${txDraft.quote?.rateDate||today}" max="${today}">`)}</div><button type="button" class="text-button" data-action="use-latest-rate">使用最新可得參考價</button><p class="note" id="tx-rate-help"></p><p class="note">${fxAttribution()} · 每日更新，非銀行成交價。</p></div><label class="field wide" id="tx-to-field"><span>轉入帳戶</span><select name="toAccountId" id="tx-to"><option value="">選擇轉入帳戶</option>${accountOptions(t?.toAccountId)}</select></label><div class="field wide" id="tx-target-field"><label><span class="field-label" id="tx-target-label">實際轉入金額</span><input id="tx-target-amount" name="toAmount" inputmode="decimal" maxlength="20" value="${t?.toAccountId?e(rawAmount(t.toNativeAmount,account(t.toAccountId).currency)):''}"></label><button type="button" class="text-button" data-action="estimate-transfer">依目前參考價估算</button><p class="note">估算未含手續費與銀行價差，可直接改填實收金額。另列的手續費請記一筆支出。</p></div><p class="fx-preview field wide" id="tx-preview" aria-live="polite"></p>${field('備註',`<input name="note" maxlength="300" value="${e(t?.note||'')}" placeholder="例如：午餐、十月薪資" autocomplete="off">`,true)}</div><p class="note" id="tx-hint"></p>${t?`<div class="danger-zone"><button type="button" class="text-button expense" data-action="delete-transaction" data-id="${e(t.id)}">刪除這筆紀錄</button></div>`:''}`,async fd=>{
+ const k=fd.get('kind'),source=account(fd.get('accountId')),target=account(fd.get('toAccountId')),n=M.parseAmount(fd.get('amount'),{signed:k==='adjustment',currency:source.currency}),financial=['expense','income','refund'].includes(k),q=financial?transactionQuote():null;
+ const to=k==='transfer'?(target?.currency===source.currency?n:M.parseAmount(fd.get('toAmount'),{currency:target?.currency})):null;
+ const value={id:t?.id||uid(),date:fd.get('date'),kind:k,amount:financial?M.convertToTwd(n,source.currency,q?.rate||1):null,nativeAmount:n,toNativeAmount:to,rateSnapshot:q,actualRateSnapshot:k==='transfer'&&target.currency!==source.currency?M.makeActualRateSnapshot(source.currency,target.currency,n,to):null,accountId:source.id,toAccountId:k==='transfer'?target?.id||'':'',categoryId:financial?fd.get('categoryId'):'',note:fd.get('note').trim(),createdAt:t?.createdAt||new Date().toISOString()};
+ M.validateTransaction(value,state);await update(s=>{const i=s.transactions.findIndex(x=>x.id===value.id);if(i>=0)s.transactions[i]=value;else s.transactions.push(value);if(!s.accounts.find(a=>a.id===value.accountId)?.archived)s.settings.defaultAccountId=value.accountId;});notify(t?'已更新這筆紀錄':'已記下一筆');
+ });updateTransactionFields(kind,t?.categoryId);if(a.currency!=='TWD')void refreshFx();
+}
+function updateTransactionFields(kind,selected){const categories=kind==='income'?M.categories.income:M.categories.expense,hasCategory=['expense','income','refund'].includes(kind);$('tx-category-field').hidden=!hasCategory;$('tx-category').disabled=!hasCategory;$('tx-category').required=hasCategory;$('tx-category').innerHTML=categories.map(c=>option(c.id,c.name,selected)).join('');$('tx-to-field').hidden=kind!=='transfer';$('tx-to').disabled=kind!=='transfer';$('tx-to').required=kind==='transfer';$('tx-hint').textContent=kind==='transfer'?'帳戶互轉與信用卡還款不計入收入或消費。':kind==='refund'?'退款會加回收款帳戶，並沖減退款當月的分類支出。':kind==='adjustment'?'帳戶對帳差額，不計入月收入或支出。':'日期須在帳戶期初日期之後，且不得晚於今天。';updateTransactionPreview();}
+function openAccount(id){const a=state.accounts.find(x=>x.id===id),used=a&&state.transactions.some(t=>t.accountId===id||t.toAccountId===id);showDialog(a?'編輯帳戶':'新增常用帳戶',`<p class="form-hint">選擇帳戶實際使用的幣別，金額以原幣輸入。期初餘額請填「尚未包含之後要登錄交易」的金額。</p><div class="form-grid">${field('帳戶名稱',`<input name="name" maxlength="60" placeholder="例如：日常銀行、美元存款" value="${e(a?.name||'')}" required>`,true)}${field('類型',`<select name="type" id="account-type" ${used?'disabled':''}>${M.accountTypes.map(t=>option(t.id,t.name,a?.type||'bank')).join('')}</select>`)}${field('帳戶幣別',`<select name="currency" id="account-currency" ${used?'disabled':''}>${currencyOptions(a?.currency||'TWD')}</select>`)}${field('期初日期',`<input name="openingDate" type="date" value="${a?.openingDate||today}" max="${today}" ${used?'disabled':''} required>`,true)}<label class="field wide"><span id="account-opening-label">期初餘額／欠款</span><input id="account-opening" name="openingBalance" inputmode="decimal" type="text" value="${a?e(rawAmount(isLiability(a.type)?-a.openingBalance:a.openingBalance,a.currency)):'0'}" maxlength="20" ${used?'disabled':''} required><small>${used?'已有交易，幣別、類型與期初資料已鎖定。請使用「校正目前餘額」對帳。':'資產帳戶填存款；負債帳戶填欠款。負數代表透支或信用卡溢繳。'}</small></label><p id="account-fx-preview" class="fx-preview field wide" aria-live="polite"></p></div><p class="note">外幣資產採每日參考匯率估值。${fxAttribution()}</p>${a?`<div class="danger-zone"><button type="button" class="text-button" data-action="archive-account" data-id="${e(a.id)}">${a.archived?'重新啟用帳戶':'封存這個帳戶'}</button>${!used?`<button type="button" class="text-button expense" style="margin-left:20px" data-action="delete-account" data-id="${e(a.id)}">刪除未使用帳戶</button>`:''}</div>`:''}`,async fd=>{const type=used?a.type:fd.get('type'),currency=used?a.currency:fd.get('currency'),amount=used?a.openingBalance:M.parseAmount(fd.get('openingBalance'),{signed:true,currency})*(isLiability(type)?-1:1);const value={id:a?.id||uid(),name:fd.get('name').trim(),type,currency,openingDate:used?a.openingDate:fd.get('openingDate'),openingBalance:amount,archived:a?.archived||false};await update(s=>{const i=s.accounts.findIndex(x=>x.id===value.id);if(i>=0)s.accounts[i]=value;else s.accounts.push(value);if(!s.settings.defaultAccountId)s.settings.defaultAccountId=value.id;});maybeRefreshFx();notify(a?'已更新帳戶':'帳戶已建立，可以開始記帳');});updateAccountPreview();if(a?.currency&&a.currency!=='TWD')void refreshFx();}
+function adjustAccount(id){const a=account(id),balance=M.balances(state,today).find(x=>x.id===id)?.balance||0,debt=isLiability(a.type);showDialog('校正目前餘額',`<p class="form-hint">${e(a.name)} · 目前${debt?'欠款':'餘額'} ${e(nativeMoney(debt?-balance:balance,a.currency))}。填入今天對帳後的實際原幣金額，差額會留下一筆校正紀錄。</p><div class="form-grid">${field(`${debt?'實際欠款':'實際餘額'} · ${a.currency}`,`<input class="amount-input" name="balance" inputmode="decimal" maxlength="20" value="${e(rawAmount(debt?-balance:balance,a.currency))}" required>`,true)}${field('校正原因',`<input name="note" maxlength="300" placeholder="例如：核對銀行餘額、投資估值更新" required>`,true)}</div><p class="note">只改變原幣餘額，不算收入或支出。${debt?'信用卡溢繳可輸入負數。':''}</p>`,async fd=>{const desired=M.parseAmount(fd.get('balance'),{signed:true,currency:a.currency})*(debt?-1:1),delta=desired-balance;if(!delta)throw new Error('餘額沒有變動，不需要校正。');await update(s=>s.transactions.push({id:uid(),date:today,kind:'adjustment',amount:null,nativeAmount:delta,toNativeAmount:null,rateSnapshot:null,actualRateSnapshot:null,accountId:id,toAccountId:'',categoryId:'',note:fd.get('note').trim(),createdAt:new Date().toISOString()}));notify('已儲存餘額校正');});}
 function budgetDialog(){const budgetMonth=month;const b=state.budgets[budgetMonth]||{total:0,categories:{}};showDialog(monthName(budgetMonth)+'預算',`<p class="form-hint">總預算與分類上限各自追蹤，不會相加。留白或 0 表示不設上限。</p>${field('本月總預算 · NT$',`<input class="amount-input" name="total" inputmode="decimal" maxlength="20" value="${b.total?e(rawAmount(b.total)):''}" placeholder="0">`)}<h3 class="subheading">分類預算（選填）</h3><div class="category-budgets">${M.categories.expense.map(c=>field(e(c.name),`<input name="budget:${e(c.id)}" inputmode="decimal" maxlength="20" placeholder="不設上限" value="${b.categories[c.id]?e(rawAmount(b.categories[c.id])):''}">`)).join('')}</div>`,async fd=>{const next={total:fd.get('total').trim()?M.parseAmount(fd.get('total')):0,categories:{}};for(const c of M.categories.expense){const text=fd.get('budget:'+c.id).trim();if(text)next.categories[c.id]=M.parseAmount(text);}await update(s=>s.budgets[budgetMonth]=next);notify('本月預算已儲存');});}
 function download(name,text,type){const blob=new Blob([text],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 async function backup(){if(!ready)return;const stamp=new Date().toISOString();download(`收支日常-完整備份-${today}-${Date.now()}.json`,JSON.stringify(state),'application/json');try{await update(s=>s.settings.lastBackupAt=stamp);notify('備份已下載，請妥善保存');}catch(err){notify('備份已下載；備份時間未能儲存：'+err.message);}}
-function csv(rows){const cell=x=>{let v=String(x??'');if(/^[\s]*[=+\-@]/.test(v))v="'"+v;return '"'+v.replaceAll('"','""')+'"';};const out=[['日期','類型','金額（TWD）','帳戶','轉入帳戶','分類','備註'],...rows.map(t=>[t.date,typeNames[t.kind],rawAmount(t.amount),accountName(t.accountId),t.toAccountId?accountName(t.toAccountId):'',category(t.categoryId)?.name||'',t.note])];download(`收支日常-明細-${today}.csv`,'\uFEFF'+out.map(r=>r.map(cell).join(',')).join('\r\n'),'text/csv;charset=utf-8');notify('CSV 已下載');}
-async function restore(file){if(!file)return;if(file.size>25*1024*1024)throw new Error('備份檔超過 25 MB。');let parsed;try{parsed=JSON.parse(await file.text());}catch{throw new Error('這不是有效的 JSON 備份檔。');}const imported=M.validateState(parsed);showDialog('還原完整帳本',`<p class="form-hint">此操作會用備份取代目前的新帳本；原本的月報檢視器資料不受影響。</p><div class="restore-summary"><strong>備份：${imported.accounts.length} 個帳戶 / ${imported.transactions.length.toLocaleString()} 筆交易</strong><span>目前：${state.accounts.length} 個帳戶 / ${state.transactions.length.toLocaleString()} 筆交易</span><button type="button" class="text-button" data-action="backup">先下載目前帳本的備份 ↗</button></div><label class="checkbox-line"><input type="checkbox" name="confirmed" required>我已確認備份內容，並同意取代目前帳本。</label>`,async fd=>{if(fd.get('confirmed')!=='on')throw new Error('請先確認還原內容。');await update(s=>{s.accounts=imported.accounts;s.transactions=imported.transactions;s.budgets=imported.budgets;s.settings=imported.settings;});filter={query:'',kind:'',account:'',category:'',all:false};notify('帳本已還原');},'確認還原');}
+function csv(rows){const cell=x=>{let v=String(x??'');if(/^[\s]*[=+\-@]/.test(v))v="'"+v;return '"'+v.replaceAll('"','""')+'"';};const out=[['日期','類型','原幣','原幣金額','入帳金額（TWD）','帳戶','轉入帳戶','轉入幣別','實際轉入金額','入帳匯率（TWD/原幣）','匯率日期','匯率來源','分類','備註'],...rows.map(t=>{const a=account(t.accountId),b=account(t.toAccountId);return [t.date,typeNames[t.kind],a.currency,rawAmount(t.nativeAmount,a.currency),rawAmount(t.amount),a.name,b?.name||'',b?.currency||'',b?rawAmount(t.toNativeAmount,b.currency):'',t.rateSnapshot?.rate??'',t.rateSnapshot?.rateDate||'',t.rateSnapshot?.source||'',category(t.categoryId)?.name||'',t.note];})];download(`收支日常-明細-${today}.csv`,'\uFEFF'+out.map(r=>r.map(cell).join(',')).join('\r\n'),'text/csv;charset=utf-8');notify('CSV 已下載');}
+async function restore(file){if(!file)return;if(file.size>45*1024*1024)throw new Error('備份檔超過 45 MB。');let parsed;try{parsed=JSON.parse(await file.text());}catch{throw new Error('這不是有效的 JSON 備份檔。');}const imported=M.validateState(parsed);showDialog('還原完整帳本',`<p class="form-hint">此操作會用備份取代目前的新帳本；原本的月報檢視器資料不受影響。</p><div class="restore-summary"><strong>備份：${imported.accounts.length} 個帳戶 / ${imported.transactions.length.toLocaleString()} 筆交易</strong><span>目前：${state.accounts.length} 個帳戶 / ${state.transactions.length.toLocaleString()} 筆交易</span><button type="button" class="text-button" data-action="backup">先下載目前帳本的備份 ↗</button></div><label class="checkbox-line"><input type="checkbox" name="confirmed" required>我已確認備份內容，並同意取代目前帳本。</label>`,async fd=>{if(fd.get('confirmed')!=='on')throw new Error('請先確認還原內容。');await update(s=>{s.accounts=imported.accounts;s.transactions=imported.transactions;s.budgets=imported.budgets;s.settings=imported.settings;});filter={query:'',kind:'',account:'',category:'',all:false};maybeRefreshFx();notify('帳本已還原');},'確認還原');}
 form.addEventListener('submit',async event=>{event.preventDefault();if(busy||!dialogSubmit)return;$('dialog-error').hidden=true;$('save-button').disabled=true;try{await dialogSubmit(new FormData(form));dialog.close();}catch(err){$('dialog-error').textContent=err.message||'儲存失敗，請再試一次。';$('dialog-error').hidden=false;}finally{$('save-button').disabled=false;}});
 dialog.addEventListener('cancel',event=>{if(busy)event.preventDefault();else setTimeout(reload,0);});
-document.addEventListener('click',async event=>{const button=event.target.closest('[data-action],[data-view]');if(!button||button.disabled)return;if(button.dataset.view){setView(button.dataset.view);return;}const id=button.dataset.id;try{switch(button.dataset.action){case 'add-transaction':openTransaction();break;case 'edit-transaction':openTransaction(id);break;case 'add-account':openAccount();break;case 'edit-account':openAccount(id);break;case 'adjust-account':adjustAccount(id);break;case 'budget':budgetDialog();break;case 'close-dialog':if(!busy){dialog.close();await reload();}break;case 'previous-month':if(month>'1900-01'){month=shiftMonth(month,-1);page=1;render();}break;case 'next-month':if(month<currentMonth){month=shiftMonth(month,1);page=1;render();}break;case 'filter-category':filter.category=id;filter.kind='';filter.all=false;page=1;setView('records');break;case 'account-records':filter.account=id;filter.all=true;page=1;setView('records');break;case 'page-prev':page=Math.max(1,page-1);$('records-region').innerHTML=recordsContent();break;case 'page-next':page++;$('records-region').innerHTML=recordsContent();break;case 'backup':await backup();break;case 'restore':$('restore-file').click();break;case 'export-filtered':csv(filtered());break;case 'export-all':csv([...state.transactions].sort((a,b)=>a.date.localeCompare(b.date)));break;case 'delete-transaction':confirmAction('刪除這筆紀錄？','帳戶餘額、預算與月分析都會一併重算。',async()=>{await update(s=>s.transactions=s.transactions.filter(t=>t.id!==id));notify('已刪除紀錄');},'刪除紀錄');break;case 'archive-account':{const a=account(id);confirmAction(a.archived?'重新啟用帳戶？':'封存帳戶？','餘額與所有歷史交易會保留。封存後不再出現在新增交易的帳戶選單。',async()=>{await update(s=>{s.accounts.find(a=>a.id===id).archived=!a.archived;if(s.settings.defaultAccountId===id)s.settings.defaultAccountId='';});notify('已更新帳戶狀態');});break;}case 'delete-account':confirmAction('刪除未使用的帳戶？','只有沒有任何交易的帳戶可以刪除，期初餘額也會移除。',async()=>{await update(s=>{if(s.transactions.some(t=>t.accountId===id||t.toAccountId===id))throw new Error('帳戶已有交易，請改用封存。');s.accounts=s.accounts.filter(a=>a.id!==id);if(s.settings.defaultAccountId===id)s.settings.defaultAccountId='';});notify('已刪除帳戶');},'刪除帳戶');break;case 'persist':{const granted=await navigator.storage?.persist?.();const message=granted?'瀏覽器已允許持久保存。仍建議定期下載備份。':'這個瀏覽器尚未允許持久保存，請定期下載備份。';if($('persist-status'))$('persist-status').textContent=message;notify(message);break;}}}catch(err){if(dialog.open){$('dialog-error').textContent=err.message;$('dialog-error').hidden=false;}else error(err.message);}});
-document.addEventListener('change',event=>{const t=event.target;if(t.id==='month'){if(M.validDate(t.value+'-01')&&t.value<=currentMonth){month=t.value;page=1;render();}else t.value=month;}if(t.id==='as-of'){if(M.validDate(t.value)&&t.value<=today){asOf=t.value;render();}else t.value=asOf;}if(t.id==='tx-kind')updateTransactionFields(t.value);if(['filter-kind','filter-account','filter-category','filter-all'].includes(t.id)){const key=t.id.slice(7);filter[key]=key==='all'?t.checked:t.value;page=1;$('records-region').innerHTML=recordsContent();}});
-document.addEventListener('input',event=>{if(event.target.id==='filter-query'){filter.query=event.target.value;page=1;$('records-region').innerHTML=recordsContent();}});
+document.addEventListener('click',async event=>{const button=event.target.closest('[data-action],[data-view]');if(!button||button.disabled)return;if(button.dataset.view){setView(button.dataset.view);return;}const id=button.dataset.id;try{switch(button.dataset.action){case 'refresh-fx':await refreshFx(true);break;case 'use-latest-rate':{const draft=txDraft,context=txContext();await refreshFx();if(!dialog.open||!$('tx-account')||draft!==txDraft||context!==txContext())break;if(!latestQuote(selectedTxAccount().currency))throw new Error('暫無可用參考價，請手動輸入銀行實際匯率。');selectLatestRate();updateTransactionPreview();break;}case 'estimate-transfer':{const draft=txDraft,context=txContext();await refreshFx();if(!dialog.open||!$('tx-account')||draft!==txDraft||context!==txContext())break;const a=selectedTxAccount(),b=account($('tx-to').value);if(!b||!latestQuote(a.currency)||!latestQuote(b.currency))throw new Error('暫無換算所需匯率，請直接填寫實際轉入金額。');txDraft.targetTouched=false;suggestTransferAmount();updateTransactionPreview();break;}case 'add-transaction':openTransaction();break;case 'edit-transaction':openTransaction(id);break;case 'add-account':openAccount();break;case 'edit-account':openAccount(id);break;case 'adjust-account':adjustAccount(id);break;case 'budget':budgetDialog();break;case 'close-dialog':if(!busy){dialog.close();await reload();}break;case 'previous-month':if(month>'1900-01'){month=shiftMonth(month,-1);page=1;render();}break;case 'next-month':if(month<currentMonth){month=shiftMonth(month,1);page=1;render();}break;case 'filter-category':filter.category=id;filter.kind='';filter.all=false;page=1;setView('records');break;case 'account-records':filter.account=id;filter.all=true;page=1;setView('records');break;case 'page-prev':page=Math.max(1,page-1);$('records-region').innerHTML=recordsContent();break;case 'page-next':page++;$('records-region').innerHTML=recordsContent();break;case 'backup':await backup();break;case 'restore':$('restore-file').click();break;case 'export-filtered':csv(filtered());break;case 'export-all':csv([...state.transactions].sort((a,b)=>a.date.localeCompare(b.date)));break;case 'delete-transaction':confirmAction('刪除這筆紀錄？','帳戶餘額、預算與月分析都會一併重算。',async()=>{await update(s=>s.transactions=s.transactions.filter(t=>t.id!==id));notify('已刪除紀錄');},'刪除紀錄');break;case 'archive-account':{const a=account(id);confirmAction(a.archived?'重新啟用帳戶？':'封存帳戶？','餘額與所有歷史交易會保留。封存後不再出現在新增交易的帳戶選單。',async()=>{await update(s=>{s.accounts.find(a=>a.id===id).archived=!a.archived;if(s.settings.defaultAccountId===id)s.settings.defaultAccountId='';});notify('已更新帳戶狀態');});break;}case 'delete-account':confirmAction('刪除未使用的帳戶？','只有沒有任何交易的帳戶可以刪除，期初餘額也會移除。',async()=>{await update(s=>{if(s.transactions.some(t=>t.accountId===id||t.toAccountId===id))throw new Error('帳戶已有交易，請改用封存。');s.accounts=s.accounts.filter(a=>a.id!==id);if(s.settings.defaultAccountId===id)s.settings.defaultAccountId='';});notify('已刪除帳戶');},'刪除帳戶');break;case 'persist':{const granted=await navigator.storage?.persist?.();const message=granted?'瀏覽器已允許持久保存。仍建議定期下載備份。':'這個瀏覽器尚未允許持久保存，請定期下載備份。';if($('persist-status'))$('persist-status').textContent=message;notify(message);break;}}}catch(err){if(dialog.open){$('dialog-error').textContent=err.message;$('dialog-error').hidden=false;}else error(err.message);}});
+document.addEventListener('change',event=>{const t=event.target;if(t.id==='month'){if(M.validDate(t.value+'-01')&&t.value<=currentMonth){month=t.value;page=1;render();}else t.value=month;}if(t.id==='as-of'){if(M.validDate(t.value)&&t.value<=today){asOf=t.value;render();}else t.value=asOf;}if(t.id==='tx-kind'){updateTransactionFields(t.value);if(!txDraft.targetTouched)suggestTransferAmount();}if(t.id==='tx-account'){const currency=selectedTxAccount().currency;if(currency!==txDraft.sourceCurrency){selectLatestRate();txDraft.sourceCurrency=currency;txDraft.targetTouched=false;suggestTransferAmount();}updateTransactionPreview();if(currency!=='TWD')void refreshFx();}if(t.id==='tx-to'){const currency=account(t.value)?.currency||'';if(currency!==txDraft.targetCurrency){txDraft.targetCurrency=currency;txDraft.targetTouched=false;suggestTransferAmount();}updateTransactionPreview();if(currency&&currency!=='TWD')void refreshFx();}if(t.id==='tx-rate-date'){txDraft.rateTouched=true;txDraft.quote=null;updateTransactionPreview();}if(t.id==='account-type'&&t.value==='forex'&&$('account-currency').value==='TWD'){$('account-currency').value='USD';updateAccountPreview();void refreshFx();}if(t.id==='account-currency'){updateAccountPreview();if(t.value!=='TWD')void refreshFx();}if(['filter-kind','filter-account','filter-category','filter-all'].includes(t.id)){const key=t.id.slice(7);filter[key]=key==='all'?t.checked:t.value;page=1;$('records-region').innerHTML=recordsContent();}});
+document.addEventListener('input',event=>{const t=event.target;if(t.id==='tx-amount'){if(!txDraft.targetTouched)suggestTransferAmount();updateTransactionPreview();}if(t.id==='tx-target-amount'){txDraft.targetTouched=true;updateTransactionPreview();}if(t.id==='tx-rate'){txDraft.rateTouched=true;txDraft.quote=null;updateTransactionPreview();}if(t.id==='account-opening')updateAccountPreview();if(event.target.id==='filter-query'){filter.query=event.target.value;page=1;$('records-region').innerHTML=recordsContent();}});
 $('restore-file').addEventListener('change',async event=>{try{await restore(event.target.files[0]);}catch(err){error('無法還原：'+err.message);}finally{event.target.value='';}});
-window.addEventListener('focus',reload);
-setInterval(()=>{if(syncClock()&&ready)render();},60000);
-(async()=>{try{db=await openDB();db.onversionchange=()=>{db.close();ready=false;error('帳本儲存格式已更新，請重新整理網頁。');};const raw=await readDB();state=raw?M.validateState(raw):M.emptyState();ready=true;$('storage-status').textContent='儲存在此裝置';try{channel=new BroadcastChannel('eric-money-ledger-updates');channel.onmessage=()=>{if(dialog.open)error('另一個分頁已更新帳本。請先取消目前表單再重開，避免覆蓋資料。');else reload();};}catch{}setView(location.hash.slice(1));if(state.transactions.length&&(!state.settings.lastBackupAt||Date.now()-Date.parse(state.settings.lastBackupAt)>7*86400000))notify('記得下載一份備份，把帳本留在自己手上');}catch(err){error('無法開啟本機帳本：'+err.message+'。原始資料不會被覆寫。');$('main').innerHTML=empty('帳本暫時無法開啟','請確認瀏覽器允許網站儲存資料，或使用原本的瀏覽器重新開啟。');$('storage-status').textContent='儲存不可用';}})();
+window.addEventListener('focus',()=>{void reload();if(ready)maybeRefreshFx();});
+setInterval(()=>{if(syncClock()&&ready)render();if(ready&&document.visibilityState==='visible'&&Date.now()-lastAutoFx>=3600000)maybeRefreshFx();},60000);
+(async()=>{try{db=await openDB();db.onversionchange=()=>{db.close();ready=false;error('帳本儲存格式已更新，請重新整理網頁。');};const raw=await readDB();state=raw?M.validateState(raw):M.emptyState();ready=true;$('storage-status').textContent='儲存在此裝置';try{channel=new BroadcastChannel('eric-money-ledger-updates');channel.onmessage=()=>{if(dialog.open)error('另一個分頁已更新帳本。請先取消目前表單再重開，避免覆蓋資料。');else reload();};}catch{}setView(location.hash.slice(1));maybeRefreshFx();if(state.transactions.length&&(!state.settings.lastBackupAt||Date.now()-Date.parse(state.settings.lastBackupAt)>7*86400000))notify('記得下載一份備份，把帳本留在自己手上');}catch(err){error('無法開啟本機帳本：'+err.message+'。原始資料不會被覆寫。');$('main').innerHTML=empty('帳本暫時無法開啟','請確認瀏覽器允許網站儲存資料，或使用原本的瀏覽器重新開啟。');$('storage-status').textContent='儲存不可用';}})();
 })();
 
 </script>
