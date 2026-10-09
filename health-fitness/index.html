@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex,nofollow">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#f6f5f0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-aGNfORyYh6LfBxk3DegCM8YhX/6fBc+aoBNDBq9ciTw='; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-S3LmpIiHiQs3ztAiriOldVrMZs2ixx3VaUei4mQ/3YU='; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
 <title>日日動 · 健康紀錄與每日健身規劃</title>
 <style>
 :root {
@@ -293,6 +293,37 @@ button.phase-card:active { transform: translateY(1px); }
 .care-grid > .panel + .panel { margin-top: 0; }
 .care-grid .section-head { align-items: flex-start; flex-wrap: wrap; gap: 10px; }
 .care-grid .section-head .muted { max-width: 54ch; }
+.training-nutrition { min-width: 0; margin-bottom: 21px; }
+.training-nutrition .section-head { align-items: flex-start; flex-wrap: wrap; gap: 13px 18px; margin-bottom: 14px; }
+.training-nutrition h2 { font-size: 20px; font-weight: 550; letter-spacing: -.025em; line-height: 1.5; overflow-wrap: anywhere; }
+.training-nutrition .section-head > div { min-width: 0; }
+.training-nutrition .muted, .training-nutrition .note, .training-nutrition small, .training-nutrition .eyebrow, .training-nutrition .badge, .training-nutrition .phase-tag { font-size: 12px; }
+.training-nutrition .eyebrow { letter-spacing: .065em; }
+.training-nutrition .muted, .training-nutrition .note { line-height: 1.85; overflow-wrap: anywhere; }
+.training-nutrition > .note:last-child { margin-top: 15px; }
+.training-nutrition-meta { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; min-width: 0; margin: 13px 0 0; }
+.training-nutrition-meta > span, .training-nutrition-meta > small, .training-nutrition-meta > p { display: inline-flex; align-items: center; flex-wrap: wrap; gap: 4px; max-width: 100%; margin: 0; padding: 5px 9px; border: 1px solid #dce4d5; border-radius: 7px; background: #f1f5eb; color: #50694f; font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
+.training-nutrition-meta strong { font-weight: 550; }
+.training-nutrition-meta small { font-size: 12px; }
+.training-focus { margin-top: 15px; padding: 11px 14px; border-left: 2px solid #b98b6f; border-radius: 0 8px 8px 0; background: #f7f2e9; color: #5f6958; font-size: 13px; line-height: 1.85; overflow-wrap: anywhere; }
+.training-focus strong { color: var(--ink); font-weight: 550; }
+.fuel-timeline { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; gap: 12px; min-width: 0; margin-top: 20px; }
+.fuel-step { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; padding: 18px; border: 1px solid #e0e5d8; border-radius: 12px; background: #f8faf3; }
+.fuel-when { display: block; max-width: 100%; color: #63755b; font-size: 12px; font-weight: 500; font-variant-numeric: tabular-nums; line-height: 1.8; white-space: normal; overflow-wrap: anywhere; }
+.fuel-when time, .fuel-when span, .fuel-when small { max-width: 100%; font-size: inherit; white-space: normal; overflow-wrap: anywhere; }
+.fuel-step h3 { margin-top: 8px; color: var(--ink); font-size: 15px; font-weight: 550; line-height: 1.65; overflow-wrap: anywhere; }
+.fuel-items { width: 100%; min-width: 0; margin: 11px 0 0; padding-left: 18px; color: #4f6555; font-size: 13px; line-height: 1.85; }
+.fuel-items li { padding-left: 1px; overflow-wrap: anywhere; }
+.fuel-items li + li { margin-top: 5px; }
+.fuel-items li::marker { color: #91a785; }
+.fuel-note { width: 100%; margin-top: 13px; padding-top: 11px; border-top: 1px solid #e0e7d6; color: var(--muted); font-size: 12px; line-height: 1.85; overflow-wrap: anywhere; }
+.fuel-step small { font-size: 12px; }
+.meal-purpose { display: inline-flex; align-items: center; max-width: 100%; margin-top: 9px; padding: 4px 8px; border: 1px solid #dce5d2; border-radius: 6px; background: #eef4e7; color: #4d6c46; font-size: 12px; font-weight: 400; line-height: 1.7; overflow-wrap: anywhere; }
+.meal-purpose small { font-size: inherit; }
+.care-summary.compact { gap: 10px 17px; padding: 14px 17px; }
+.care-summary .training-nutrition-meta { margin-top: 8px; }
+.care-summary .training-focus { margin-top: 8px; padding: 0; border: 0; border-radius: 0; background: transparent; font-size: 12px; }
+.care-summary small { font-size: 12px; }
 .meal-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 11px; min-width: 0; margin-top: 17px; }
 .meal-card { min-width: 0; padding: 16px 17px; border: 1px solid #e1e6da; border-radius: 11px; background: #fbfcf6; }
 .meal-label { display: flex; align-items: center; gap: 7px; margin: 0 0 6px; color: #6b765f; font-size: 10px; font-weight: 500; letter-spacing: .075em; line-height: 1.6; }
@@ -451,6 +482,8 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
   .care-grid { gap: 16px; }
   .meal-card { padding: 15px 16px; }
   .sleep-event { grid-template-columns: 91px minmax(0, 1fr); column-gap: 14px; }
+  .fuel-timeline { gap: 10px; }
+  .fuel-step { padding: 16px; }
 }
 
 @media (max-width: 760px) {
@@ -477,6 +510,8 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
   .care-grid { grid-template-columns: minmax(0, 1fr); }
   .care-summary { gap: 10px 17px; }
   .sleep-event { grid-template-columns: 108px minmax(0, 1fr); }
+  .fuel-timeline { grid-template-columns: minmax(0, 1fr); gap: 11px; }
+  .fuel-step { padding: 17px 18px; }
 }
 
 @media (max-width: 560px) {
@@ -641,6 +676,19 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
   .care-status { font-size: 10px; }
   .care-form-section { margin-top: 21px; padding-top: 17px; }
   .care-form-section > h3, .care-form-section > legend { font-size: 14px; }
+  .training-nutrition { margin-bottom: 17px; }
+  .training-nutrition h2 { font-size: 19px; }
+  .training-nutrition .section-head { gap: 11px; margin-bottom: 13px; }
+  .training-nutrition-meta { gap: 7px; margin-top: 12px; }
+  .training-nutrition-meta > span, .training-nutrition-meta > small, .training-nutrition-meta > p { padding: 5px 8px; font-size: 12px; }
+  .training-focus { margin-top: 13px; padding: 11px 12px; font-size: 13px; }
+  .fuel-timeline { margin-top: 17px; }
+  .fuel-step { padding: 16px; border-radius: 11px; }
+  .fuel-when { font-size: 12px; }
+  .fuel-step h3 { font-size: 15px; }
+  .fuel-items { font-size: 13px; }
+  .fuel-note { font-size: 12px; }
+  .meal-purpose { font-size: 12px; }
 }
 
 @media (max-width: 370px) {
@@ -733,8 +781,8 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
 
-  const SCHEMA = 'eric-health/3';
-  const LEGACY_SCHEMAS = ['eric-health/1', 'eric-health/2'];
+  const SCHEMA = 'eric-health/4';
+  const LEGACY_SCHEMAS = ['eric-health/1', 'eric-health/2', 'eric-health/3'];
   const MAX_BYTES = 20 * 1024 * 1024;
   const FIRST_DATE = '1900-01-01';
   const GOALS = ['habit', 'strength', 'fitness', 'fatloss'];
@@ -1006,7 +1054,7 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
     return value;
   }
 
-  function cleanCareProfile(input) {
+  function cleanCareProfile(input, allowMissingTrainingTime) {
     if (input === null) return null;
     const value = object(input, '飲食睡眠設定');
     const allergens = list(value.allergens, '過敏原', ALLERGENS.length).map(function (allergen) { return choice(allergen, ALLERGENS, '過敏原'); });
@@ -1018,6 +1066,8 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
     if (allergyStatus === 'listed' && !hasAllergies) fail('食物過敏狀態', '請至少選擇一項過敏原，或填寫其他過敏。');
     const sleepHours = number(value.sleepHours, '睡眠預留時數', 7, 9, false, true);
     if (sleepHours !== null && !Number.isInteger(sleepHours * 2)) fail('睡眠預留時數', '請以半小時為單位設定，範圍為 7–9 小時。');
+    const hasTrainingTime = Object.prototype.hasOwnProperty.call(value, 'trainingTime');
+    if (!hasTrainingTime && !allowMissingTrainingTime) fail('訓練開始時間', '此版本設定必須包含 trainingTime，未設定時請使用 null。');
     return {
       diet: choice(value.diet, ['omnivore', 'vegetarian', 'vegan'], '飲食型態'),
       mealMode: choice(value.mealMode, ['out', 'home', 'mixed'], '用餐方式'),
@@ -1025,6 +1075,7 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
       allergens: allergens,
       otherAllergies: otherAllergies,
       nutritionCare: choice(value.nutritionCare, ['none', 'yes', 'unsure'], '專業飲食照護需求'),
+      trainingTime: hasTrainingTime ? clockTime(value.trainingTime, '訓練開始時間') : null,
       wakeTime: clockTime(value.wakeTime, '預計起床時間'),
       sleepHours: sleepHours,
       schedule: choice(value.schedule, ['regular', 'shift', 'unsure'], '作息型態'),
@@ -1062,16 +1113,16 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
     }
     const checkins = list(value.checkins, '健康紀錄', 100000).map(function (item, index) { return cleanCheckin(item, index, latest); });
     const sessions = list(value.sessions, '訓練紀錄', 100000).map(function (item, index) { return cleanSession(item, index, latest); });
-    // Version 1 backups may lack program; versions 2 and 3 require it. Care
-    // fields are required in v3 and added only when missing from older backups.
-    // Always output v3 so older clients reject instead of dropping new records.
+    // Version 1 may lack program; v2 onward require it. Care fields remain
+    // mandatory from v3. Only v1-v3 may omit trainingTime inside careProfile.
+    // Always output v4 so older clients reject instead of dropping new fields.
     const hasProgram = Object.prototype.hasOwnProperty.call(value, 'program');
     if (!hasProgram && value.schema !== 'eric-health/1') fail('月計畫', '此版本資料必須包含 program 欄位，未建立時請使用 null。');
     const program = hasProgram ? cleanProgram(value.program, latest) : null;
     const hasCareProfile = Object.prototype.hasOwnProperty.call(value, 'careProfile');
     const hasCareLogs = Object.prototype.hasOwnProperty.call(value, 'careLogs');
-    if (value.schema === SCHEMA && (!hasCareProfile || !hasCareLogs)) fail('飲食睡眠資料', '此版本資料必須包含 careProfile 與 careLogs，未設定時分別使用 null 與空陣列。');
-    const careProfile = hasCareProfile ? cleanCareProfile(value.careProfile) : null;
+    if ((value.schema === SCHEMA || value.schema === 'eric-health/3') && (!hasCareProfile || !hasCareLogs)) fail('飲食睡眠資料', '此版本資料必須包含 careProfile 與 careLogs，未設定時分別使用 null 與空陣列。');
+    const careProfile = hasCareProfile ? cleanCareProfile(value.careProfile, value.schema !== SCHEMA) : null;
     const careLogs = hasCareLogs ? list(value.careLogs, '飲食睡眠紀錄', 100000).map(function (item, index) { return cleanCareLog(item, index, latest); }) : [];
     const ids = new Set();
     if (program) ids.add(program.id);
@@ -1370,6 +1421,8 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
   // clock calculations are product templates, not official meal prescriptions.
   // https://www.mohw.gov.tw/cp-4251-50222-1.html
   // https://www.cdc.gov/sleep/about/index.html
+  // https://www.mayoclinic.org/healthy-lifestyle/fitness/in-depth/exercise/art-20045506
+  // https://www.mayoclinichealthsystem.org/hometown-health/speaking-of-health/5-nutrition-tips-to-maximize-your-workouts
   const DAY_MS = 86400000;
   const ALLERGENS = ['milk', 'egg', 'soy', 'wheat', 'gluten', 'peanut', 'nuts', 'sesame', 'fish', 'shellfish'];
   const PLANT_DIETS = ['omnivore', 'vegetarian', 'vegan'];
@@ -1505,7 +1558,7 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
   }
 
   function missingMeal(id) {
-    return { id: id, label: MEAL_LABELS[id], title: '這餐需要另外搭配', items: [], tip: '目前食材庫沒有符合全部條件的組合。請依已知可食用的食材，與營養師另行討論搭配。' };
+    return { id: id, label: MEAL_LABELS[id], title: '這餐需要另外搭配', items: [], purpose: '先確認符合飲食方式與過敏限制的搭配。', tip: '目前食材庫沒有符合全部條件的組合。請依已知可食用的食材，與營養師另行討論搭配。' };
   }
 
   function buildMeal(id, option, care) {
@@ -1517,15 +1570,15 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
     const ids = [grain, protein].concat(vegetables, [fruit]);
     const extra = select(option.extra, care);
     if (extra) ids.push(extra);
-    return { id: id, label: MEAL_LABELS[id], title: FOOD[grain].name + '與' + FOOD[protein].name + '餐盤', items: ids.map(function (foodId) { return FOOD[foodId].detail; }), tip: mealTip(care) };
+    return { id: id, label: MEAL_LABELS[id], title: FOOD[grain].name + '與' + FOOD[protein].name + '餐盤', items: ids.map(function (foodId) { return FOOD[foodId].detail; }), purpose: '保留主食、蛋白質食物與蔬果的均衡搭配。', tip: mealTip(care) };
   }
 
   function trainingGoal(state, date) {
     const program = state.program;
-    return program && date >= program.startDate && date <= program.endDate ? program.profile.goal : state.profile.goal;
+    return program && date >= program.startDate && date <= program.endDate ? program.profile.goal : state.profile ? state.profile.goal : null;
   }
 
-  function nutritionPlan(state, date, trainingKind) {
+  function nutritionPlan(state, date, training) {
     const scope = ageStatus(state);
     if (scope === 'setup') return nutritionResult('setup', '先完成基本設定', '請先在設定填寫年齡等基本資料，再建立飲食偏好。這份通用餐食模板適用於 18–64 歲成人。');
     if (scope === 'review') return nutritionResult('review', '飲食需求需要另外規劃', '目前年齡不在 18–64 歲通用模板範圍。可保留飲食紀錄，並依自己的需求與營養師另行討論。');
@@ -1539,7 +1592,8 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
 
     const dayNumber = Math.floor(new Date(date + 'T00:00:00.000Z').getTime() / DAY_MS);
     const rotation = ((dayNumber % 7) + 7) % 7;
-    const result = nutritionResult('ready', '當日餐食搭配', SOURCE_NOTE);
+    const mealTitle = training.kind === 'strength' ? (training.goal === 'strength' ? '增肌目標・肌力日三餐' : '肌力日・三餐搭配') : training.kind === 'cardio' ? '有氧日・三餐搭配' : training.kind === 'recovery' ? '恢復日・三餐搭配' : '均衡三餐・待課表調整';
+    const result = nutritionResult('ready', mealTitle, SOURCE_NOTE);
     result.meals = ['breakfast', 'lunch', 'dinner'].map(function (id) { return buildMeal(id, MENUS[id][rotation], care); });
     result.tips = [
       '三餐時間可依作息、飢餓感與活動調整；日常搭配全穀雜糧、蛋白質食物、蔬菜及水果，餐點份量由實際需求另行調整。',
@@ -1547,15 +1601,131 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
     ];
     if (care.diet === 'vegan' || care.allergens.includes('milk')) result.tips.push('這份範例沒有把植物飲品視為乳品的營養等值替代；乳品排除後的完整營養需求，可與營養師討論適合自己的食物搭配。');
     else result.tips.push('國健署「我的餐盤」也包含乳品與堅果種子；選用時仍以自己的飲食方式和已知過敏限制為準。');
-    if (trainingGoal(state, date) === 'strength') result.tips.push('肌力目標：每餐保留一項符合飲食方式與過敏限制的蛋白質食物；這份模板不指定克數或熱量。');
-
-    if (trainingKind === 'strength' || trainingKind === 'cardio') {
-      const fruit = select([['banana'], ['guava'], ['apple'], ['orange'], ['papaya'], ['pear'], ['kiwi']][rotation], care);
-      const companion = select(['yogurt', 'soyMilk', 'chickpeas'], care);
-      if (!fruit || !companion) result.meals.push(missingMeal('snack'));
-      else result.meals.push({ id: 'snack', label: MEAL_LABELS.snack, title: '依飢餓感選用的小點心', items: [FOOD[fruit].detail, FOOD[companion].detail], tip: '這天有安排活動；若兩餐間隔較長或覺得餓，可以選用，不需要為了課表額外強迫進食。' + mealTip(care) });
-    } else result.tips.push('這天依原有三餐與飢餓感安排即可，恢復日同樣保留均衡搭配。');
+    if (training.goal === 'strength' || training.goal === 'fatloss') result.tips.push('把符合飲食方式與過敏限制的蛋白質食物分配在三餐，同時保留主食與蔬果；這份模板不指定克數或熱量，也不自動減餐。');
+    if (training.kind !== 'strength' && training.kind !== 'cardio') result.tips.push('這天依原有三餐與飢餓感安排即可，恢復日同樣保留均衡搭配，不因沒有訓練就跳餐。');
     return result;
+  }
+
+  function clockMinutes(value) {
+    const parts = value.split(':').map(Number);
+    return parts[0] * 60 + parts[1];
+  }
+
+  function trainingInfo(state, date, plan) {
+    const programActive = state.program && date >= state.program.startDate && date <= state.program.endDate;
+    const goal = trainingGoal(state, date);
+    const phase = plan.phase ? { index: plan.phase.index, title: plan.phase.title, focus: plan.phase.focus } : null;
+    const trainingTime = state.careProfile && state.careProfile.trainingTime != null ? state.careProfile.trainingTime : null;
+    const active = plan.kind === 'strength' || plan.kind === 'cardio';
+    const goalFocus = {
+      habit: '用規律三餐支持習慣，先找到能持續的用餐節奏。',
+      strength: '把蛋白質食物分配到三餐，同時保留主食。',
+      fitness: '用主食、蛋白質食物與蔬果支持日常體能。',
+      fatloss: '保留均衡三餐與肌力恢復所需的食物，不自動跳餐或限食。'
+    };
+    let focus;
+    if (plan.kind === 'strength') focus = '配合約 ' + plan.minutes + ' 分鐘肌力課表，三餐保留主食與蛋白質食物，再依活動時段銜接運動前後的一餐。';
+    else if (plan.kind === 'cardio') focus = '配合約 ' + plan.minutes + ' 分鐘有氧課表，以原有三餐供應活動所需，留意補水；餐間隔較長且餓時才選小份點心。';
+    else if (plan.kind === 'recovery') focus = '恢復日維持主食、蛋白質與均衡三餐，不因休息而跳餐或自動減量。';
+    else focus = '目前先維持一般均衡三餐，訓練未安排或暫停時不提供運動前後加餐。';
+    if (goalFocus[goal]) focus += ' ' + goalFocus[goal];
+    if (phase && active) {
+      const phaseFood = [
+        '熟悉階段先觀察用餐與活動間隔是否舒服。',
+        '穩定階段維持已適應的餐次與搭配。',
+        '進階階段也依實際飢餓感調整，不因日曆自動增加食量。',
+        '回顧哪些搭配讓活動與恢復舒服，作為下一份計畫的參考。'
+      ];
+      focus += ' ' + phaseFood[phase.index - 1];
+    }
+    return {
+      source: plan.kind === 'setup' ? 'setup' : programActive && phase ? 'month' : state.profile ? 'weekly' : 'setup',
+      goal: goal,
+      kind: plan.kind,
+      title: plan.title,
+      minutes: plan.minutes,
+      phase: phase,
+      trainingTime: trainingTime,
+      focus: focus,
+      note: active ? '分鐘數取自當日課表的預估安排，不代表已完成或已消耗的熱量。用餐時點是可調整的銜接參考，階段變更不會自動加餐。' : plan.note,
+      timing: []
+    };
+  }
+
+  function timeRange(date, clock, fromOffset, toOffset, fallback) {
+    if (clock === null) return fallback;
+    const start = new Date(date + 'T00:00:00.000Z').getTime() + clockMinutes(clock) * 60000;
+    function formatted(offset) {
+      const iso = new Date(start + offset * 60000).toISOString();
+      return HealthCore.validDate(iso.slice(0, 10)) ? iso.slice(0, 10) + ' ' + iso.slice(11, 16) : null;
+    }
+    const first = formatted(fromOffset);
+    const last = formatted(toOffset);
+    if (!first || !last) return fallback + '（跨出可顯示的日期範圍，改以相對順序表示）';
+    return first + ' ～ ' + last + '（參考時段，可依作息調整）';
+  }
+
+  function mealConnection(trainingTime) {
+    if (trainingTime === null) return { id: null, previous: null, late: false };
+    const minute = clockMinutes(trainingTime);
+    if (minute < 300 || minute >= 1200) return { id: 'dinner', previous: 'dinner', late: true };
+    if (minute < 600) return { id: 'breakfast', previous: null, late: false };
+    if (minute < 960) return { id: 'lunch', previous: 'breakfast', late: false };
+    return { id: 'dinner', previous: 'lunch', late: false };
+  }
+
+  function connectTrainingMeals(state, date, training, nutrition) {
+    // No timing path may bypass the existing allergy, diet or medical-care gate.
+    if (nutrition.status !== 'ready') {
+      training.note += ' 飲食條件尚待確認，目前不提供具體運動前後餐點。';
+      return;
+    }
+    const active = training.kind === 'strength' || training.kind === 'cardio';
+    const connection = mealConnection(training.trainingTime);
+    nutrition.meals.forEach(function (meal) {
+      if (!meal.items.length) return;
+      if (training.kind === 'recovery') meal.purpose = meal.label + '維持主食與蛋白質，延續恢復日的均衡飲食；不自動減食或跳餐。';
+      else if (!active) meal.purpose = meal.label + '維持一般均衡搭配；原訂訓練未安排或暫停，不為運動另加餐。';
+      else {
+        const roles = training.kind === 'strength' ? {
+          breakfast: '早餐用主食與蛋白質開始一天，讓蛋白質分配到各餐。',
+          lunch: '午餐保留主食、蛋白質與蔬果，支持白天活動及肌力恢復。',
+          dinner: '晚餐保留主食與蛋白質，接續當日肌力練習的恢復。'
+        } : {
+          breakfast: '早餐保留主食與蛋白質，提供一天活動的飲食基礎。',
+          lunch: '午餐用主食銜接有氧活動，同時保留蛋白質與蔬果。',
+          dinner: '晚餐維持主食與蛋白質，銜接當日活動後的正常用餐。'
+        };
+        meal.purpose = roles[meal.id] || meal.purpose;
+        if (connection.id === null) meal.purpose += ' 若這餐接在運動後，可用本餐主食與蛋白質作為恢復正餐。';
+        if (meal.id === connection.previous && !connection.late) meal.purpose += ' 可作為運動前的上一餐；較大份正餐盡量與活動相隔 3–4 小時，依腸胃感受調整。';
+        if (meal.id === connection.id) {
+          meal.purpose = connection.late ? '晚餐照常保留主食與蛋白質；夜間活動後若仍餓，可將本餐一部分留作小餐，已吃足夠就不再吃第二份完整晚餐。' : '依已設定的訓練開始時段，讓' + meal.label + '銜接運動後的主食與蛋白質；這就是原有三餐之一，若已吃過不重複再吃一整餐。';
+        }
+      }
+    });
+    if (!active) return;
+
+    const care = state.careProfile;
+    // These are simple carbohydrate options; every option goes through the same
+    // ingredient filter as meals. Select one small option, not both by default.
+    const preItems = ['ricePorridge', 'banana'].filter(function (foodId) { return allowed(foodId, care); }).map(function (foodId) { return FOOD[foodId].detail; });
+    const postMeal = connection.id === null ? nutrition.meals.find(function (meal) { return meal.id === 'lunch' && meal.items.length; }) || nutrition.meals.find(function (meal) { return meal.items.length; }) : nutrition.meals.find(function (meal) { return meal.id === connection.id; });
+    const postItems = postMeal && postMeal.items.length ? (connection.late || connection.id === null ? postMeal.items.slice(0, 2) : postMeal.items.slice()) : [];
+    const postLabel = connection.late ? '運動後的小餐（有需要才選用）' : connection.id ? '運動後銜接' + MEAL_LABELS[connection.id] : '運動後銜接下一餐';
+    let preNote = preItems.length ? '若距離上一餐較久且餓，可從以上單純主食或水果擇一小份，依腸胃感受調整。近期已吃過正餐且不餓可略過，也不需為了點心提早起床。' : '目前沒有符合全部飲食條件的選項，請另行討論搭配。';
+    if (connection.id === 'breakfast') preNote += ' 晨間活動可依起床與消化狀況選小點心，早餐放在活動後，不必為吃正餐刻意提早起床。';
+    let postNote = connection.late ? '以已篩選晚餐中的主食與蛋白質作小餐範例，可預留原有晚餐的一部分；若已吃足夠或不餓，可略過，不默認再吃第二份完整晚餐。' : connection.id ? '沿用當日' + MEAL_LABELS[connection.id] + '已篩選的食材，作為原有三餐的銜接；若該餐已吃過，依實際下一餐調整，不額外重複一整餐。' : '下列是從當日已篩選三餐取出的主食與蛋白質範例，可移到活動後的下一餐；未設定訓練時間，未指定必須是早餐、午餐或晚餐。';
+    if (!postItems.length) postNote = '這餐沒有符合全部條件的可用食材，請另行搭配，不以其他未經篩選的食物取代。';
+    postNote += ' 活動後約 2 小時內是可調整的參考，不是硬性截止，也不是額外必吃的一餐。';
+    training.timing = [
+      { label: '運動前的小份選項（可略過）', when: timeRange(date, training.trainingTime, -180, -60, '活動前約 1–3 小時，依實際用餐與腸胃感受調整'), items: preItems, note: preNote, mealId: null },
+      { label: '依課表進行，留意補水', when: timeRange(date, training.trainingTime, 0, training.minutes, '當日約 ' + training.minutes + ' 分鐘課表期間'), items: [], note: '依口渴與活動情況補水。這是課表預估時段；當天縮短或延長時，前後餐也跟著調整。', mealId: null },
+      { label: postLabel, when: timeRange(date, training.trainingTime, training.minutes, training.minutes + 120, '活動結束後，盡量銜接接下來約 2 小時內的一餐'), items: postItems, note: postNote, mealId: connection.id }
+    ];
+    nutrition.tips.push('運動前後卡與三餐是同一份搭配安排：可依實際作息調整餐次，點心選用，運動後餐不另外重複計成一餐。');
+    nutrition.tips.push('依口渴與當下活動情況補水；這份短時起步課表不自動安排運動飲品或補充品。');
+    training.note += training.trainingTime === null ? ' 尚未設定訓練開始時間，因此只列相對順序，不假定早上或晚上。' : ' 前餐按開始時間倒推，後餐按課表預估 ' + training.minutes + ' 分鐘結束後銜接；實際訓練縮短或延長時，請跟著調整。餐次對照是可調整的產品模板。';
   }
 
   function eventAt(timestamp, label) {
@@ -1591,8 +1761,11 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
   function day(state, date) {
     // The store/import boundary already validated state. Do not rescan the full
     // ledger for each render; use dayPlan as the single training-date authority.
-    const training = HealthCore.dayPlan(state, date);
-    return { date: date, trainingKind: training.kind, nutrition: nutritionPlan(state, date, training.kind), sleep: sleepPlan(state, date) };
+    const plan = HealthCore.dayPlan(state, date);
+    const training = trainingInfo(state, date, plan);
+    const nutrition = nutritionPlan(state, date, training);
+    connectTrainingMeals(state, date, training, nutrition);
+    return { date: date, trainingKind: plan.kind, training: training, nutrition: nutrition, sleep: sleepPlan(state, date) };
   }
 
   return Object.freeze({ day: day });
@@ -1634,7 +1807,7 @@ function latestCards(){const s=H.summary(state,date),c=state.checkins.find(x=>x.
 function checkinValues(c){const out=[];for(const [key,m]of Object.entries(metricMeta)){if(c[key]!==null&&c[key]!==undefined)out.push(`${m.name} ${num(c[key])} ${m.unit}`);}if(c.energy!==null)out.push(`精神 ${c.energy}/5`);if(c.soreness!==null)out.push(`痠感 ${c.soreness}/5`);if(c.pain===true)out.push('有疼痛／不適');if(c.pain===false)out.push('目前無疼痛／不適（自述）');return out.join(' · ');}
 function checkinRow(c){return `<article class="record-row"><span class="record-date">${esc(formatDate(c.date))}</span><div class="record-values"><p>${esc(checkinValues(c))||'僅備註'}</p>${c.note?`<small>${esc(c.note)}</small>`:''}</div><button class="text-button" data-action="edit-checkin" data-id="${esc(c.id)}">編輯</button></article>`;}
 function todayView(){const p=H.dayPlan(state,date),c=state.checkins.find(x=>x.date===date);return `${monthEntry()}${careSummary()}${planPanel(p)}${weekStrip()}${latestCards()}<div class="grid-equal"><section class="panel"><div class="section-head"><h2>這天的身體紀錄</h2><button class="text-button" data-action="checkin">${c?'更新紀錄':'新增紀錄'}</button></div>${c?checkinRow(c):empty('想記多少，就記多少','睡眠、步數、體重或一句感受，都可以。')}</section><section class="panel"><div class="section-head"><h2>訓練筆記</h2><button class="text-button" data-view="progress">所有紀錄 ↗</button></div>${state.sessions.filter(x=>x.date===date).length?state.sessions.filter(x=>x.date===date).map(sessionRow).join(''):empty('留下實際練過的內容','完成活動後，記下時間與訓練感受。','log-custom','記錄活動')}</section></div>`;}
-function planView(){return `${weekStrip()}${planPanel(H.dayPlan(state,date))}<section class="panel"><div class="section-head"><h2>你的安排方式</h2><button class="text-button" data-action="profile">調整條件</button></div><div class="tips"><article class="tip"><h3>肌力日之間留恢復時間</h3><p>重新開始時先安排每週 2 次全身肌力，中間至少隔一天。只有 1 天就完成一次，有第 3 天可選輕鬆有氧；可用日期相鄰時保留恢復間隔。</p></article><article class="tip"><h3>先熟悉，再增加</h3><p>先選能穩定完成次數、仍保留約 3–4 次餘力的重量。連續兩次訓練都能輕鬆完成上限次數，再加器械最小一格；動作變形就退回原重量。</p></article><article class="tip"><h3>課表可以一起修訂</h3><p>將最近訓練的動作、實際組次與感受告訴我，我會據此協助調整下一週。</p></article></div><p class="note">網頁依設定產生起步模板；對話中的個人化規劃需另外提供你的條件與回饋。</p></section>`;}
+function planView(){return `${weekStrip()}${planPanel(H.dayPlan(state,date))}${careSummary()}<section class="panel"><div class="section-head"><h2>你的安排方式</h2><button class="text-button" data-action="profile">調整條件</button></div><div class="tips"><article class="tip"><h3>肌力日之間留恢復時間</h3><p>重新開始時先安排每週 2 次全身肌力，中間至少隔一天。只有 1 天就完成一次，有第 3 天可選輕鬆有氧；可用日期相鄰時保留恢復間隔。</p></article><article class="tip"><h3>先熟悉，再增加</h3><p>先選能穩定完成次數、仍保留約 3–4 次餘力的重量。連續兩次訓練都能輕鬆完成上限次數，再加器械最小一格；動作變形就退回原重量。</p></article><article class="tip"><h3>課表可以一起修訂</h3><p>將最近訓練的動作、實際組次與感受告訴我，我會據此協助調整下一週。</p></article></div><p class="note">網頁依設定產生起步模板；對話中的個人化規劃需另外提供你的條件與回饋。</p></section>`;}
 
 const monthStageCopy=[
   ['熟悉動作','先熟悉器材與動作，選擇保留餘力的重量。'],
@@ -1686,23 +1859,30 @@ function render(){if(!ready)return;syncClock();if(view==='month'&&state.program&
 const allergenLabels={milk:'乳類',egg:'蛋',soy:'大豆',wheat:'小麥',gluten:'含麩質穀物',peanut:'花生',nuts:'堅果',sesame:'芝麻',fish:'魚',shellfish:'甲殼／貝類'};
 function careSummary(){
   const p=W.day(state,date),bed=p.sleep.status==='ready'?p.sleep.events[1]:null;
-  return `<section class="care-summary"><div><h3>吃飯與休息，也一起安排</h3><p>${p.nutrition.status==='ready'?'這天的三餐搭配已準備好':'先設定飲食偏好與過敏資訊'}${bed?` · ${formatDate(bed.date)} ${bed.time} 預留睡眠`:' · 依起床時間安排睡眠'}</p></div><button class="button" data-view="care">查看 ${dateLabel(date)} 飲食睡眠 ↗</button></section>`;
+  return `<section class="care-summary"><div><h3>吃飯與休息，也一起安排</h3><p>${p.nutrition.status==='ready'?esc(p.nutrition.title)+' · '+esc(p.training.title):'先設定飲食偏好與過敏資訊'}${bed?` · ${formatDate(bed.date)} ${bed.time} 預留睡眠`:' · 依起床時間安排睡眠'}</p></div><button class="button" data-view="care">查看 ${dateLabel(date)} 飲食睡眠 ↗</button></section>`;
 }
 function careTips(tips){return tips.length?`<ul class="care-tips">${tips.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:'';}
 function careLogRow(log){
   const meals=[['breakfast','早餐'],['lunch','午餐'],['dinner','晚餐']].filter(([key])=>log[key]);
   return `<article class="care-log-entry"><div><strong>${formatDate(log.date)} · 實際紀錄</strong>${meals.map(([key,label])=>`<p><strong>${label}</strong> ${esc(log[key])}</p>`).join('')}${log.bedTime||log.wakeTime?`<p>這次睡眠：${log.bedTime?'上床 '+esc(log.bedTime):'上床未填'} → ${log.wakeTime?'起床 '+esc(log.wakeTime):'起床未填'}（以起床日歸檔）</p>`:''}${log.sleepQuality!==null?`<p>睡眠感受 ${log.sleepQuality} / 5</p>`:''}${log.note?`<p>${esc(log.note)}</p>`:''}</div><button class="text-button" data-action="care-log" data-id="${esc(log.id)}">編輯</button></article>`;
 }
+function trainingNutritionPanel(day){
+  const t=day.training;
+  if(!t)return '';
+  const source={month:'依 30 天月計畫',weekly:'依每週起步課表',setup:'尚未設定課表'};
+  return `<section class="panel training-nutrition"><div class="section-head"><div><p class="eyebrow">FUEL YOUR TRAINING</p><h2>${t.kind==='setup'?'先讓飲食與課表連在一起':esc(t.title)+' · 飲食安排'}</h2></div><button class="text-button" data-action="${state.profile?'care-profile':'profile'}">${state.profile?'調整訓練時間':'設定訓練條件'}</button></div><div class="training-nutrition-meta"><span>${source[t.source]}</span>${t.goal?`<span>${esc(goals[t.goal])}</span>`:''}${t.minutes?`<span>計畫 ${t.minutes} 分鐘</span>`:''}${t.trainingTime&&['strength','cardio'].includes(t.kind)?`<span>${esc(t.trainingTime)} 開始</span>`:''}${t.phase?`<span>第 ${t.phase.index} 階段 · ${esc(t.phase.title)}</span>`:''}</div><p class="training-focus">${esc(t.focus)}</p><p class="note">${esc(t.note)}</p>${t.timing.length?`<div class="fuel-timeline">${t.timing.map(step=>`<article class="fuel-step"><p class="fuel-when">${esc(step.when)}</p><h3>${esc(step.label)}</h3>${step.items.length?`<ul class="fuel-items">${step.items.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}<p class="fuel-note">${esc(step.note)}</p></article>`).join('')}</div>`:''}${day.nutrition.status!=='ready'?'<p class="note">完整確認飲食偏好、過敏資訊與飲食限制後，這裡會連同三餐顯示適用的搭配。</p>':''}<div class="button-row"><button class="text-button" data-view="${t.source==='month'?'month':'plan'}">查看這天的課表 ↗</button></div></section>`;
+}
+
 function careView(){
   const p=W.day(state,date),n=p.nutrition,s=p.sleep,log=state.careLogs.find(x=>x.date===date);
   const status={setup:'待設定',review:'需個別調整',ready:'一般生活規劃'};
-  return `<section class="care-intro"><div><p class="eyebrow">EAT WELL · REST WELL</p><h2>${formatDate(date)} 的生活安排</h2><p class="muted">${esc(kinds[p.trainingKind])} · 餐食與作息依你的設定產生，可按日查看。</p></div><div class="button-row">${!state.profile?'<button class="button" data-action="profile">設定基本條件</button>':''}<button class="button primary" data-action="care-profile">${state.careProfile?'調整飲食與作息':'設定飲食與作息'}</button></div></section><div class="care-grid"><section class="panel"><div class="section-head"><h2>這天怎麼吃</h2><span class="care-status">${status[n.status]}</span></div><h3>${esc(n.title)}</h3><p class="note">${esc(n.note)}</p><div class="meal-list">${n.meals.map(m=>`<article class="meal-card"><p class="meal-label">${esc(m.label)}</p><h3>${esc(m.title)}</h3><ul class="meal-items">${m.items.map(item=>`<li>${esc(item)}</li>`).join('')}</ul><p class="meal-tip">${esc(m.tip)}</p></article>`).join('')}</div>${careTips(n.tips)}</section><section class="panel"><div class="section-head"><h2>接下來的睡眠時段</h2><span class="care-status">${status[s.status]}</span></div><p class="note">${esc(s.note)}</p><div class="sleep-timeline">${s.events.map(e=>`<div class="sleep-event"><div><span class="time-date">${formatDate(e.date)}</span><strong class="time-value">${esc(e.time)}</strong></div><span class="time-label">${esc(e.label)}</span></div>`).join('')}</div>${careTips(s.tips)}</section></div><section class="panel"><div class="section-head"><div><h2>實際吃了什麼、睡得如何</h2><p class="note">${date>today?'這是未來安排；到了當天再留下紀錄。':'想記一餐或一句感受，都可以。睡眠以起床日歸檔。'}</p></div>${date<=today?`<button class="button" data-action="care-log">${log?'更新這天紀錄':'記錄這天生活'}</button>`:''}</div><div class="care-log-list">${log?careLogRow(log):'<p class="muted">尚未留下這天的飲食與作息紀錄。</p>'}</div></section><section class="panel"><h2>讓安排貼近日常</h2><p class="note">餐點搭配與時段推算是一般生活模板，適用 18–64 歲成人；有治療飲食需求或持續睡眠困擾時，需另行討論。修改偏好會立即更新各日期的建議，已填寫的實際紀錄仍會保留。</p><div class="care-source-links"><a href="https://www.mohw.gov.tw/cp-4251-50222-1.html" target="_blank" rel="noopener noreferrer">國健署・我的餐盤 ↗</a><a href="https://www.cdc.gov/sleep/about/index.html" target="_blank" rel="noopener noreferrer">CDC・睡眠習慣 ↗</a></div></section>`;
+  return `<section class="care-intro"><div><p class="eyebrow">EAT WELL · REST WELL</p><h2>${formatDate(date)} 的生活安排</h2><p class="muted">${esc(kinds[p.trainingKind])} · 餐食配合這天的課表，可按日查看。</p></div><div class="button-row">${!state.profile?'<button class="button" data-action="profile">設定基本條件</button>':''}<button class="button primary" data-action="care-profile">${state.careProfile?'調整飲食與作息':'設定飲食與作息'}</button></div></section>${trainingNutritionPanel(p)}<div class="care-grid"><section class="panel"><div class="section-head"><h2>這天怎麼吃</h2><span class="care-status">${status[n.status]}</span></div><h3>${esc(n.title)}</h3><p class="note">${esc(n.note)}</p><div class="meal-list">${n.meals.map(m=>`<article class="meal-card"><p class="meal-label">${esc(m.label)}</p>${m.purpose?`<p class="meal-purpose">${esc(m.purpose)}</p>`:''}<h3>${esc(m.title)}</h3><ul class="meal-items">${m.items.map(item=>`<li>${esc(item)}</li>`).join('')}</ul><p class="meal-tip">${esc(m.tip)}</p></article>`).join('')}</div>${careTips(n.tips)}</section><section class="panel"><div class="section-head"><h2>接下來的睡眠時段</h2><span class="care-status">${status[s.status]}</span></div><p class="note">${esc(s.note)}</p><div class="sleep-timeline">${s.events.map(e=>`<div class="sleep-event"><div><span class="time-date">${formatDate(e.date)}</span><strong class="time-value">${esc(e.time)}</strong></div><span class="time-label">${esc(e.label)}</span></div>`).join('')}</div>${careTips(s.tips)}</section></div><section class="panel"><div class="section-head"><div><h2>實際吃了什麼、睡得如何</h2><p class="note">${date>today?'這是未來安排；到了當天再留下紀錄。':'想記一餐或一句感受，都可以。睡眠以起床日歸檔。'}</p></div>${date<=today?`<button class="button" data-action="care-log">${log?'更新這天紀錄':'記錄這天生活'}</button>`:''}</div><div class="care-log-list">${log?careLogRow(log):'<p class="muted">尚未留下這天的飲食與作息紀錄。</p>'}</div></section><section class="panel"><h2>讓安排貼近日常</h2><p class="note">餐點搭配與時段推算是一般生活模板，適用 18–64 歲成人；有治療飲食需求或持續睡眠困擾時，需另行討論。餐點會跟隨當日有效課表的目標與訓練類型。月計畫採建立時的目標；重新規劃後套用新安排。飲食偏好與訓練時間可隨時調整，實際紀錄仍會保留。</p><div class="care-source-links"><a href="https://www.mayoclinic.org/healthy-lifestyle/fitness/in-depth/exercise/art-20045506" target="_blank" rel="noopener noreferrer">Mayo Clinic・運動前後飲食 ↗</a><a href="https://www.mohw.gov.tw/cp-4251-50222-1.html" target="_blank" rel="noopener noreferrer">國健署・我的餐盤 ↗</a><a href="https://www.cdc.gov/sleep/about/index.html" target="_blank" rel="noopener noreferrer">CDC・睡眠習慣 ↗</a></div></section>`;
 }
 function careProfileDialog(){
   const p=state.careProfile;
   const select=(name,options,value)=>`<select name="${name}">${options.map(([k,v])=>option(k,v,value)).join('')}</select>`;
-  showDialog('讓飲食與作息配合你',`<p class="form-hint">先確認過敏、飲食限制與作息，再產生適合的生活模板。未確認的項目可保留「不確定」。</p><section class="care-form-section"><h3>飲食偏好</h3><div class="form-grid">${field('飲食方式',select('diet',[['omnivore','一般飲食'],['vegetarian','蛋奶素'],['vegan','全素']],p?.diet||'omnivore'))}${field('平常用餐方式',select('mealMode',[['mixed','外食與自煮都有'],['out','主要外食'],['home','主要自煮']],p?.mealMode||'mixed'))}${field('食物過敏狀況',select('allergyStatus',[['unknown','尚未確認'],['none','目前沒有已知食物過敏'],['listed','有，請勾選或填寫下方']],p?.allergyStatus||'unknown'),true)}<fieldset class="field wide"><legend>需要避開的食物</legend><div class="chip-group">${Object.entries(allergenLabels).map(([key,label])=>`<label class="chip"><input type="checkbox" name="allergens" value="${key}" ${p?.allergens.includes(key)?'checked':''}><span>${label}</span></label>`).join('')}</div></fieldset>${field('其他過敏或需避開的食物（選填）',`<textarea name="otherAllergies" maxlength="1000" rows="2" placeholder="系統無法自動辨識自由文字；填寫後先保留條件，不產生菜單。">${esc(p?.otherAllergies||'')}</textarea>`,true)}${field('是否有醫師／營養師交代的飲食限制或治療飲食需求？',select('nutritionCare',[['unsure','不確定，先保留'],['none','目前沒有'],['yes','有，需要個別安排']],p?.nutritionCare||'unsure'),true)}</div></section><section class="care-form-section"><h3>睡眠與作息</h3><div class="form-grid">${field('工作與睡眠型態',select('schedule',[['unsure','尚未確認'],['regular','大致固定作息'],['shift','輪班或不固定']],p?.schedule||'unsure'))}${field('固定起床時間（選填）',`<input type="time" name="wakeTime" value="${p?.wakeTime||''}">`)}${field('希望預留的睡眠時段',select('sleepHours',[['','尚未設定'],...[7,7.5,8,8.5,9].map(n=>[String(n),n+' 小時'])],p?.sleepHours==null?'':String(p.sleepHours)),true,'這是作息規劃的預留時段，不等於實際睡著的時間。')}${field('是否有持續失眠、打鼾伴隨喘醒，或其他睡眠困擾？',select('sleepConcern',[['unsure','不確定，先保留'],['none','目前沒有'],['yes','有，需要個別討論']],p?.sleepConcern||'unsure'),true)}</div></section><p class="note">資料只存在這個瀏覽器。可先設定其中一部分；飲食和睡眠各自確認後，各自開始顯示安排。</p>`,async fd=>{
-    const profile={diet:fd.get('diet'),mealMode:fd.get('mealMode'),allergyStatus:fd.get('allergyStatus'),allergens:fd.getAll('allergens'),otherAllergies:fd.get('otherAllergies').trim(),nutritionCare:fd.get('nutritionCare'),wakeTime:fd.get('wakeTime')||null,sleepHours:nullable(fd,'sleepHours'),schedule:fd.get('schedule'),sleepConcern:fd.get('sleepConcern')};
+  showDialog('讓飲食與作息配合你',`<p class="form-hint">先確認過敏、飲食限制與作息，再產生適合的生活模板。未確認的項目可保留「不確定」。</p><section class="care-form-section"><h3>飲食偏好</h3><div class="form-grid">${field('飲食方式',select('diet',[['omnivore','一般飲食'],['vegetarian','蛋奶素'],['vegan','全素']],p?.diet||'omnivore'))}${field('平常用餐方式',select('mealMode',[['mixed','外食與自煮都有'],['out','主要外食'],['home','主要自煮']],p?.mealMode||'mixed'))}${field('食物過敏狀況',select('allergyStatus',[['unknown','尚未確認'],['none','目前沒有已知食物過敏'],['listed','有，請勾選或填寫下方']],p?.allergyStatus||'unknown'),true)}<fieldset class="field wide"><legend>需要避開的食物</legend><div class="chip-group">${Object.entries(allergenLabels).map(([key,label])=>`<label class="chip"><input type="checkbox" name="allergens" value="${key}" ${p?.allergens.includes(key)?'checked':''}><span>${label}</span></label>`).join('')}</div></fieldset>${field('其他過敏或需避開的食物（選填）',`<textarea name="otherAllergies" maxlength="1000" rows="2" placeholder="系統無法自動辨識自由文字；填寫後先保留條件，不產生菜單。">${esc(p?.otherAllergies||'')}</textarea>`,true)}${field('是否有醫師／營養師交代的飲食限制或治療飲食需求？',select('nutritionCare',[['unsure','不確定，先保留'],['none','目前沒有'],['yes','有，需要個別安排']],p?.nutritionCare||'unsure'),true)}</div></section><section class="care-form-section"><h3>配合健身計畫</h3><div class="form-grid">${field('平常的訓練開始時間（選填）',`<input type="time" name="trainingTime" value="${p?.trainingTime||''}">`,true,'只套用肌力與有氧日，用來安排運動前後餐點；留空時顯示相對時段。')}</div></section><section class="care-form-section"><h3>睡眠與作息</h3><div class="form-grid">${field('工作與睡眠型態',select('schedule',[['unsure','尚未確認'],['regular','大致固定作息'],['shift','輪班或不固定']],p?.schedule||'unsure'))}${field('固定起床時間（選填）',`<input type="time" name="wakeTime" value="${p?.wakeTime||''}">`)}${field('希望預留的睡眠時段',select('sleepHours',[['','尚未設定'],...[7,7.5,8,8.5,9].map(n=>[String(n),n+' 小時'])],p?.sleepHours==null?'':String(p.sleepHours)),true,'這是作息規劃的預留時段，不等於實際睡著的時間。')}${field('是否有持續失眠、打鼾伴隨喘醒，或其他睡眠困擾？',select('sleepConcern',[['unsure','不確定，先保留'],['none','目前沒有'],['yes','有，需要個別討論']],p?.sleepConcern||'unsure'),true)}</div></section><p class="note">資料只存在這個瀏覽器。可先設定其中一部分；飲食和睡眠各自確認後，各自開始顯示安排。</p>`,async fd=>{
+    const profile={diet:fd.get('diet'),mealMode:fd.get('mealMode'),allergyStatus:fd.get('allergyStatus'),allergens:fd.getAll('allergens'),otherAllergies:fd.get('otherAllergies').trim(),nutritionCare:fd.get('nutritionCare'),trainingTime:fd.get('trainingTime')||null,wakeTime:fd.get('wakeTime')||null,sleepHours:nullable(fd,'sleepHours'),schedule:fd.get('schedule'),sleepConcern:fd.get('sleepConcern')};
     if(profile.allergyStatus==='none'&&(profile.allergens.length||profile.otherAllergies))throw new Error('若沒有已知過敏，請取消勾選並清空其他食物；有需要避開的項目則選「有」。');
     await update(s=>s.careProfile=profile);notify('飲食與作息設定已儲存');
   });
