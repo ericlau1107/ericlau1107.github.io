@@ -1,3 +1,4 @@
 User-agent: *
 Disallow: /labor-report/
 Disallow: /money-report/
+Disallow: /health-fitness/
