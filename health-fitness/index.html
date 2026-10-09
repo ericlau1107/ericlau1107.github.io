@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex,nofollow">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#f6f5f0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-dMgU205nsHZoGyUIG1MqTF/Ctw1Ej39ny4PftexNYh8='; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-aGNfORyYh6LfBxk3DegCM8YhX/6fBc+aoBNDBq9ciTw='; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
 <title>日日動 · 健康紀錄與每日健身規劃</title>
 <style>
 :root {
@@ -276,6 +276,79 @@ button.phase-card:active { transform: translateY(1px); }
 .month-detail > .section-head { margin-bottom: 16px; }
 .month-detail .hero { margin-bottom: 19px; }
 .month-detail > .phase-tag { margin-bottom: 11px; }
+.care-intro { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-width: 0; margin-bottom: 21px; padding: 24px 27px; border: 1px solid #dce5d8; border-radius: var(--radius); background: #eaf0e5; }
+.care-intro > div { min-width: 0; }
+.care-intro h2 { font-size: 24px; font-weight: 550; letter-spacing: -.035em; }
+.care-intro h2 + p, .care-intro .muted { max-width: 66ch; margin-top: 8px; color: #52665c; font-size: 12px; line-height: 1.85; }
+.care-intro > .button, .care-intro > .button-row { flex-shrink: 0; }
+.care-intro .eyebrow { color: #607a67; }
+.care-summary { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px 20px; min-width: 0; margin: 19px 0; padding: 16px 19px; border: 1px solid #dce3d6; border-radius: 12px; background: #f0f4eb; }
+.care-summary > div { min-width: 0; }
+.care-summary h3 { color: var(--ink); font-size: 13px; font-weight: 550; }
+.care-summary p { max-width: 66ch; margin-top: 4px; color: var(--muted); font-size: 11px; line-height: 1.8; overflow-wrap: anywhere; }
+.care-summary .eyebrow { margin: 0 0 5px; color: var(--green); font-size: 9px; }
+.care-summary .button, .care-summary .text-button { flex-shrink: 0; }
+.care-summary .section-head { width: 100%; margin: 0; }
+.care-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); align-items: start; gap: 20px; min-width: 0; margin-bottom: 20px; }
+.care-grid > .panel + .panel { margin-top: 0; }
+.care-grid .section-head { align-items: flex-start; flex-wrap: wrap; gap: 10px; }
+.care-grid .section-head .muted { max-width: 54ch; }
+.meal-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 11px; min-width: 0; margin-top: 17px; }
+.meal-card { min-width: 0; padding: 16px 17px; border: 1px solid #e1e6da; border-radius: 11px; background: #fbfcf6; }
+.meal-label { display: flex; align-items: center; gap: 7px; margin: 0 0 6px; color: #6b765f; font-size: 10px; font-weight: 500; letter-spacing: .075em; line-height: 1.6; }
+.meal-label::before { content: ""; flex-shrink: 0; width: 10px; height: 2px; border-radius: 2px; background: #b48368; }
+.meal-card h3 { color: var(--ink); font-size: 14px; font-weight: 550; line-height: 1.7; overflow-wrap: anywhere; }
+.meal-items { margin: 10px 0 0; padding-left: 17px; color: #53675a; font-size: 12px; line-height: 1.85; }
+.meal-items li { padding-left: 2px; overflow-wrap: anywhere; }
+.meal-items li + li { margin-top: 3px; }
+.meal-items li::marker { color: #9aae93; font-size: .85em; }
+.meal-tip { margin-top: 11px; padding-top: 10px; border-top: 1px solid #e6eadd; color: var(--muted); font-size: 11px; line-height: 1.85; overflow-wrap: anywhere; }
+.sleep-timeline { position: relative; display: grid; gap: 0; min-width: 0; margin: 19px 0 0; padding-left: 19px; }
+.sleep-timeline::before { content: ""; position: absolute; top: 29px; bottom: 29px; left: 3px; width: 1px; background: #c9d8c5; }
+.sleep-event { position: relative; display: grid; grid-template-columns: 103px minmax(0, 1fr); align-items: center; column-gap: 18px; min-width: 0; min-height: 87px; padding: 13px 0; border-bottom: 1px solid var(--line); }
+.sleep-event:last-child { border-bottom: 0; }
+.sleep-event::before { content: ""; position: absolute; top: 50%; left: -19px; width: 7px; height: 7px; border: 1px solid #88a280; border-radius: 50%; background: var(--paper); transform: translateY(-50%); }
+.sleep-event:last-child::before { background: #6e9276; }
+.sleep-event > div { min-width: 0; }
+.sleep-event .time-date { display: block; color: var(--muted); font-size: 10px; font-variant-numeric: tabular-nums; line-height: 1.7; overflow-wrap: anywhere; }
+.sleep-event .time-value { display: block; color: var(--green); font-size: 25px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: -.04em; line-height: 1.4; white-space: nowrap; }
+.sleep-event .time-label { color: #526657; font-size: 12px; font-weight: 500; line-height: 1.8; overflow-wrap: anywhere; }
+.sleep-event > .time-date { grid-column: 1; grid-row: 1; }
+.sleep-event > .time-value { grid-column: 1; grid-row: 2; }
+.sleep-event > .time-label { grid-column: 2; grid-row: 1 / 3; }
+.care-tips { margin-top: 19px; padding: 14px 16px; border: 1px solid #e0e6d6; border-radius: 10px; background: #f0f4e9; color: #5b6d55; font-size: 11px; line-height: 1.9; overflow-wrap: anywhere; }
+.care-tips h3 { margin-bottom: 7px; color: var(--green); font-size: 12px; font-weight: 550; }
+.care-tips p + p { margin-top: 8px; }
+.care-tips ul, .care-tips ol { margin: 0; padding-left: 17px; }
+ul.care-tips, ol.care-tips { padding-left: 32px; }
+.care-tips li + li { margin-top: 7px; }
+.care-tips li::marker { color: #8caa82; }
+.care-source-links { display: flex; align-items: center; flex-wrap: wrap; gap: 3px 17px; margin-top: 17px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--muted); font-size: 10px; line-height: 1.7; }
+.care-source-links a { display: inline-flex; align-items: center; min-height: 34px; max-width: 100%; color: var(--green); font-size: 10px; text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere; }
+.care-source-links a:hover { color: #183f3b; text-decoration-thickness: 2px; }
+.care-source-links a:active { opacity: .75; }
+.care-log-list { display: grid; gap: 0; min-width: 0; }
+.care-log-entry { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 8px 17px; min-width: 0; padding: 17px 0; border-top: 1px solid var(--line); }
+.care-log-entry:first-child { padding-top: 3px; border-top: 0; }
+.care-log-entry:last-child { padding-bottom: 2px; }
+.care-log-entry > div { min-width: 0; }
+.care-log-entry h3 { color: var(--ink); font-size: 13px; font-weight: 550; }
+.care-log-entry p { margin-top: 5px; color: var(--muted); font-size: 12px; line-height: 1.85; white-space: pre-wrap; overflow-wrap: anywhere; }
+.care-log-entry strong { color: var(--ink); font-weight: 500; }
+.care-log-entry small { color: var(--muted); font-size: 10px; line-height: 1.8; overflow-wrap: anywhere; }
+.care-log-entry > .button, .care-log-entry > .text-button, .care-log-entry > .button-row { grid-column: 2; grid-row: 1; justify-self: end; }
+.care-log-entry > .text-button { font-size: 11px; white-space: nowrap; }
+.care-log-entry > .note { grid-column: 1 / -1; margin-top: 0; }
+.care-log-entry .record-date { display: block; font-size: 11px; }
+.care-status { display: inline-flex; align-items: center; max-width: 100%; padding: 4px 9px; border: 1px solid #d9e3d2; border-radius: 6px; background: #edf3e7; color: #54704e; font-size: 10px; font-weight: 500; line-height: 1.6; overflow-wrap: anywhere; }
+.care-status[data-status="setup"], .care-status.setup { border-color: #dfe3d8; background: #f0f2eb; color: var(--muted); }
+.care-status[data-status="review"], .care-status.review { border-color: #e4d6c6; background: #f6ede2; color: #805d45; }
+.care-form-section { min-width: 0; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+.care-form-section:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+.care-form-section > h3, .care-form-section > legend { margin-bottom: 13px; color: var(--ink); font-size: 14px; font-weight: 550; line-height: 1.7; }
+.care-form-section > p { margin-bottom: 14px; color: var(--muted); font-size: 11px; line-height: 1.85; }
+.care-form-section .checkbox-line + .checkbox-line { margin-top: 10px; }
+.care-form-section .form-hint { margin-bottom: 15px; }
 .data-table { max-width: 100%; margin-top: 18px; color: var(--muted); font-size: 11px; overflow-x: auto; }
 .data-table summary { cursor: pointer; padding: 3px 0; }
 .data-table table, table.data-table { width: 100%; border-collapse: collapse; text-align: right; font-size: 11px; }
@@ -374,6 +447,10 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
   .phase-card { padding: 16px; }
   .month-calendar { gap: 7px; }
   .month-day { min-height: 105px; padding: 12px 10px 11px; }
+  .care-intro { gap: 19px; padding: 23px; }
+  .care-grid { gap: 16px; }
+  .meal-card { padding: 15px 16px; }
+  .sleep-event { grid-template-columns: 91px minmax(0, 1fr); column-gap: 14px; }
 }
 
 @media (max-width: 760px) {
@@ -392,6 +469,14 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
   .month-phases { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .month-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .phase-focus { font-size: 11px; }
+  .navigation { flex-wrap: wrap; gap: 9px; }
+  .navigation nav { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); flex: 1 0 100%; width: 100%; gap: 3px; }
+  .nav-button { min-width: 0; min-height: 44px; padding: 8px 5px; font-size: 12px; }
+  .navigation .quick-add { margin-left: auto; }
+  .care-intro { align-items: flex-start; flex-direction: column; gap: 17px; }
+  .care-grid { grid-template-columns: minmax(0, 1fr); }
+  .care-summary { gap: 10px 17px; }
+  .sleep-event { grid-template-columns: 108px minmax(0, 1fr); }
 }
 
 @media (max-width: 560px) {
@@ -407,8 +492,8 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
   .back-link svg { width: 11px; height: 11px; }
   .header-tools .icon-button { min-width: 30px; min-height: 35px; }
   .navigation { flex-wrap: wrap; gap: 9px; padding-bottom: 13px; }
-  .navigation nav { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); flex: 1 0 100%; width: 100%; gap: 3px; }
-  .nav-button { min-width: 0; gap: 0; min-height: 44px; padding: 8px 4px; font-size: 12px; }
+  .navigation nav { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); flex: 1 0 100%; width: 100%; gap: 4px; }
+  .nav-button { min-width: 0; gap: 0; min-height: 44px; padding: 8px 7px; font-size: 13px; }
   .nav-button svg { display: none; }
   .quick-add { min-height: 40px; gap: 4px; margin-left: auto; padding: 8px 11px; font-size: 11px; }
   .quick-add svg { width: 13px; height: 13px; }
@@ -527,13 +612,42 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
   .phase-tag { font-size: 10px; }
   .month-detail { margin-top: 20px; scroll-margin-top: 18px; }
   .month-detail .hero { margin-bottom: 17px; }
+  .care-intro { margin-bottom: 17px; padding: 22px 20px; border-radius: 14px; }
+  .care-intro h2 { font-size: 23px; }
+  .care-intro h2 + p, .care-intro .muted { font-size: 12px; }
+  .care-intro .button { min-height: 44px; }
+  .care-summary { margin: 17px 0; padding: 15px 17px; border-radius: 11px; }
+  .care-summary h3 { font-size: 13px; }
+  .care-summary p { font-size: 11px; }
+  .care-summary .button { min-height: 44px; }
+  .care-summary > .text-button { min-height: 44px; }
+  .care-grid { gap: 16px; margin-bottom: 17px; }
+  .meal-list { gap: 10px; margin-top: 16px; }
+  .meal-card { padding: 15px; }
+  .meal-card h3 { font-size: 14px; }
+  .meal-items { font-size: 12px; line-height: 1.9; }
+  .meal-tip { font-size: 11px; }
+  .sleep-timeline { margin-top: 16px; }
+  .sleep-event { grid-template-columns: 97px minmax(0, 1fr); min-height: 83px; column-gap: 14px; }
+  .sleep-event .time-value { font-size: 25px; }
+  .sleep-event .time-label { font-size: 12px; }
+  .care-tips { margin-top: 17px; padding: 13px 14px; font-size: 11px; }
+  ul.care-tips, ol.care-tips { padding-left: 30px; }
+  .care-source-links { gap: 2px 14px; margin-top: 15px; padding-top: 9px; }
+  .care-source-links a { min-height: 44px; font-size: 11px; }
+  .care-log-entry { gap: 7px 12px; padding: 15px 0; }
+  .care-log-entry p { font-size: 12px; }
+  .care-log-entry > .text-button { min-height: 44px; padding: 6px 2px; }
+  .care-status { font-size: 10px; }
+  .care-form-section { margin-top: 21px; padding-top: 17px; }
+  .care-form-section > h3, .care-form-section > legend { font-size: 14px; }
 }
 
 @media (max-width: 370px) {
   .app-shell { padding: 0 14px; }
   .brand small { letter-spacing: .06em; font-size: 6.5px; }
   .back-link { font-size: 9px; }
-  .nav-button { padding: 8px 3px; font-size: 11px; }
+  .nav-button { padding: 8px 5px; font-size: 12px; }
   .quick-add { font-size: 10px; padding: 7px 8px; }
   .quick-add svg { display: none; }
   .form-grid { grid-template-columns: minmax(0, 1fr); }
@@ -546,6 +660,8 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
   .month-day-number { font-size: 14px; }
   .phase-card { padding: 13px; }
   .month-summary .stat { padding: 14px; }
+  .sleep-event { grid-template-columns: 87px minmax(0, 1fr); column-gap: 11px; }
+  .meal-card { padding: 14px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -617,8 +733,8 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
 
-  const SCHEMA = 'eric-health/2';
-  const LEGACY_SCHEMA = 'eric-health/1';
+  const SCHEMA = 'eric-health/3';
+  const LEGACY_SCHEMAS = ['eric-health/1', 'eric-health/2'];
   const MAX_BYTES = 20 * 1024 * 1024;
   const FIRST_DATE = '1900-01-01';
   const GOALS = ['habit', 'strength', 'fitness', 'fatloss'];
@@ -627,6 +743,7 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
   const MINUTES = [20, 30, 45, 60];
   const LIMITATIONS = ['none', 'yes', 'unsure'];
   const SESSION_KINDS = ['strength', 'cardio', 'recovery', 'other'];
+  const ALLERGENS = ['milk', 'egg', 'soy', 'wheat', 'gluten', 'peanut', 'nuts', 'sesame', 'fish', 'shellfish'];
   const PROGRAM_PHASES = [
     { title: '熟悉動作', focus: '先從次數範圍下緣開始，熟悉動作幅度與呼吸。每組保留餘力，需要時少做一組或提早結束。' },
     { title: '穩定累積', focus: '先維持相同組次，留意動作品質與休息是否足夠。以舒服、穩定地重複為主，不急著增加份量。' },
@@ -677,7 +794,7 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
   }
 
   function emptyState() {
-    return { schema: SCHEMA, revision: 0, profile: null, program: null, checkins: [], sessions: [], settings: { lastBackupAt: '' } };
+    return { schema: SCHEMA, revision: 0, profile: null, program: null, careProfile: null, checkins: [], sessions: [], careLogs: [], settings: { lastBackupAt: '' } };
   }
 
   function object(value, label) {
@@ -883,9 +1000,59 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
     };
   }
 
+  function clockTime(value, label) {
+    if (value === null) return null;
+    if (typeof value !== 'string' || !/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(value)) fail(label, '請使用有效的 24 小時制 HH:MM，未填時請使用 null。');
+    return value;
+  }
+
+  function cleanCareProfile(input) {
+    if (input === null) return null;
+    const value = object(input, '飲食睡眠設定');
+    const allergens = list(value.allergens, '過敏原', ALLERGENS.length).map(function (allergen) { return choice(allergen, ALLERGENS, '過敏原'); });
+    if (new Set(allergens).size !== allergens.length) fail('過敏原', '不可重複。');
+    const allergyStatus = choice(value.allergyStatus, ['unknown', 'none', 'listed'], '食物過敏狀態');
+    const otherAllergies = text(value.otherAllergies, '其他食物過敏', 1000, false);
+    const hasAllergies = allergens.length > 0 || Boolean(otherAllergies.trim());
+    if (allergyStatus === 'none' && hasAllergies) fail('食物過敏狀態', '選擇無已知過敏時，請勿同時保留過敏項目或其他過敏文字。');
+    if (allergyStatus === 'listed' && !hasAllergies) fail('食物過敏狀態', '請至少選擇一項過敏原，或填寫其他過敏。');
+    const sleepHours = number(value.sleepHours, '睡眠預留時數', 7, 9, false, true);
+    if (sleepHours !== null && !Number.isInteger(sleepHours * 2)) fail('睡眠預留時數', '請以半小時為單位設定，範圍為 7–9 小時。');
+    return {
+      diet: choice(value.diet, ['omnivore', 'vegetarian', 'vegan'], '飲食型態'),
+      mealMode: choice(value.mealMode, ['out', 'home', 'mixed'], '用餐方式'),
+      allergyStatus: allergyStatus,
+      allergens: allergens,
+      otherAllergies: otherAllergies,
+      nutritionCare: choice(value.nutritionCare, ['none', 'yes', 'unsure'], '專業飲食照護需求'),
+      wakeTime: clockTime(value.wakeTime, '預計起床時間'),
+      sleepHours: sleepHours,
+      schedule: choice(value.schedule, ['regular', 'shift', 'unsure'], '作息型態'),
+      sleepConcern: choice(value.sleepConcern, ['none', 'yes', 'unsure'], '睡眠困擾')
+    };
+  }
+
+  function cleanCareLog(input, index, latest) {
+    const label = '飲食睡眠紀錄第 ' + (index + 1) + ' 筆';
+    const value = object(input, label);
+    // The date is the day of waking. Clock entries are recorded independently;
+    // they describe time in bed, never measured sleep or checkins.sleep.
+    return {
+      id: id(value.id, label),
+      date: requireDate(value.date, label + '日期', latest),
+      breakfast: text(value.breakfast, label + '早餐', 1000, false),
+      lunch: text(value.lunch, label + '午餐', 1000, false),
+      dinner: text(value.dinner, label + '晚餐', 1000, false),
+      note: text(value.note, label + '備註', 2000, false),
+      bedTime: clockTime(value.bedTime, label + '躺床時間'),
+      wakeTime: clockTime(value.wakeTime, label + '起床時間'),
+      sleepQuality: number(value.sleepQuality, label + '睡眠感受', 1, 5, true, true)
+    };
+  }
+
   function validateState(input) {
     const value = object(readInput(input), '資料');
-    if (value.schema !== SCHEMA && value.schema !== LEGACY_SCHEMA) fail('備份版本', '不支援此資料格式。');
+    if (value.schema !== SCHEMA && !LEGACY_SCHEMAS.includes(value.schema)) fail('備份版本', '不支援此資料格式。');
     const latest = today();
     const settings = object(value.settings, '偏好設定');
     const lastBackupAt = text(settings.lastBackupAt, '備份時間', 30, false);
@@ -895,18 +1062,25 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
     }
     const checkins = list(value.checkins, '健康紀錄', 100000).map(function (item, index) { return cleanCheckin(item, index, latest); });
     const sessions = list(value.sessions, '訓練紀錄', 100000).map(function (item, index) { return cleanSession(item, index, latest); });
-    // Version 1 backups may lack program. Version 2 requires it, and every
-    // validated result uses v2 so old clients reject rather than drop the plan.
+    // Version 1 backups may lack program; versions 2 and 3 require it. Care
+    // fields are required in v3 and added only when missing from older backups.
+    // Always output v3 so older clients reject instead of dropping new records.
     const hasProgram = Object.prototype.hasOwnProperty.call(value, 'program');
-    if (!hasProgram && value.schema === SCHEMA) fail('月計畫', '此版本資料必須包含 program 欄位，未建立時請使用 null。');
+    if (!hasProgram && value.schema !== 'eric-health/1') fail('月計畫', '此版本資料必須包含 program 欄位，未建立時請使用 null。');
     const program = hasProgram ? cleanProgram(value.program, latest) : null;
+    const hasCareProfile = Object.prototype.hasOwnProperty.call(value, 'careProfile');
+    const hasCareLogs = Object.prototype.hasOwnProperty.call(value, 'careLogs');
+    if (value.schema === SCHEMA && (!hasCareProfile || !hasCareLogs)) fail('飲食睡眠資料', '此版本資料必須包含 careProfile 與 careLogs，未設定時分別使用 null 與空陣列。');
+    const careProfile = hasCareProfile ? cleanCareProfile(value.careProfile) : null;
+    const careLogs = hasCareLogs ? list(value.careLogs, '飲食睡眠紀錄', 100000).map(function (item, index) { return cleanCareLog(item, index, latest); }) : [];
     const ids = new Set();
     if (program) ids.add(program.id);
-    checkins.concat(sessions).forEach(function (record) {
+    checkins.concat(sessions, careLogs).forEach(function (record) {
       if (ids.has(record.id)) fail('紀錄識別碼', '不可重複，請確認備份內容。');
       ids.add(record.id);
     });
     if (new Set(checkins.map(function (item) { return item.date; })).size !== checkins.length) fail('健康紀錄', '同一天只能保留一筆，可編輯當天的既有紀錄。');
+    if (new Set(careLogs.map(function (item) { return item.date; })).size !== careLogs.length) fail('飲食睡眠紀錄', '同一天只能保留一筆，可編輯當天的既有紀錄。');
     // Build every level explicitly. Unknown fields (including __proto__) are
     // discarded and never merged into application objects.
     return {
@@ -914,8 +1088,10 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
       revision: number(value.revision, '資料修訂版', 0, Number.MAX_SAFE_INTEGER, true, false),
       profile: cleanProfile(value.profile, latest),
       program: program,
+      careProfile: careProfile,
       checkins: checkins.sort(function (a, b) { return a.date.localeCompare(b.date); }),
       sessions: sessions.sort(function (a, b) { return a.date.localeCompare(b.date); }),
+      careLogs: careLogs.sort(function (a, b) { return a.date.localeCompare(b.date); }),
       settings: { lastBackupAt: lastBackupAt }
     };
   }
@@ -1181,14 +1357,256 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
 });
 
 ;
+(function (root, factory) {
+  'use strict';
+  const health = typeof module === 'object' && module.exports && typeof require === 'function' ? require('./core.js') : root.HealthCore;
+  const api = factory(health);
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  root.WellnessCore = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this, function (HealthCore) {
+  'use strict';
+
+  // General guidance checked 2026-10-10. These ingredient combinations and
+  // clock calculations are product templates, not official meal prescriptions.
+  // https://www.mohw.gov.tw/cp-4251-50222-1.html
+  // https://www.cdc.gov/sleep/about/index.html
+  const DAY_MS = 86400000;
+  const ALLERGENS = ['milk', 'egg', 'soy', 'wheat', 'gluten', 'peanut', 'nuts', 'sesame', 'fish', 'shellfish'];
+  const PLANT_DIETS = ['omnivore', 'vegetarian', 'vegan'];
+  const VEGETARIAN_DIETS = ['omnivore', 'vegetarian'];
+  const MEAT_DIETS = ['omnivore'];
+
+  function ingredient(name, detail, allergens, diets) {
+    return { name: name, detail: detail, allergens: allergens || [], diets: diets || PLANT_DIETS };
+  }
+
+  // Every selectable ingredient has explicit diet and allergen tags. Recipes
+  // name simple ingredients only: no unlisted dressing, stock, marinade or sauce.
+  const FOOD = {
+    sweetPotato: ingredient('地瓜', '蒸地瓜'),
+    purplePotato: ingredient('紫地瓜', '蒸紫地瓜'),
+    potato: ingredient('馬鈴薯', '水煮馬鈴薯'),
+    rice: ingredient('白飯', '白飯（白米、水）'),
+    brownRice: ingredient('糙米飯', '糙米飯（糙米、水）'),
+    ricePorridge: ingredient('米粥', '米粥（白米、水；不加高湯）'),
+    millet: ingredient('小米', '水煮小米（不加高湯）'),
+    corn: ingredient('玉米', '蒸玉米（不加奶油）'),
+    quinoa: ingredient('藜麥飯', '藜麥飯（藜麥、白米、水）'),
+    barley: ingredient('大麥', '水煮大麥（不加高湯）', ['gluten']),
+    noodles: ingredient('全麥麵', '水煮全麥麵（成分僅全麥小麥粉、水、鹽；不拌醬）', ['wheat', 'gluten']),
+    egg: ingredient('雞蛋', '水煮雞蛋（不加醬料）', ['egg'], VEGETARIAN_DIETS),
+    tofu: ingredient('板豆腐', '蒸原味板豆腐（成分僅黃豆、水、硫酸鈣）', ['soy']),
+    edamame: ingredient('毛豆', '水煮去莢毛豆（不加調味）', ['soy']),
+    chickpeas: ingredient('鷹嘴豆', '煮熟鷹嘴豆（乾豆、水；不加醬料）'),
+    lentils: ingredient('扁豆', '煮熟扁豆（乾豆、水；不加醬料）'),
+    whiteBeans: ingredient('白腰豆', '完全煮熟白腰豆（乾豆、水；不加醬料）'),
+    kidneyBeans: ingredient('紅腰豆', '完全煮熟紅腰豆（乾豆、水；不加醬料）'),
+    chicken: ingredient('雞胸肉', '蒸熟雞胸肉（不醃製、不加醬料）', [], MEAT_DIETS),
+    pork: ingredient('豬里肌', '蒸熟豬里肌（不醃製、不加醬料）', [], MEAT_DIETS),
+    beef: ingredient('牛肉', '水煮熟牛肉片（不醃製、不加醬料）', [], MEAT_DIETS),
+    salmon: ingredient('鮭魚', '蒸熟鮭魚（不醃製、不加醬料）', ['fish'], MEAT_DIETS),
+    shrimp: ingredient('蝦仁', '水煮熟蝦仁（不醃製、不加醬料）', ['shellfish'], MEAT_DIETS),
+    broccoli: ingredient('青花菜', '蒸青花菜'),
+    cabbage: ingredient('高麗菜', '蒸高麗菜'),
+    spinach: ingredient('菠菜', '燙菠菜（不淋醬）'),
+    carrot: ingredient('紅蘿蔔', '蒸紅蘿蔔'),
+    bokChoy: ingredient('青江菜', '燙青江菜（不淋醬）'),
+    tomato: ingredient('番茄', '新鮮番茄（不加醬）'),
+    cucumber: ingredient('小黃瓜', '新鮮小黃瓜（不醃漬、不加醬）'),
+    mushrooms: ingredient('菇類', '蒸鮮香菇（不加高湯）'),
+    zucchini: ingredient('櫛瓜', '蒸櫛瓜'),
+    cauliflower: ingredient('白花椰菜', '蒸白花椰菜'),
+    orange: ingredient('柳橙', '新鮮柳橙'),
+    banana: ingredient('香蕉', '新鮮香蕉'),
+    guava: ingredient('芭樂', '新鮮芭樂（不加梅粉）'),
+    apple: ingredient('蘋果', '新鮮蘋果'),
+    kiwi: ingredient('奇異果', '新鮮奇異果'),
+    pear: ingredient('梨子', '新鮮梨子'),
+    papaya: ingredient('木瓜', '新鮮木瓜'),
+    milk: ingredient('鮮奶', '無調味鮮奶（成分僅牛奶）', ['milk'], VEGETARIAN_DIETS),
+    yogurt: ingredient('原味優格', '無糖原味優格（成分僅牛奶、乳酸菌）', ['milk'], VEGETARIAN_DIETS),
+    soyMilk: ingredient('無糖豆漿', '無糖豆漿（成分僅黃豆、水）', ['soy']),
+    almonds: ingredient('杏仁', '原味杏仁（不加調味或油）', ['nuts']),
+    peanuts: ingredient('花生', '乾烘焙花生（不加調味或油）', ['peanut']),
+    sesame: ingredient('芝麻', '乾烘焙白芝麻（不加調味或油）', ['sesame']),
+    oliveOil: ingredient('橄欖油', '烹調可用少量純橄欖油（成分僅橄欖油）')
+  };
+
+  function recipe(grain, protein, vegetables, fruit, extra) {
+    return { grain: grain, protein: protein, vegetables: vegetables, fruit: fruit, extra: extra || [] };
+  }
+
+  // Seven distinct base combinations per meal remain distinct after removing
+  // common allergens. Beans are named individually and never stand in for soy.
+  // The fallback lists still pass the exact same ingredient filter.
+  const MENUS = {
+    breakfast: [
+      recipe(['sweetPotato'], ['egg', 'tofu', 'chickpeas'], ['tomato'], ['guava'], ['milk', 'soyMilk']),
+      recipe(['ricePorridge'], ['tofu', 'whiteBeans'], ['spinach'], ['banana'], ['sesame', 'oliveOil']),
+      recipe(['millet'], ['egg', 'lentils'], ['carrot'], ['apple'], ['yogurt', 'soyMilk']),
+      recipe(['corn'], ['edamame', 'chickpeas'], ['cucumber'], ['orange'], ['almonds', 'oliveOil']),
+      recipe(['potato'], ['egg', 'whiteBeans'], ['broccoli'], ['kiwi'], ['milk', 'soyMilk']),
+      recipe(['purplePotato'], ['tofu', 'lentils'], ['bokChoy'], ['pear'], ['peanuts', 'oliveOil']),
+      recipe(['brownRice'], ['egg', 'kidneyBeans'], ['cabbage'], ['papaya'], ['yogurt', 'soyMilk'])
+    ],
+    lunch: [
+      recipe(['brownRice'], ['chicken', 'tofu', 'lentils'], ['broccoli', 'carrot'], ['orange'], ['oliveOil']),
+      recipe(['quinoa'], ['salmon', 'egg', 'chickpeas'], ['cabbage', 'tomato'], ['guava'], ['sesame', 'oliveOil']),
+      recipe(['noodles', 'rice'], ['pork', 'tofu', 'whiteBeans'], ['bokChoy', 'mushrooms'], ['apple'], ['oliveOil']),
+      recipe(['sweetPotato'], ['shrimp', 'edamame', 'lentils'], ['spinach', 'carrot'], ['pear'], ['almonds', 'oliveOil']),
+      recipe(['millet'], ['beef', 'egg', 'kidneyBeans'], ['cauliflower', 'tomato'], ['papaya'], ['oliveOil']),
+      recipe(['potato'], ['chicken', 'tofu', 'chickpeas'], ['zucchini', 'mushrooms'], ['kiwi'], ['peanuts', 'oliveOil']),
+      recipe(['barley', 'corn'], ['salmon', 'egg', 'whiteBeans'], ['cabbage', 'cucumber'], ['banana'], ['oliveOil'])
+    ],
+    dinner: [
+      recipe(['quinoa'], ['salmon', 'edamame', 'whiteBeans'], ['bokChoy', 'mushrooms'], ['apple'], ['milk', 'soyMilk']),
+      recipe(['potato'], ['chicken', 'tofu', 'lentils'], ['broccoli', 'tomato'], ['pear'], ['oliveOil']),
+      recipe(['brownRice'], ['egg', 'chickpeas'], ['cabbage', 'carrot'], ['papaya'], ['yogurt', 'soyMilk']),
+      recipe(['corn'], ['pork', 'egg', 'whiteBeans'], ['zucchini', 'mushrooms'], ['guava'], ['oliveOil']),
+      recipe(['noodles', 'ricePorridge'], ['salmon', 'tofu', 'lentils'], ['spinach', 'tomato'], ['orange'], ['milk', 'soyMilk']),
+      recipe(['millet'], ['shrimp', 'edamame', 'kidneyBeans'], ['cauliflower', 'cucumber'], ['banana'], ['oliveOil']),
+      recipe(['sweetPotato'], ['chicken', 'tofu', 'chickpeas'], ['broccoli', 'bokChoy'], ['kiwi'], ['yogurt', 'soyMilk'])
+    ]
+  };
+  const MEAL_LABELS = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐', snack: '可選餐間點心' };
+  const SOURCE_NOTE = '參考國健署「我的餐盤」的食物多樣化方向；以下為可調整的餐食搭配範例，並非官方逐餐處方，也未計算個人的熱量或營養素需求。';
+  const CONTACT_TIP = '外食與加工品請核對完整成分、過敏原標示，並向店家確認醬料、高湯、醃料及共用器具的交叉接觸；名稱相同不代表成分相同，這份篩選不能保證餐點無過敏原。';
+  const SLEEP_TIPS = [
+    '盡量維持規律的上床與起床時間，讓睡眠環境安靜、舒適且偏涼。',
+    '預留睡前至少 30 分鐘關閉電子裝置、放鬆；午後與晚間避免咖啡因，睡前避免大餐與酒精。',
+    '若經常難入睡、夜間醒來，或休息後仍覺得疲倦，可記錄情況並與醫事專業人員討論。'
+  ];
+
+  function nutritionResult(status, title, note) {
+    return { status: status, title: title, note: note, meals: [], tips: [] };
+  }
+
+  function sleepResult(status, note) {
+    return { status: status, title: '接下來的睡眠時段', note: note, events: [], tips: SLEEP_TIPS.slice() };
+  }
+
+  function ageStatus(state) {
+    if (!state.profile) return 'setup';
+    return state.profile.age >= 18 && state.profile.age <= 64 ? 'ready' : 'review';
+  }
+
+  function allowed(foodId, care) {
+    const food = FOOD[foodId];
+    return Boolean(food && food.diets.includes(care.diet) && !food.allergens.some(function (tag) { return care.allergens.includes(tag); }));
+  }
+
+  function select(candidates, care) {
+    return candidates.find(function (foodId) { return allowed(foodId, care); });
+  }
+
+  function mealTip(care) {
+    const mode = care.mealMode === 'out' ? '外食時可用列出的食材向店家確認搭配；無法確認配料時，請另選能確認成分的餐點。' : care.mealMode === 'home' ? '自煮可蒸、煮，調味只用已確認的單純食材；不用未列出的醬料、高湯或醃料。' : '自煮可蒸、煮；外食請先確認各項配料，不直接依菜名判斷。';
+    return mode + ' 加工品依完整成分核對，並確認共用器具的交叉接觸；無法保證無過敏原。';
+  }
+
+  function missingMeal(id) {
+    return { id: id, label: MEAL_LABELS[id], title: '這餐需要另外搭配', items: [], tip: '目前食材庫沒有符合全部條件的組合。請依已知可食用的食材，與營養師另行討論搭配。' };
+  }
+
+  function buildMeal(id, option, care) {
+    const grain = select(option.grain, care);
+    const protein = select(option.protein, care);
+    const fruit = select(option.fruit, care);
+    const vegetables = option.vegetables.filter(function (foodId) { return allowed(foodId, care); });
+    if (!grain || !protein || !fruit || !vegetables.length) return missingMeal(id);
+    const ids = [grain, protein].concat(vegetables, [fruit]);
+    const extra = select(option.extra, care);
+    if (extra) ids.push(extra);
+    return { id: id, label: MEAL_LABELS[id], title: FOOD[grain].name + '與' + FOOD[protein].name + '餐盤', items: ids.map(function (foodId) { return FOOD[foodId].detail; }), tip: mealTip(care) };
+  }
+
+  function trainingGoal(state, date) {
+    const program = state.program;
+    return program && date >= program.startDate && date <= program.endDate ? program.profile.goal : state.profile.goal;
+  }
+
+  function nutritionPlan(state, date, trainingKind) {
+    const scope = ageStatus(state);
+    if (scope === 'setup') return nutritionResult('setup', '先完成基本設定', '請先在設定填寫年齡等基本資料，再建立飲食偏好。這份通用餐食模板適用於 18–64 歲成人。');
+    if (scope === 'review') return nutritionResult('review', '飲食需求需要另外規劃', '目前年齡不在 18–64 歲通用模板範圍。可保留飲食紀錄，並依自己的需求與營養師另行討論。');
+    const care = state.careProfile;
+    if (!care) return nutritionResult('setup', '先設定飲食偏好', '請儲存飲食方式、食物過敏情況，以及是否有需要專業調整的飲食限制。');
+    if (care.nutritionCare !== 'none') return nutritionResult('review', '先釐清個別飲食需求', '你填寫有、或不確定是否有需要專業調整的飲食限制。先保留飲食紀錄，與營養師或醫事專業人員討論後再安排餐點。');
+    if (care.otherAllergies.trim()) return nutritionResult('review', '先確認其他過敏食物', '你填寫了其他過敏食物，現有食材標籤無法完整辨識。先保留紀錄，與營養師另行確認合適搭配。');
+    const knownTags = care.allergens.every(function (tag) { return ALLERGENS.includes(tag); });
+    const clearAllergies = knownTags && ((care.allergyStatus === 'none' && care.allergens.length === 0) || (care.allergyStatus === 'listed' && care.allergens.length > 0));
+    if (!clearAllergies) return nutritionResult('setup', '先確認食物過敏情況', '請明確選擇無已知食物過敏，或列出已知過敏項目；未確認前先不提供具體菜單。');
+
+    const dayNumber = Math.floor(new Date(date + 'T00:00:00.000Z').getTime() / DAY_MS);
+    const rotation = ((dayNumber % 7) + 7) % 7;
+    const result = nutritionResult('ready', '當日餐食搭配', SOURCE_NOTE);
+    result.meals = ['breakfast', 'lunch', 'dinner'].map(function (id) { return buildMeal(id, MENUS[id][rotation], care); });
+    result.tips = [
+      '三餐時間可依作息、飢餓感與活動調整；日常搭配全穀雜糧、蛋白質食物、蔬菜及水果，餐點份量由實際需求另行調整。',
+      CONTACT_TIP
+    ];
+    if (care.diet === 'vegan' || care.allergens.includes('milk')) result.tips.push('這份範例沒有把植物飲品視為乳品的營養等值替代；乳品排除後的完整營養需求，可與營養師討論適合自己的食物搭配。');
+    else result.tips.push('國健署「我的餐盤」也包含乳品與堅果種子；選用時仍以自己的飲食方式和已知過敏限制為準。');
+    if (trainingGoal(state, date) === 'strength') result.tips.push('肌力目標：每餐保留一項符合飲食方式與過敏限制的蛋白質食物；這份模板不指定克數或熱量。');
+
+    if (trainingKind === 'strength' || trainingKind === 'cardio') {
+      const fruit = select([['banana'], ['guava'], ['apple'], ['orange'], ['papaya'], ['pear'], ['kiwi']][rotation], care);
+      const companion = select(['yogurt', 'soyMilk', 'chickpeas'], care);
+      if (!fruit || !companion) result.meals.push(missingMeal('snack'));
+      else result.meals.push({ id: 'snack', label: MEAL_LABELS.snack, title: '依飢餓感選用的小點心', items: [FOOD[fruit].detail, FOOD[companion].detail], tip: '這天有安排活動；若兩餐間隔較長或覺得餓，可以選用，不需要為了課表額外強迫進食。' + mealTip(care) });
+    } else result.tips.push('這天依原有三餐與飢餓感安排即可，恢復日同樣保留均衡搭配。');
+    return result;
+  }
+
+  function eventAt(timestamp, label) {
+    const iso = new Date(timestamp).toISOString();
+    return { label: label, date: iso.slice(0, 10), time: iso.slice(11, 16) };
+  }
+
+  function sleepPlan(state, date) {
+    const scope = ageStatus(state);
+    if (scope === 'setup') return sleepResult('setup', '請先在設定填寫年齡等基本資料，再設定起床時間與睡眠預留時段。這份通用模板適用於 18–64 歲成人。');
+    if (scope === 'review') return sleepResult('review', '目前年齡不在 18–64 歲通用模板範圍。可以保留睡眠紀錄，再依自己的需求另行討論合適的作息。');
+    const care = state.careProfile;
+    if (!care) return sleepResult('setup', '請先儲存作息類型、起床時間、睡眠預留時數，以及是否有睡眠困擾。');
+    if (care.schedule !== 'regular' || care.sleepConcern !== 'none') return sleepResult('review', '你填寫輪班、作息未確定，或有／不確定是否有睡眠困擾。先保留實際紀錄，依班表或困擾與醫事專業人員個別討論；以下提供一般作息方向。');
+    if (care.wakeTime === null || care.sleepHours === null) return sleepResult('setup', '請設定起床時間與預留的躺床時數，再計算接下來的睡眠時段。');
+
+    // "date" is the planning day: use the next calendar day's chosen wake time.
+    // UTC represents local wall-clock arithmetic only (not a timezone conversion),
+    // so DST cannot move the entered HH:MM. At FIRST_DATE this stays in range.
+    const nextMidnight = new Date(date + 'T00:00:00.000Z').getTime() + DAY_MS;
+    const nextDate = new Date(nextMidnight).toISOString().slice(0, 10);
+    if (!HealthCore.validDate(nextDate)) return sleepResult('review', '接下來的起床日期超出可用的 1900–9999 年範圍。請選擇較早的日期再查看時段。');
+    const clockParts = care.wakeTime.split(':').map(Number);
+    const wake = nextMidnight + (clockParts[0] * 60 + clockParts[1]) * 60000;
+    const bed = wake - care.sleepHours * 60 * 60000;
+    const unwind = bed - 30 * 60000;
+    const result = sleepResult('ready', '以 ' + nextDate + ' ' + care.wakeTime + ' 起床往前預留 ' + care.sleepHours + ' 小時躺床，再留 30 分鐘放鬆。這是可調整的時間安排，不代表已睡滿這些時數，也不會覆寫睡眠紀錄。');
+    result.events = [eventAt(unwind, '關閉電子裝置、開始放鬆'), eventAt(bed, '開始預留躺床時段'), eventAt(wake, '預定起床')];
+    result.tips.push(state.profile.age <= 60 ? 'CDC 對 18–60 歲成人的一般建議為每日睡眠至少 7 小時；預留躺床時間與實際睡眠時間不同。' : 'CDC 對 61–64 歲成人的一般建議為每日睡眠 7–9 小時；預留躺床時間與實際睡眠時間不同。');
+    return result;
+  }
+
+  function day(state, date) {
+    // The store/import boundary already validated state. Do not rescan the full
+    // ledger for each render; use dayPlan as the single training-date authority.
+    const training = HealthCore.dayPlan(state, date);
+    return { date: date, trainingKind: training.kind, nutrition: nutritionPlan(state, date, training.kind), sleep: sleepPlan(state, date) };
+  }
+
+  return Object.freeze({ day: day });
+});
+
+;
 (() => {
 'use strict';
-const H=globalThis.HealthCore,$=id=>document.getElementById(id);
+const H=globalThis.HealthCore,W=globalThis.WellnessCore,$=id=>document.getElementById(id);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const uid=()=>crypto.randomUUID(),num=v=>v===null||v===undefined?'—':Number(v).toLocaleString('zh-TW',{maximumFractionDigits:1});
 const goals={habit:'建立運動習慣',fatloss:'減脂與肌力',strength:'增肌與力量',fitness:'提升體能'},kinds={strength:'肌力訓練',cardio:'有氧活動',recovery:'恢復與伸展',other:'其他活動',setup:'先設定',review:'調整安排'};
 const weekdays=['一','二','三','四','五','六','日'];
-const views=[{id:'today',label:'今天',title:'把身體，照顧進日常',subtitle:'今天的安排與身體紀錄，從這裡開始。'},{id:'plan',label:'每週課表',title:'練習，也留時間恢復',subtitle:'依可用時間與器材安排，一次看見這一週。'},{id:'month',label:'月計畫',title:'把接下來一個月，安排好',subtitle:'從你選的日期開始，30 天訓練與恢復一起規劃。'},{id:'records',label:'健康紀錄',title:'身體的變化，慢慢記下',subtitle:'留下量測與感受，空白就保持空白。'},{id:'progress',label:'訓練進度',title:'看見累積的每一次',subtitle:'實際練過的內容、時間與份量，都留在這裡。'}];
+const views=[{id:'today',label:'今天',title:'把身體，照顧進日常',subtitle:'今天的安排與身體紀錄，從這裡開始。'},{id:'plan',label:'每週課表',title:'練習，也留時間恢復',subtitle:'依可用時間與器材安排，一次看見這一週。'},{id:'month',label:'月計畫',title:'把接下來一個月，安排好',subtitle:'從你選的日期開始，30 天訓練與恢復一起規劃。'},{id:'care',label:'飲食睡眠',title:'吃好、睡好，留力氣給生活',subtitle:'每天的三餐搭配與睡眠時段，配合你的訓練一起安排。'},{id:'records',label:'健康紀錄',title:'身體的變化，慢慢記下',subtitle:'留下量測與感受，空白就保持空白。'},{id:'progress',label:'訓練進度',title:'看見累積的每一次',subtitle:'實際練過的內容、時間與份量，都留在這裡。'}];
 const metricMeta={weight:{name:'體重',unit:'kg',step:'any',min:1,max:700},waist:{name:'腰圍',unit:'cm',step:'any',min:1,max:300},sleep:{name:'睡眠',unit:'小時',step:'any',min:0,max:24},steps:{name:'步數',unit:'步',step:1,min:0,max:200000},restingHR:{name:'靜息心率',unit:'次／分',step:1,min:1,max:300},systolic:{name:'收縮壓',unit:'mmHg',step:1,min:1,max:400},diastolic:{name:'舒張壓',unit:'mmHg',step:1,min:1,max:300}};
 let state,db,ready=false,busy=false,view='today',date=H.today(),today=date,metric='weight',recordsPage=1,sessionPage=1,submitHandler,channel,toastTimer,timerHandle,timerEnd=0,sessionDraft=[];
 const dialog=$('dialog'),form=$('dialog-form');
@@ -1208,14 +1626,14 @@ async function openDB(){return new Promise((resolve,reject)=>{const r=indexedDB.
 async function read(){return new Promise((resolve,reject)=>{const q=db.transaction('health').objectStore('health').get('main');q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error);});}
 async function reload(){if(syncClock()&&ready)render();if(!ready||busy||dialog.open)return;const revision=state.revision;try{const saved=await read();if(busy||dialog.open||!ready||state.revision!==revision)return;if(saved&&saved.revision!==revision){state=H.validateState(saved);render();notify('已載入另一個分頁的更新');}}catch(e){error('無法讀取更新：'+e.message);}}
 async function update(change){if(!ready||busy)throw new Error('資料尚未就緒，請稍後再試。');const expected=state.revision;if(expected>=Number.MAX_SAFE_INTEGER)throw new Error('儲存版本已達上限，請先備份。');const draft=structuredClone(state);change(draft);draft.revision=expected+1;const clean=H.validateState(draft);busy=true;$('storage-status').textContent='儲存中…';try{await new Promise((resolve,reject)=>{const tx=db.transaction('health','readwrite'),store=tx.objectStore('health'),q=store.get('main');let reason;q.onsuccess=()=>{if((q.result?.revision||0)!==expected){reason=new Error('另一個分頁已更新資料，請取消並重新開啟表單。');tx.abort();return;}store.put(clean,'main');};tx.oncomplete=resolve;tx.onerror=()=>reject(reason||tx.error||new Error('儲存失敗'));tx.onabort=()=>reject(reason||tx.error||new Error('儲存中止'));});state=clean;channel?.postMessage({revision:state.revision});$('global-error').hidden=true;render();return clean;}finally{busy=false;$('storage-status').textContent='儲存在此裝置';}}
-function setView(id){view=views.some(v=>v.id===id)||id==='settings'?id:'today';if(!['plan','month'].includes(view)&&date>today)date=today;if(view==='month'&&state.program&&(date<state.program.startDate||date>state.program.endDate))date=today>=state.program.startDate&&today<=state.program.endDate?today:state.program.startDate;history.replaceState(null,'','#'+view);render();window.scrollTo({top:0,behavior:'instant'});}
+function setView(id){view=views.some(v=>v.id===id)||id==='settings'?id:'today';if(!['plan','month','care'].includes(view)&&date>today)date=today;if(view==='month'&&state.program&&(date<state.program.startDate||date>state.program.endDate))date=today>=state.program.startDate&&today<=state.program.endDate?today:state.program.startDate;history.replaceState(null,'','#'+view);render();window.scrollTo({top:0,behavior:'instant'});}
 function weekStrip(){return `<div class="week-strip">${H.weekPlan(state,date).map((d,i)=>`<button class="day-card${d.date===date?' selected':''}" data-action="select-day" data-date="${d.date}" aria-pressed="${d.date===date}"><span>週${weekdays[i]}</span><strong class="day-date">${Number(d.date.slice(5,7))}/${Number(d.date.slice(8))}</strong><span class="day-kind">${esc(kinds[d.kind])}</span>${state.sessions.some(s=>s.date===d.date)?'<span class="day-dot" aria-label="有訓練紀錄"></span>':''}</button>`).join('')}</div>`;}
 function exercises(plan){if(!plan.exercises.length)return '';return `<div class="exercise-list">${plan.exercises.map((x,i)=>`<article class="exercise"><span class="exercise-number">${String(i+1).padStart(2,'0')}</span><div><h3 class="exercise-name">${esc(x.name)}</h3><p class="exercise-dose">${x.sets} 組 · ${esc(x.reps)}</p><p class="exercise-detail">${esc(x.detail)}</p></div>${x.rest>0?`<button class="text-button" data-action="rest-timer" data-seconds="${x.rest}">休息 ${x.rest} 秒</button>`:''}</article>`).join('')}</div>`;}
 function planPanel(plan){if(plan.kind==='setup')return `<section class="hero"><div class="hero-copy"><p class="hero-label">YOUR NEXT CHAPTER</p><h2 class="hero-title">先認識你的日常</h2><p>設定目標、器材與可用時間，讓每天的安排更貼近生活。</p><div class="hero-actions"><button class="button primary" data-action="profile">設定我的訓練條件</button><button class="button" data-action="checkin">先記錄身體狀況</button></div></div><div class="hero-art" aria-hidden="true"><span>MOVE</span><span>AT YOUR</span><span>PACE.</span></div></section>`;const review=plan.kind==='review';return `<section class="hero${review?' review':''}"><div class="hero-copy"><p class="hero-label">${esc(date===today?'TODAY’S PLAN':formatDate(date))} · ${esc(kinds[plan.kind])}</p><h2 class="hero-title">${esc(plan.title)}</h2><p>${esc(plan.subtitle)}</p><div class="hero-meta">${plan.minutes?`<span>${plan.minutes} 分鐘</span>`:''}<span>${review?'依你的條件調整':plan.phase?'30 天計畫 · 起步模板':'起步課表模板'}</span>${state.profile?`<span>${esc(goals[plan.phase&&state.program?state.program.profile.goal:state.profile.goal])}</span>`:''}</div><div class="hero-actions">${review?'<button class="button primary" data-action="profile">查看訓練條件</button>':`<button class="button primary" data-action="log-planned" ${date>today?'disabled':''}>紀錄這次訓練</button>`}<button class="button" data-action="checkin">${date>=today?'記錄今日狀況':'記錄這天狀況'}</button></div></div><div class="hero-art" aria-hidden="true"><span>${plan.kind==='recovery'?'REST':'MOVE'}</span><span>AT YOUR</span><span>PACE.</span></div></section>${plan.phase?`<p class="phase-tag">第 ${plan.phase.index} 階段 · ${esc(plan.phase.title)}</p>`:''}${plan.note?`<p class="note plan-note">${esc(plan.note)}</p>`:''}${!review?`<section class="panel"><div class="section-head"><h2>今天怎麼練</h2><span class="muted">依感受保留餘力</span></div>${plan.warmup.length?`<div class="routine-note"><strong>暖身</strong><p>${plan.warmup.map(esc).join(' · ')}</p></div>`:''}${exercises(plan)}${plan.cooldown.length?`<div class="routine-note"><strong>收操</strong><p>${plan.cooldown.map(esc).join(' · ')}</p></div>`:''}</section>`:''}`;}
 function latestCards(){const s=H.summary(state,date),c=state.checkins.find(x=>x.date===date);return `<div class="stats">${stat('本週活動',num(s.weekMinutes)+' 分鐘','以實際訓練紀錄計算',true)}${stat('本週訓練',num(s.weekSessions)+' 次','含肌力、有氧與恢復')}${stat('體重 7 日均值',s.weightAverage===null?'—':num(s.weightAverage)+' kg','近 7 天至少 4 天資料')}${stat('這天睡眠',c?.sleep==null?'—':num(c.sleep)+' 小時',c?'依自行記錄':'尚無紀錄')}</div>`;}
 function checkinValues(c){const out=[];for(const [key,m]of Object.entries(metricMeta)){if(c[key]!==null&&c[key]!==undefined)out.push(`${m.name} ${num(c[key])} ${m.unit}`);}if(c.energy!==null)out.push(`精神 ${c.energy}/5`);if(c.soreness!==null)out.push(`痠感 ${c.soreness}/5`);if(c.pain===true)out.push('有疼痛／不適');if(c.pain===false)out.push('目前無疼痛／不適（自述）');return out.join(' · ');}
 function checkinRow(c){return `<article class="record-row"><span class="record-date">${esc(formatDate(c.date))}</span><div class="record-values"><p>${esc(checkinValues(c))||'僅備註'}</p>${c.note?`<small>${esc(c.note)}</small>`:''}</div><button class="text-button" data-action="edit-checkin" data-id="${esc(c.id)}">編輯</button></article>`;}
-function todayView(){const p=H.dayPlan(state,date),c=state.checkins.find(x=>x.date===date);return `${monthEntry()}${planPanel(p)}${weekStrip()}${latestCards()}<div class="grid-equal"><section class="panel"><div class="section-head"><h2>這天的身體紀錄</h2><button class="text-button" data-action="checkin">${c?'更新紀錄':'新增紀錄'}</button></div>${c?checkinRow(c):empty('想記多少，就記多少','睡眠、步數、體重或一句感受，都可以。')}</section><section class="panel"><div class="section-head"><h2>訓練筆記</h2><button class="text-button" data-view="progress">所有紀錄 ↗</button></div>${state.sessions.filter(x=>x.date===date).length?state.sessions.filter(x=>x.date===date).map(sessionRow).join(''):empty('留下實際練過的內容','完成活動後，記下時間與訓練感受。','log-custom','記錄活動')}</section></div>`;}
+function todayView(){const p=H.dayPlan(state,date),c=state.checkins.find(x=>x.date===date);return `${monthEntry()}${careSummary()}${planPanel(p)}${weekStrip()}${latestCards()}<div class="grid-equal"><section class="panel"><div class="section-head"><h2>這天的身體紀錄</h2><button class="text-button" data-action="checkin">${c?'更新紀錄':'新增紀錄'}</button></div>${c?checkinRow(c):empty('想記多少，就記多少','睡眠、步數、體重或一句感受，都可以。')}</section><section class="panel"><div class="section-head"><h2>訓練筆記</h2><button class="text-button" data-view="progress">所有紀錄 ↗</button></div>${state.sessions.filter(x=>x.date===date).length?state.sessions.filter(x=>x.date===date).map(sessionRow).join(''):empty('留下實際練過的內容','完成活動後，記下時間與訓練感受。','log-custom','記錄活動')}</section></div>`;}
 function planView(){return `${weekStrip()}${planPanel(H.dayPlan(state,date))}<section class="panel"><div class="section-head"><h2>你的安排方式</h2><button class="text-button" data-action="profile">調整條件</button></div><div class="tips"><article class="tip"><h3>肌力日之間留恢復時間</h3><p>重新開始時先安排每週 2 次全身肌力，中間至少隔一天。只有 1 天就完成一次，有第 3 天可選輕鬆有氧；可用日期相鄰時保留恢復間隔。</p></article><article class="tip"><h3>先熟悉，再增加</h3><p>先選能穩定完成次數、仍保留約 3–4 次餘力的重量。連續兩次訓練都能輕鬆完成上限次數，再加器械最小一格；動作變形就退回原重量。</p></article><article class="tip"><h3>課表可以一起修訂</h3><p>將最近訓練的動作、實際組次與感受告訴我，我會據此協助調整下一週。</p></article></div><p class="note">網頁依設定產生起步模板；對話中的個人化規劃需另外提供你的條件與回饋。</p></section>`;}
 
 const monthStageCopy=[
@@ -1243,7 +1661,7 @@ function monthView(){
   const shortKind={strength:'肌力',cardio:'有氧',recovery:'恢復',review:'暫停',setup:'待設定'};
   const phase=month.phases.find(x=>date>=x.startDate&&date<=x.endDate);
   const blocked=month.days.filter(d=>d.kind==='review'||d.kind==='setup').length;
-  return `<section class="panel month-overview"><div><p class="eyebrow">YOUR 30-DAY PLAN</p><h2>${esc(goals[profile.goal])} · 30 天計畫</h2><p class="month-range">${formatDate(month.startDate)} — ${formatDate(month.endDate)}</p><p class="note">${esc({bodyweight:'徒手＋穩固椅子',dumbbell:'啞鈴',gym:'健身房器械'}[profile.equipment])} · 每次預留 ${profile.minutes} 分鐘 · 可用日 ${profile.days.map(d=>'週'+weekdays[d-1]).join('、')}</p></div><div class="month-actions"><button class="button" data-action="month-today">${today<month.startDate?'計畫第一天':today>month.endDate?'回看計畫':'看今天'}</button><button class="button primary" data-action="month-create">${today>month.endDate?'規劃下一個月':'重新規劃'}</button></div></section>${changed?'<p class="note plan-note">訓練條件已更新，這份計畫仍保留建立時的器材與日期。按「重新規劃」套用新條件。</p>':''}${today>month.endDate?'<p class="note plan-note">這份計畫已到期，仍可回看。準備好時再建立下一份，實際訓練紀錄會保留。</p>':''}${blocked?`<p class="note plan-note">目前有 ${blocked} 天待調整，請先查看訓練條件或不適回報；下方天數不包含暫停日。</p>`:''}<div class="month-summary">${stat('肌力日',month.strengthCount+' 天','計畫安排，非完成紀錄',true)}${stat('有氧日',month.cardioCount+' 天','依可用日分配')}${stat('恢復日',month.recoveryCount+' 天','休息或自在走動')}</div>${monthPhases(month.phases)}<section class="panel"><div class="section-head"><h2>30 天行事曆</h2><span class="muted">點日期看當日課表</span></div><div class="month-calendar" aria-label="30 天訓練日曆">${weekdays.map(d=>`<span class="month-weekday">週${d}</span>`).join('')}${blanks}${month.days.map(d=>`<button class="month-day${d.date===date?' selected':''}${d.date===today?' is-today':''}${logged.has(d.date)?' has-session':''}" data-action="month-select" data-date="${d.date}" data-kind="${d.kind}" aria-pressed="${d.date===date}" aria-label="${d.date} ${esc(kinds[d.kind])}${logged.has(d.date)?'，有活動紀錄':''}"><span class="month-day-number"><small>${Number(d.date.slice(5,7))}月</small>${Number(d.date.slice(8))}</span><span class="month-day-kind">${esc(shortKind[d.kind])}</span><span class="month-day-phase">${logged.has(d.date)?'有紀錄':d.date===today?'今天':d.phase?'階段 '+d.phase.index:''}</span></button>`).join('')}</div><div class="month-legend"><span class="legend-item" data-kind="strength">肌力</span><span class="legend-item" data-kind="cardio">有氧</span><span class="legend-item" data-kind="recovery">恢復</span><span class="legend-item">「有紀錄」只代表當天留有活動紀錄</span></div></section><section class="month-detail" id="month-detail"><div class="section-head"><h2>${formatDate(date)} · 每日課表</h2><span class="muted">${esc(phase?.title||'')}</span></div>${planPanel(H.dayPlan(state,date))}</section>`;
+  return `<section class="panel month-overview"><div><p class="eyebrow">YOUR 30-DAY PLAN</p><h2>${esc(goals[profile.goal])} · 30 天計畫</h2><p class="month-range">${formatDate(month.startDate)} — ${formatDate(month.endDate)}</p><p class="note">${esc({bodyweight:'徒手＋穩固椅子',dumbbell:'啞鈴',gym:'健身房器械'}[profile.equipment])} · 每次預留 ${profile.minutes} 分鐘 · 可用日 ${profile.days.map(d=>'週'+weekdays[d-1]).join('、')}</p></div><div class="month-actions"><button class="button" data-action="month-today">${today<month.startDate?'計畫第一天':today>month.endDate?'回看計畫':'看今天'}</button><button class="button primary" data-action="month-create">${today>month.endDate?'規劃下一個月':'重新規劃'}</button></div></section>${changed?'<p class="note plan-note">訓練條件已更新，這份計畫仍保留建立時的器材與日期。按「重新規劃」套用新條件。</p>':''}${today>month.endDate?'<p class="note plan-note">這份計畫已到期，仍可回看。準備好時再建立下一份，實際訓練紀錄會保留。</p>':''}${blocked?`<p class="note plan-note">目前有 ${blocked} 天待調整，請先查看訓練條件或不適回報；下方天數不包含暫停日。</p>`:''}<div class="month-summary">${stat('肌力日',month.strengthCount+' 天','計畫安排，非完成紀錄',true)}${stat('有氧日',month.cardioCount+' 天','依可用日分配')}${stat('恢復日',month.recoveryCount+' 天','休息或自在走動')}</div>${monthPhases(month.phases)}<section class="panel"><div class="section-head"><h2>30 天行事曆</h2><span class="muted">點日期看當日課表</span></div><div class="month-calendar" aria-label="30 天訓練日曆">${weekdays.map(d=>`<span class="month-weekday">週${d}</span>`).join('')}${blanks}${month.days.map(d=>`<button class="month-day${d.date===date?' selected':''}${d.date===today?' is-today':''}${logged.has(d.date)?' has-session':''}" data-action="month-select" data-date="${d.date}" data-kind="${d.kind}" aria-pressed="${d.date===date}" aria-label="${d.date} ${esc(kinds[d.kind])}${logged.has(d.date)?'，有活動紀錄':''}"><span class="month-day-number"><small>${Number(d.date.slice(5,7))}月</small>${Number(d.date.slice(8))}</span><span class="month-day-kind">${esc(shortKind[d.kind])}</span><span class="month-day-phase">${logged.has(d.date)?'有紀錄':d.date===today?'今天':d.phase?'階段 '+d.phase.index:''}</span></button>`).join('')}</div><div class="month-legend"><span class="legend-item" data-kind="strength">肌力</span><span class="legend-item" data-kind="cardio">有氧</span><span class="legend-item" data-kind="recovery">恢復</span><span class="legend-item">「有紀錄」只代表當天留有活動紀錄</span></div></section><section class="month-detail" id="month-detail"><div class="section-head"><h2>${formatDate(date)} · 每日課表</h2><span class="muted">${esc(phase?.title||'')}</span></div>${careSummary()}${planPanel(H.dayPlan(state,date))}</section>`;
 }
 function monthDialog(){
   if(!state.profile){profileDialog();notify('先儲存訓練條件，再建立月計畫');return;}
@@ -1263,8 +1681,41 @@ function recordsView(){const rows=state.checkins.filter(x=>x.date<=date).sort((a
 function pagination(kind,page,total){return total>1?`<div class="button-row pagination"><button class="button small" data-action="${kind}-prev" ${page===1?'disabled':''}>上一頁</button><span>${page} / ${total}</span><button class="button small" data-action="${kind}-next" ${page===total?'disabled':''}>下一頁</button></div>`:'';}
 function sessionRow(s){const count=s.exercises.reduce((n,x)=>n+x.sets.length,0);return `<article class="record-row"><span class="record-date">${esc(formatDate(s.date))}</span><div class="record-values"><strong>${esc(s.title)}</strong><p>${esc(kinds[s.kind])} · ${s.minutes} 分鐘${count?` · ${count} 組`:''}${s.effort?` · 費力度 ${s.effort}/10`:''}</p>${s.note?`<small>${esc(s.note)}</small>`:''}${s.exercises.length?`<details class="data-table"><summary>查看動作與組次</summary>${s.exercises.map(x=>`<p><strong>${esc(x.name)}</strong>：${x.sets.map(t=>`${t.reps!==null?t.reps+'次':''}${t.weight!==null?' / '+t.weight+'kg':''}${t.seconds!==null?' / '+t.seconds+'秒':''}`).map(esc).join('；')}</p>`).join('')}</details>`:''}</div><button class="text-button" data-action="edit-session" data-id="${esc(s.id)}">編輯</button></article>`;}
 function progressView(){const s=H.summary(state,date),rows=state.sessions.filter(x=>x.date<=date).sort((a,b)=>b.date.localeCompare(a.date)),pages=Math.max(1,Math.ceil(rows.length/15));sessionPage=Math.min(sessionPage,pages);const starts=[...new Set(Array.from({length:6},(_,i)=>safeShift(H.weekDates(date)[0],(i-5)*7)))];const weeks=starts.map(d=>{const end=H.shiftDate(d,6),cutoff=end>date?date:end,sum=H.summary(state,cutoff);return{date:d,minutes:sum.weekMinutes,count:sum.weekSessions};}),max=Math.max(1,...weeks.map(w=>w.minutes));return `<div class="stats">${stat('本週活動時間',s.weekMinutes+' 分鐘','依實際紀錄',true)}${stat('本週訓練次數',s.weekSessions+' 次','各次活動分開計算')}${stat('本週肌力天數',s.strengthDays+' 天','同一天只計一次')}${stat('累積訓練',rows.length+' 次','截至選擇日期')}</div><section class="panel"><div class="section-head"><h2>六週活動時間</h2><button class="button small" data-action="log-custom">＋ 記錄活動</button></div><div class="activity-bars">${weeks.map(w=>`<div class="activity-column"><span>${w.minutes} 分</span><div class="activity-track"><i style="height:${w.minutes/max*100}%"></i></div><small>${dateLabel(w.date)}</small></div>`).join('')}</div><p class="note">標示每週一日期，本週僅計入截至選擇日期的紀錄；活動時間不代表運動強度。</p></section><section class="panel"><div class="section-head"><h2>每一次練習</h2><button class="text-button" data-action="export-sessions">匯出 CSV</button></div>${rows.length?rows.slice((sessionPage-1)*15,sessionPage*15).map(sessionRow).join(''):empty('還沒有訓練紀錄','完成活動後，再記下實際內容。','log-custom','記錄一次活動')}</section>${pagination('sessions',sessionPage,pages)}`;}
-function settingsView(){const p=state.profile;return `<div class="settings-grid"><section class="panel"><div class="section-head"><h2>我的訓練條件</h2><button class="text-button" data-action="profile">${p?'編輯':'開始設定'}</button></div>${p?`<div class="facts"><div><span>目標</span><strong>${esc(goals[p.goal])}</strong></div><div><span>器材</span><strong>${esc({bodyweight:'徒手',dumbbell:'啞鈴',gym:'健身房'}[p.equipment])}</strong></div><div><span>可用日期</span><strong>${p.days.map(d=>'週'+weekdays[d-1]).join('、')}</strong></div><div><span>每次時間</span><strong>${p.minutes} 分鐘</strong></div></div>`:'<p class="muted">資料留空時，不會自動套用訓練課表。</p>'}<p class="note">你提供的目標與限制只保存在目前瀏覽器。更新條件會改變一般模板；已建立的月計畫保留原安排，需重新建立才套用新器材與日期。運動限制與不適回報會立即暫停課表。</p></section><section class="panel"><h2>把資料留在自己手上</h2><p class="muted">健康資料只存在這個瀏覽器；沒有穿戴裝置或醫療院所串接，也不會自動同步其他裝置。</p><div class="facts"><div><span>健康紀錄</span><strong>${state.checkins.length} 筆</strong></div><div><span>訓練紀錄</span><strong>${state.sessions.length} 筆</strong></div><div><span>最近備份</span><strong>${state.settings.lastBackupAt?esc(new Date(state.settings.lastBackupAt).toLocaleString('zh-TW')):'尚未備份'}</strong></div></div><div class="button-row"><button class="button primary" data-action="backup">下載完整備份</button><button class="button" data-action="restore">還原備份</button><button class="text-button" data-action="persist">申請持久保存</button></div><p class="note">JSON 可還原月計畫及完整紀錄；CSV 供你查閱。下載檔案可能包含敏感健康資料，請自行保管。</p></section><section class="panel"><h2>課表如何安排</h2><p>此版本依你設定的時間、器材與經驗產生起步模板。我可以在對話中，依你提供的訓練回饋調整個人化課表。</p><p class="note">一般成人可逐步累積每週至少 150 分鐘中等強度活動及至少 2 天肌力。這是長期參考方向，不是第一週必須完成的份量；中等強度常可說話、難以唱歌。若有慢性病或運動限制，請先確認適合的活動種類與份量。</p><div class="button-row"><a class="text-button" href="https://www.cdc.gov/physical-activity-basics/adding-adults/what-counts.html" target="_blank" rel="noopener noreferrer">CDC 活動與強度指引 ↗</a><a class="text-button" href="https://www.cdc.gov/physical-activity-basics/adding-adults/index.html" target="_blank" rel="noopener noreferrer">CDC 開始活動的方式 ↗</a><a class="text-button" href="https://acsm.org/resistance-training-guidelines-update-2026/" target="_blank" rel="noopener noreferrer">ACSM 2026 肌力訓練指引 ↗</a></div></section><section class="panel"><h2>健康紀錄的用途</h2><p>這個系統只記錄和呈現數字，不做判讀。數值的意義、正不正常、要不要處理，請問醫師或藥師。我可以幫你把資料整理成看診時好講的樣子——哪一項、哪幾次、間隔多久。</p><div class="danger-zone"><button class="text-button" data-action="clear">清除此瀏覽器的健康資料</button></div></section></div>`;}
-function render(){if(!ready)return;syncClock();if(view==='month'&&state.program&&(date<state.program.startDate||date>state.program.endDate))date=today>=state.program.startDate&&today<=state.program.endDate?today:state.program.startDate;const v=views.find(x=>x.id===view);$('nav').innerHTML=views.map(x=>`<button class="nav-button" data-view="${x.id}"${view===x.id?' aria-current="page"':''}>${x.label}</button>`).join('');$('page-title').textContent=v?.title||'你的資料與設定';$('page-subtitle').textContent=v?.subtitle||'照自己的節奏安排，也照顧資料的保存。';$('page-eyebrow').textContent='DAILY HEALTH & TRAINING';$('date-control').hidden=view==='settings'||view==='month';$('date').value=date;$('date').min='1900-01-01';$('date').max=['plan','month'].includes(view)?[H.shiftDate(today,42),state.program?.endDate||today].sort().pop():today;document.querySelector('[data-action="prev-day"]').disabled=date<='1900-01-01';document.querySelector('[data-action="next-day"]').disabled=date>=$('date').max;if($('quick-add')){$('quick-add').disabled=false;$('quick-add').querySelector('span').textContent=date>=today?'記錄今天':'記錄這天';}$('main').innerHTML=view==='today'?todayView():view==='plan'?planView():view==='month'?monthView():view==='records'?recordsView():view==='progress'?progressView():settingsView();}
+function settingsView(){const p=state.profile;return `<div class="settings-grid"><section class="panel"><div class="section-head"><h2>我的訓練條件</h2><button class="text-button" data-action="profile">${p?'編輯':'開始設定'}</button></div>${p?`<div class="facts"><div><span>目標</span><strong>${esc(goals[p.goal])}</strong></div><div><span>器材</span><strong>${esc({bodyweight:'徒手',dumbbell:'啞鈴',gym:'健身房'}[p.equipment])}</strong></div><div><span>可用日期</span><strong>${p.days.map(d=>'週'+weekdays[d-1]).join('、')}</strong></div><div><span>每次時間</span><strong>${p.minutes} 分鐘</strong></div></div>`:'<p class="muted">資料留空時，不會自動套用訓練課表。</p>'}<p class="note">你提供的目標與限制只保存在目前瀏覽器。更新條件會改變一般模板；已建立的月計畫保留原安排，需重新建立才套用新器材與日期。運動限制與不適回報會立即暫停課表。</p></section><section class="panel"><h2>把資料留在自己手上</h2><p class="muted">健康資料只存在這個瀏覽器；沒有穿戴裝置或醫療院所串接，也不會自動同步其他裝置。</p><div class="facts"><div><span>健康紀錄</span><strong>${state.checkins.length} 筆</strong></div><div><span>訓練紀錄</span><strong>${state.sessions.length} 筆</strong></div><div><span>生活紀錄</span><strong>${state.careLogs.length} 筆</strong></div><div><span>最近備份</span><strong>${state.settings.lastBackupAt?esc(new Date(state.settings.lastBackupAt).toLocaleString('zh-TW')):'尚未備份'}</strong></div></div><div class="button-row"><button class="button primary" data-action="backup">下載完整備份</button><button class="button" data-action="restore">還原備份</button><button class="text-button" data-action="persist">申請持久保存</button></div><p class="note">JSON 可還原月計畫、飲食作息設定及所有紀錄；健康與訓練 CSV 供你查閱。下載檔案可能包含敏感健康資料，請自行保管。</p></section><section class="panel"><div class="section-head"><h2>飲食與作息</h2><button class="text-button" data-action="care-profile">調整設定</button></div><p class="note">依飲食偏好、需避開的食物及固定起床時間產生每日生活模板。實際紀錄由你自行填寫。</p><button class="button" data-view="care">查看每日安排 ↗</button></section><section class="panel"><h2>課表如何安排</h2><p>此版本依你設定的時間、器材與經驗產生起步模板。我可以在對話中，依你提供的訓練回饋調整個人化課表。</p><p class="note">一般成人可逐步累積每週至少 150 分鐘中等強度活動及至少 2 天肌力。這是長期參考方向，不是第一週必須完成的份量；中等強度常可說話、難以唱歌。若有慢性病或運動限制，請先確認適合的活動種類與份量。</p><div class="button-row"><a class="text-button" href="https://www.cdc.gov/physical-activity-basics/adding-adults/what-counts.html" target="_blank" rel="noopener noreferrer">CDC 活動與強度指引 ↗</a><a class="text-button" href="https://www.cdc.gov/physical-activity-basics/adding-adults/index.html" target="_blank" rel="noopener noreferrer">CDC 開始活動的方式 ↗</a><a class="text-button" href="https://acsm.org/resistance-training-guidelines-update-2026/" target="_blank" rel="noopener noreferrer">ACSM 2026 肌力訓練指引 ↗</a></div></section><section class="panel"><h2>健康紀錄的用途</h2><p>這個系統只記錄和呈現數字，不做判讀。數值的意義、正不正常、要不要處理，請問醫師或藥師。我可以幫你把資料整理成看診時好講的樣子——哪一項、哪幾次、間隔多久。</p><div class="danger-zone"><button class="text-button" data-action="clear">清除此瀏覽器的健康資料</button></div></section></div>`;}
+function render(){if(!ready)return;syncClock();if(view==='month'&&state.program&&(date<state.program.startDate||date>state.program.endDate))date=today>=state.program.startDate&&today<=state.program.endDate?today:state.program.startDate;const v=views.find(x=>x.id===view);$('nav').innerHTML=views.map(x=>`<button class="nav-button" data-view="${x.id}"${view===x.id?' aria-current="page"':''}>${x.label}</button>`).join('');$('page-title').textContent=v?.title||'你的資料與設定';$('page-subtitle').textContent=v?.subtitle||'照自己的節奏安排，也照顧資料的保存。';$('page-eyebrow').textContent='DAILY HEALTH & TRAINING';$('date-control').hidden=view==='settings'||view==='month';$('date').value=date;$('date').min='1900-01-01';$('date').max=['plan','month','care'].includes(view)?[H.shiftDate(today,42),state.program?.endDate||today].sort().pop():today;document.querySelector('[data-action="prev-day"]').disabled=date<='1900-01-01';document.querySelector('[data-action="next-day"]').disabled=date>=$('date').max;if($('quick-add')){$('quick-add').disabled=false;$('quick-add').dataset.action=view==='care'?'care-log':'checkin';$('quick-add').querySelector('span').textContent=view==='care'?(date>=today?'記錄今日生活':'記錄這天生活'):(date>=today?'記錄今天':'記錄這天');}$('main').innerHTML=view==='today'?todayView():view==='plan'?planView():view==='month'?monthView():view==='care'?careView():view==='records'?recordsView():view==='progress'?progressView():settingsView();}
+const allergenLabels={milk:'乳類',egg:'蛋',soy:'大豆',wheat:'小麥',gluten:'含麩質穀物',peanut:'花生',nuts:'堅果',sesame:'芝麻',fish:'魚',shellfish:'甲殼／貝類'};
+function careSummary(){
+  const p=W.day(state,date),bed=p.sleep.status==='ready'?p.sleep.events[1]:null;
+  return `<section class="care-summary"><div><h3>吃飯與休息，也一起安排</h3><p>${p.nutrition.status==='ready'?'這天的三餐搭配已準備好':'先設定飲食偏好與過敏資訊'}${bed?` · ${formatDate(bed.date)} ${bed.time} 預留睡眠`:' · 依起床時間安排睡眠'}</p></div><button class="button" data-view="care">查看 ${dateLabel(date)} 飲食睡眠 ↗</button></section>`;
+}
+function careTips(tips){return tips.length?`<ul class="care-tips">${tips.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:'';}
+function careLogRow(log){
+  const meals=[['breakfast','早餐'],['lunch','午餐'],['dinner','晚餐']].filter(([key])=>log[key]);
+  return `<article class="care-log-entry"><div><strong>${formatDate(log.date)} · 實際紀錄</strong>${meals.map(([key,label])=>`<p><strong>${label}</strong> ${esc(log[key])}</p>`).join('')}${log.bedTime||log.wakeTime?`<p>這次睡眠：${log.bedTime?'上床 '+esc(log.bedTime):'上床未填'} → ${log.wakeTime?'起床 '+esc(log.wakeTime):'起床未填'}（以起床日歸檔）</p>`:''}${log.sleepQuality!==null?`<p>睡眠感受 ${log.sleepQuality} / 5</p>`:''}${log.note?`<p>${esc(log.note)}</p>`:''}</div><button class="text-button" data-action="care-log" data-id="${esc(log.id)}">編輯</button></article>`;
+}
+function careView(){
+  const p=W.day(state,date),n=p.nutrition,s=p.sleep,log=state.careLogs.find(x=>x.date===date);
+  const status={setup:'待設定',review:'需個別調整',ready:'一般生活規劃'};
+  return `<section class="care-intro"><div><p class="eyebrow">EAT WELL · REST WELL</p><h2>${formatDate(date)} 的生活安排</h2><p class="muted">${esc(kinds[p.trainingKind])} · 餐食與作息依你的設定產生，可按日查看。</p></div><div class="button-row">${!state.profile?'<button class="button" data-action="profile">設定基本條件</button>':''}<button class="button primary" data-action="care-profile">${state.careProfile?'調整飲食與作息':'設定飲食與作息'}</button></div></section><div class="care-grid"><section class="panel"><div class="section-head"><h2>這天怎麼吃</h2><span class="care-status">${status[n.status]}</span></div><h3>${esc(n.title)}</h3><p class="note">${esc(n.note)}</p><div class="meal-list">${n.meals.map(m=>`<article class="meal-card"><p class="meal-label">${esc(m.label)}</p><h3>${esc(m.title)}</h3><ul class="meal-items">${m.items.map(item=>`<li>${esc(item)}</li>`).join('')}</ul><p class="meal-tip">${esc(m.tip)}</p></article>`).join('')}</div>${careTips(n.tips)}</section><section class="panel"><div class="section-head"><h2>接下來的睡眠時段</h2><span class="care-status">${status[s.status]}</span></div><p class="note">${esc(s.note)}</p><div class="sleep-timeline">${s.events.map(e=>`<div class="sleep-event"><div><span class="time-date">${formatDate(e.date)}</span><strong class="time-value">${esc(e.time)}</strong></div><span class="time-label">${esc(e.label)}</span></div>`).join('')}</div>${careTips(s.tips)}</section></div><section class="panel"><div class="section-head"><div><h2>實際吃了什麼、睡得如何</h2><p class="note">${date>today?'這是未來安排；到了當天再留下紀錄。':'想記一餐或一句感受，都可以。睡眠以起床日歸檔。'}</p></div>${date<=today?`<button class="button" data-action="care-log">${log?'更新這天紀錄':'記錄這天生活'}</button>`:''}</div><div class="care-log-list">${log?careLogRow(log):'<p class="muted">尚未留下這天的飲食與作息紀錄。</p>'}</div></section><section class="panel"><h2>讓安排貼近日常</h2><p class="note">餐點搭配與時段推算是一般生活模板，適用 18–64 歲成人；有治療飲食需求或持續睡眠困擾時，需另行討論。修改偏好會立即更新各日期的建議，已填寫的實際紀錄仍會保留。</p><div class="care-source-links"><a href="https://www.mohw.gov.tw/cp-4251-50222-1.html" target="_blank" rel="noopener noreferrer">國健署・我的餐盤 ↗</a><a href="https://www.cdc.gov/sleep/about/index.html" target="_blank" rel="noopener noreferrer">CDC・睡眠習慣 ↗</a></div></section>`;
+}
+function careProfileDialog(){
+  const p=state.careProfile;
+  const select=(name,options,value)=>`<select name="${name}">${options.map(([k,v])=>option(k,v,value)).join('')}</select>`;
+  showDialog('讓飲食與作息配合你',`<p class="form-hint">先確認過敏、飲食限制與作息，再產生適合的生活模板。未確認的項目可保留「不確定」。</p><section class="care-form-section"><h3>飲食偏好</h3><div class="form-grid">${field('飲食方式',select('diet',[['omnivore','一般飲食'],['vegetarian','蛋奶素'],['vegan','全素']],p?.diet||'omnivore'))}${field('平常用餐方式',select('mealMode',[['mixed','外食與自煮都有'],['out','主要外食'],['home','主要自煮']],p?.mealMode||'mixed'))}${field('食物過敏狀況',select('allergyStatus',[['unknown','尚未確認'],['none','目前沒有已知食物過敏'],['listed','有，請勾選或填寫下方']],p?.allergyStatus||'unknown'),true)}<fieldset class="field wide"><legend>需要避開的食物</legend><div class="chip-group">${Object.entries(allergenLabels).map(([key,label])=>`<label class="chip"><input type="checkbox" name="allergens" value="${key}" ${p?.allergens.includes(key)?'checked':''}><span>${label}</span></label>`).join('')}</div></fieldset>${field('其他過敏或需避開的食物（選填）',`<textarea name="otherAllergies" maxlength="1000" rows="2" placeholder="系統無法自動辨識自由文字；填寫後先保留條件，不產生菜單。">${esc(p?.otherAllergies||'')}</textarea>`,true)}${field('是否有醫師／營養師交代的飲食限制或治療飲食需求？',select('nutritionCare',[['unsure','不確定，先保留'],['none','目前沒有'],['yes','有，需要個別安排']],p?.nutritionCare||'unsure'),true)}</div></section><section class="care-form-section"><h3>睡眠與作息</h3><div class="form-grid">${field('工作與睡眠型態',select('schedule',[['unsure','尚未確認'],['regular','大致固定作息'],['shift','輪班或不固定']],p?.schedule||'unsure'))}${field('固定起床時間（選填）',`<input type="time" name="wakeTime" value="${p?.wakeTime||''}">`)}${field('希望預留的睡眠時段',select('sleepHours',[['','尚未設定'],...[7,7.5,8,8.5,9].map(n=>[String(n),n+' 小時'])],p?.sleepHours==null?'':String(p.sleepHours)),true,'這是作息規劃的預留時段，不等於實際睡著的時間。')}${field('是否有持續失眠、打鼾伴隨喘醒，或其他睡眠困擾？',select('sleepConcern',[['unsure','不確定，先保留'],['none','目前沒有'],['yes','有，需要個別討論']],p?.sleepConcern||'unsure'),true)}</div></section><p class="note">資料只存在這個瀏覽器。可先設定其中一部分；飲食和睡眠各自確認後，各自開始顯示安排。</p>`,async fd=>{
+    const profile={diet:fd.get('diet'),mealMode:fd.get('mealMode'),allergyStatus:fd.get('allergyStatus'),allergens:fd.getAll('allergens'),otherAllergies:fd.get('otherAllergies').trim(),nutritionCare:fd.get('nutritionCare'),wakeTime:fd.get('wakeTime')||null,sleepHours:nullable(fd,'sleepHours'),schedule:fd.get('schedule'),sleepConcern:fd.get('sleepConcern')};
+    if(profile.allergyStatus==='none'&&(profile.allergens.length||profile.otherAllergies))throw new Error('若沒有已知過敏，請取消勾選並清空其他食物；有需要避開的項目則選「有」。');
+    await update(s=>s.careProfile=profile);notify('飲食與作息設定已儲存');
+  });
+}
+function careLogDialog(id){
+  const d=date>today?today:date,existing=id?state.careLogs.find(x=>x.id===id):state.careLogs.find(x=>x.date===d);
+  showDialog(existing?'更新生活紀錄':'記錄這天的飲食與睡眠',`<p class="form-hint">填寫實際發生的內容，欄位可留空。睡眠以起床日歸檔：填這一天起床前那次睡眠的時間；實際睡眠時數可另外填在「健康紀錄」。</p><div class="form-grid">${field('紀錄日期／睡眠起床日',`<input type="date" name="date" min="1900-01-01" max="${today}" data-past-date value="${existing?.date||d}" required>`,true)}${[['breakfast','早餐'],['lunch','午餐'],['dinner','晚餐']].map(([key,label])=>field(label+'（選填）',`<textarea name="${key}" maxlength="1000" rows="2" placeholder="實際吃了什麼">${esc(existing?.[key]||'')}</textarea>`,true)).join('')}${field('這次睡眠的上床時間',`<input type="time" name="bedTime" value="${existing?.bedTime||''}">`)}${field('這天的起床時間',`<input type="time" name="wakeTime" value="${existing?.wakeTime||''}">`)}${field('睡眠感受',`<select name="sleepQuality">${option('','未記錄',existing?.sleepQuality==null?'':String(existing.sleepQuality))}${[1,2,3,4,5].map(n=>option(String(n),n+' / 5'+(n===1?' · 睡得不太好':n===5?' · 睡得很好':''),String(existing?.sleepQuality))).join('')}</select>`,true)}${field('餐間點心或一句感受',`<textarea name="note" maxlength="2000" rows="3" placeholder="想記下的其他內容">${esc(existing?.note||'')}</textarea>`,true)}</div>${existing?`<div class="danger-zone"><button type="button" class="text-button" data-action="care-delete" data-id="${esc(existing.id)}">刪除這筆生活紀錄</button></div>`:''}`,async fd=>{
+    const log={id:existing?.id||uid(),date:fd.get('date'),breakfast:fd.get('breakfast').trim(),lunch:fd.get('lunch').trim(),dinner:fd.get('dinner').trim(),note:fd.get('note').trim(),bedTime:fd.get('bedTime')||null,wakeTime:fd.get('wakeTime')||null,sleepQuality:nullable(fd,'sleepQuality')};
+    if(!log.breakfast&&!log.lunch&&!log.dinner&&!log.note&&!log.bedTime&&!log.wakeTime&&log.sleepQuality===null)throw new Error('請留下至少一項飲食、睡眠或感受。');
+    await update(s=>{if(s.careLogs.some(x=>x.date===log.date&&x.id!==log.id))throw new Error('這一天已有生活紀錄，請切換到該日期編輯。');const i=s.careLogs.findIndex(x=>x.id===log.id);if(i>=0)s.careLogs[i]=log;else s.careLogs.push(log);});date=log.date;render();notify('生活紀錄已儲存');
+  });
+}
+
 function profileDialog(){const p=state.profile;showDialog('讓課表配合你的生活',`<p class="form-hint">這些資料用來選擇起步模板。有疼痛、慢性病或醫師限制時，先保留條件，課表再另行調整。</p><div class="form-grid">${field('年齡',`<input name="age" type="number" min="1" max="120" value="${p?.age||''}" required>`)}${field('訓練目標',`<select name="goal">${Object.entries(goals).map(([k,v])=>option(k,v,p?.goal||'habit')).join('')}</select>`)}${field('目前經驗',`<select name="experience">${option('new','剛開始／重新開始',p?.experience||'new')}${option('regular','已有規律訓練',p?.experience)}</select>`)}${field('可使用的器材',`<select name="equipment">${option('bodyweight','徒手＋穩固椅子',p?.equipment||'bodyweight')}${option('dumbbell','啞鈴',p?.equipment)}${option('gym','健身房器械',p?.equipment)}</select>`)}${field('每次可用時間',`<select name="minutes">${[20,30,45,60].map(n=>option(String(n),n+' 分鐘',String(p?.minutes||30))).join('')}</select>`)}${field('開始日期',`<input name="startDate" type="date" min="1900-01-01" max="${today}" data-past-date value="${p?.startDate||today}" required>`)}<fieldset class="field wide"><legend>每週可運動的日子</legend><div class="chip-group">${weekdays.map((d,i)=>`<label class="chip"><input type="checkbox" name="days" value="${i+1}" ${(p?.days||[1,3,5]).includes(i+1)?'checked':''}><span>週${d}</span></label>`).join('')}</div></fieldset>${field('是否有疼痛、傷勢、慢性病或醫師交代的運動限制？',`<select name="limitations" required><option value="">請選擇</option>${option('none','目前沒有已知限制',p?.limitations)}${option('yes','有，需要調整',p?.limitations)}${option('unsure','不確定，先討論',p?.limitations)}</select>`,true)}${field('條件與偏好（選填）',`<textarea name="notes" rows="3" maxlength="2000" placeholder="例如：喜歡騎車、器材種類、需要避開的動作">${esc(p?.notes||'')}</textarea>`,true)}</div><p class="note">起步模板目前適用自述無限制的 18–64 歲成人；其他情況保留紀錄功能，待個別討論課表。</p>`,async fd=>{const profile={age:Number(fd.get('age')),goal:fd.get('goal'),experience:fd.get('experience'),equipment:fd.get('equipment'),days:fd.getAll('days').map(Number),minutes:Number(fd.get('minutes')),limitations:fd.get('limitations'),notes:fd.get('notes').trim(),startDate:fd.get('startDate')};await update(s=>s.profile=profile);notify('訓練條件已儲存');});}
 function nullable(fd,key){const raw=String(fd.get(key)??'').trim();return raw===''?null:Number(raw);}
 function checkinDialog(id){const existing=id?state.checkins.find(x=>x.id===id):state.checkins.find(x=>x.date===(date>today?today:date));const d=existing?.date||(date>today?today:date);showDialog(existing?'更新健康紀錄':'記錄今日狀況',`<p class="form-hint">每個欄位都可留空。請依量測工具上的數字填寫；血壓的兩個數值請一起填入。</p><div class="form-grid">${field('日期',`<input type="date" name="date" min="1900-01-01" max="${today}" data-past-date value="${d}" required>`,true)}${Object.entries(metricMeta).map(([key,m])=>field(m.name+' · '+m.unit,`<input name="${key}" type="number" inputmode="decimal" step="${m.step}" min="${m.min}" max="${m.max}" value="${existing?.[key]??''}" placeholder="未記錄">`)).join('')}${field('精神感受',`<select name="energy">${option('','未記錄','')}${[1,2,3,4,5].map(n=>option(String(n),n+' / 5'+(n===1?' · 很疲倦':n===5?' · 很有精神':''),String(existing?.energy))).join('')}</select>`)}${field('肌肉痠感',`<select name="soreness">${option('','未記錄','')}${[1,2,3,4,5].map(n=>option(String(n),n+' / 5'+(n===1?' · 幾乎沒有':n===5?' · 很明顯':''),String(existing?.soreness))).join('')}</select>`)}${field('今天有疼痛或身體不適嗎？',`<select name="pain">${option('','未填／維持上次狀態',existing?.pain==null?'':String(existing.pain))}${option('true','有疼痛或不適，先暫停原課表',String(existing?.pain))}${option('false','目前沒有疼痛或不適',String(existing?.pain))}</select>`,true,'回報有不適後，課表持續暫停；之後明確回報沒有不適，才恢復模板。')}${field('一句感受或量測條件',`<textarea name="note" maxlength="4000" rows="3" placeholder="例如：晨起量測、今天精神不錯">${esc(existing?.note||'')}</textarea>`,true)}</div>${existing?`<div class="danger-zone"><button type="button" class="text-button" data-action="delete-checkin" data-id="${existing.id}">刪除這筆紀錄</button></div>`:''}`,async fd=>{const value={id:existing?.id||uid(),date:fd.get('date'),...Object.fromEntries(Object.keys(metricMeta).map(k=>[k,nullable(fd,k)])),energy:nullable(fd,'energy'),soreness:nullable(fd,'soreness'),pain:fd.get('pain')===''?(existing?.pain??null):fd.get('pain')==='true',note:fd.get('note').trim()};if(!value.note&&value.pain===null&&!Object.keys(metricMeta).some(k=>value[k]!==null)&&value.energy===null&&value.soreness===null)throw new Error('請填入至少一項紀錄或感受。');await update(s=>{if(s.checkins.some(c=>c.date===value.date&&c.id!==value.id))throw new Error('這一天已有紀錄，請回到該日編輯。');const i=s.checkins.findIndex(x=>x.id===value.id);if(i>=0)s.checkins[i]=value;else s.checkins.push(value);});notify('健康紀錄已儲存');});}
@@ -1272,12 +1723,12 @@ function setRow(exerciseIndex,setIndex,set={reps:null,weight:null,seconds:null})
 function logDialog(id,planned=false){const old=state.sessions.find(x=>x.id===id),p=planned?H.dayPlan(state,date):null;if(planned&&['setup','review'].includes(p.kind)){profileDialog();return;}sessionDraft=old?structuredClone(old.exercises):p?p.exercises.map(x=>({exerciseId:x.id,name:x.name,sets:Array.from({length:x.sets},()=>({reps:null,weight:null,seconds:null}))})):[];showDialog(old?'編輯訓練紀錄':'記下實際練過的內容',`<div class="form-grid">${field('日期',`<input type="date" name="date" min="1900-01-01" max="${today}" data-past-date value="${old?.date||(date>today?today:date)}" required>`)}${field('活動類型',`<select name="kind">${['strength','cardio','recovery','other'].map(k=>option(k,kinds[k],old?.kind||p?.kind||'other')).join('')}</select>`)}${field('活動名稱',`<input name="title" maxlength="160" placeholder="例如：全身肌力、散步、游泳" value="${esc(old?.title||p?.title||'')}" required>`,true)}${field('實際時間 · 分鐘',`<input name="minutes" type="number" min="0" max="1440" step="any" value="${old?.minutes??''}" placeholder="${p?.minutes||'30'}" required>`)}${field('主觀費力度 · 1–10',`<select name="effort">${option('','不填','')}${Array.from({length:10},(_,i)=>option(String(i+1),String(i+1)+(i===0?' · 很輕鬆':i===9?' · 最大努力':''),String(old?.effort))).join('')}</select>`)}</div><div id="logged-exercises">${sessionDraft.map((x,i)=>`<section class="session-exercise" data-exercise="${i}"><label class="field"><span>動作名稱</span><input class="exercise-name-input" data-index="${i}" maxlength="120" value="${esc(x.name)}" required></label><p class="note">重量依每一個啞鈴或器械標示填寫，維持相同記法；徒手可填 0。</p><div class="set-rows">${x.sets.map((s,j)=>setRow(i,j,s)).join('')}</div><button type="button" class="text-button" data-action="add-set" data-index="${i}">＋ 一組</button></section>`).join('')}</div><div class="button-row"><button type="button" class="button small" data-action="add-exercise">＋ 加入動作</button></div>${field('訓練感受（選填）',`<textarea name="note" maxlength="4000" rows="3" placeholder="例如：最後一組仍有餘力、某動作需要替代">${esc(old?.note||'')}</textarea>`,true)}<p class="note">動作組數可選填；沒有填入次數或秒數的空白組不會儲存。紀錄不等於完成課表所有動作。</p>${old?`<div class="danger-zone"><button type="button" class="text-button" data-action="delete-session" data-id="${old.id}">刪除這次訓練</button></div>`:''}`,async fd=>{const entries=sessionDraft.map((x,i)=>({exerciseId:x.exerciseId,name:x.name,sets:x.sets.map((_,j)=>({reps:nullable(fd,`reps-${i}-${j}`),weight:nullable(fd,`weight-${i}-${j}`),seconds:nullable(fd,`seconds-${i}-${j}`)})).filter(s=>{if(s.weight!==null&&s.reps===null&&s.seconds===null)throw new Error('有填重量的組，請一起填入次數或秒數。');return s.reps!==null||s.seconds!==null;})})).filter(x=>x.sets.length);const value={id:old?.id||uid(),date:fd.get('date'),kind:fd.get('kind'),title:fd.get('title').trim(),minutes:Number(fd.get('minutes')),effort:nullable(fd,'effort'),note:fd.get('note').trim(),exercises:entries};await update(s=>{const i=s.sessions.findIndex(x=>x.id===value.id);if(i>=0)s.sessions[i]=value;else s.sessions.push(value);});notify('這次訓練已記下');});}
 function download(name,content,type){const url=URL.createObjectURL(new Blob([content],{type})),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
 async function backup(){if(!ready)return;const saved=await read(),snapshot=H.validateState(saved||H.emptyState());const stamp=new Date().toISOString();snapshot.settings.lastBackupAt=stamp;download(`日日動-完整備份-${today}-${Date.now()}.json`,JSON.stringify(snapshot),'application/json');try{await update(s=>s.settings.lastBackupAt=stamp);notify('完整備份已下載');}catch(e){notify('已下載目前資料；備份時間未寫回：'+e.message);}}
-async function restore(file){if(!file)return;if(file.size>20*1024*1024)throw new Error('檔案超過 20 MiB。');let data;try{data=JSON.parse(await file.text());}catch{throw new Error('請選擇有效的 JSON 備份檔。');}const imported=H.validateState(data);showDialog('還原健康與訓練資料',`<p class="form-hint">備份含 ${imported.checkins.length} 筆健康紀錄與 ${imported.sessions.length} 筆訓練${imported.program?'，包含一份 30 天月計畫':'，未包含月計畫'}。還原會取代目前的健康資料與月計畫。</p><button type="button" class="text-button" data-action="backup">先下載目前資料的備份 ↗</button><label class="checkbox-line"><input type="checkbox" name="confirmed" required>我已確認，使用備份取代目前資料。</label>`,async fd=>{if(fd.get('confirmed')!=='on')throw new Error('請先確認。');await update(s=>{s.profile=imported.profile;s.program=imported.program;s.checkins=imported.checkins;s.sessions=imported.sessions;s.settings=imported.settings;});recordsPage=sessionPage=1;notify('資料已還原');},'確認還原');}
+async function restore(file){if(!file)return;if(file.size>20*1024*1024)throw new Error('檔案超過 20 MiB。');let data;try{data=JSON.parse(await file.text());}catch{throw new Error('請選擇有效的 JSON 備份檔。');}const imported=H.validateState(data);showDialog('還原健康與訓練資料',`<p class="form-hint">備份含 ${imported.checkins.length} 筆健康紀錄、${imported.sessions.length} 筆訓練與 ${imported.careLogs.length} 筆生活紀錄${imported.program?'，包含一份 30 天月計畫':'，未包含月計畫'}。還原會取代目前所有健康、訓練、生活紀錄與設定。舊備份未包含的月計畫或飲食作息資料也會清空。</p><button type="button" class="text-button" data-action="backup">先下載目前資料的備份 ↗</button><label class="checkbox-line"><input type="checkbox" name="confirmed" required>我已確認，使用備份取代目前資料。</label>`,async fd=>{if(fd.get('confirmed')!=='on')throw new Error('請先確認。');await update(s=>{s.profile=imported.profile;s.program=imported.program;s.careProfile=imported.careProfile;s.careLogs=imported.careLogs;s.checkins=imported.checkins;s.sessions=imported.sessions;s.settings=imported.settings;});recordsPage=sessionPage=1;notify('資料已還原');},'確認還原');}
 function exportCSV(kind){const cell=x=>{let v=String(x??'');if(/^\s*[=+\-@]/.test(v))v="'"+v;return '"'+v.replaceAll('"','""')+'"';};const rows=kind==='checkins'?[['日期',...Object.values(metricMeta).map(m=>m.name+' '+m.unit),'精神1-5','痠感1-5','疼痛/不適','備註'],...state.checkins.map(c=>[c.date,...Object.keys(metricMeta).map(k=>c[k]),c.energy,c.soreness,c.pain===true?'有':c.pain===false?'無（自述）':'',c.note])]:[['日期','類型','名稱','分鐘','費力度','備註','動作與組次'],...state.sessions.map(s=>[s.date,kinds[s.kind],s.title,s.minutes,s.effort,s.note,s.exercises.map(x=>x.name+': '+x.sets.map(t=>[t.reps===null?'':t.reps+'次',t.weight===null?'':t.weight+'kg',t.seconds===null?'':t.seconds+'秒'].filter(Boolean).join('/')).join('; ')).join(' | ')])];download(`日日動-${kind==='checkins'?'健康':'訓練'}紀錄-${today}.csv`,'\uFEFF'+rows.map(r=>r.map(cell).join(',')).join('\r\n'),'text/csv;charset=utf-8');notify('CSV 已下載');}
 function startTimer(seconds){if(!Number.isFinite(seconds)||seconds<1||seconds>600)return;clearInterval(timerHandle);timerEnd=Date.now()+seconds*1000;let box=$('rest-timer');if(!box){box=document.createElement('div');box.id='rest-timer';box.innerHTML='<span id="rest-remaining"></span><button class="text-button" data-action="stop-timer">結束</button>';document.body.append(box);}box.hidden=false;const tick=()=>{const left=Math.max(0,Math.ceil((timerEnd-Date.now())/1000));$('rest-remaining').textContent=left?`休息 ${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`:'休息計時結束';if(!left)clearInterval(timerHandle);};tick();timerHandle=setInterval(tick,250);}
 form.addEventListener('submit',async e=>{e.preventDefault();if(busy||!submitHandler)return;$('dialog-error').hidden=true;$('save-button').disabled=true;try{await submitHandler(new FormData(form));dialog.close();}catch(err){$('dialog-error').textContent=err.message;$('dialog-error').hidden=false;}finally{$('save-button').disabled=false;}});
 dialog.addEventListener('cancel',e=>{if(busy)e.preventDefault();else setTimeout(reload,0);});
-document.addEventListener('click',async event=>{const b=event.target.closest('[data-action],[data-view]');if(!b||b.disabled)return;if(b.dataset.view){event.preventDefault();setView(b.dataset.view);return;}const id=b.dataset.id;try{switch(b.dataset.action){case'profile':profileDialog();break;case'month-create':monthDialog();break;case'month-select':date=b.dataset.date;render();$('month-detail')?.scrollIntoView({behavior:'smooth',block:'start'});break;case'month-today':date=today;setView('month');break;case'checkin':checkinDialog();break;case'edit-checkin':checkinDialog(id);break;case'log-planned':logDialog(null,true);break;case'log-custom':logDialog();break;case'edit-session':logDialog(id);break;case'close-dialog':if(!busy){dialog.close();await reload();}break;case'prev-day':if(date>'1900-01-01'){date=H.shiftDate(date,-1);render();}break;case'next-day':if(date<$('date').max){date=H.shiftDate(date,1);render();}break;case'select-day':date=b.dataset.date;if(date>today)setView('plan');else render();break;case'records-prev':recordsPage=Math.max(1,recordsPage-1);render();break;case'records-next':recordsPage++;render();break;case'sessions-prev':sessionPage=Math.max(1,sessionPage-1);render();break;case'sessions-next':sessionPage++;render();break;case'rest-timer':startTimer(Number(b.dataset.seconds));break;case'stop-timer':clearInterval(timerHandle);$('rest-timer').hidden=true;break;case'backup':await backup();break;case'restore':$('restore-file').click();break;case'export-checkins':exportCSV('checkins');break;case'export-sessions':exportCSV('sessions');break;case'delete-checkin':confirm('刪除這筆健康紀錄？','刪除後圖表也會更新。',async()=>{await update(s=>s.checkins=s.checkins.filter(x=>x.id!==id));notify('紀錄已刪除');},'刪除');break;case'delete-session':confirm('刪除這次訓練？','實際活動時間與次數會一起更新。',async()=>{await update(s=>s.sessions=s.sessions.filter(x=>x.id!==id));notify('紀錄已刪除');},'刪除');break;case'persist':{const granted=await navigator.storage?.persist?.();notify(granted?'已允許持久保存，仍建議保留備份。':'瀏覽器未允許持久保存，請自行保留備份。');break;}case'add-set':{const i=Number(b.dataset.index),x=sessionDraft[i];if(x.sets.length>=30)throw new Error('單一動作最多 30 組。');const j=x.sets.length;x.sets.push({reps:null,weight:null,seconds:null});b.closest('.session-exercise').querySelector('.set-rows').insertAdjacentHTML('beforeend',setRow(i,j));break;}case'add-exercise':{if(sessionDraft.length>=30)throw new Error('每次紀錄最多 30 個動作。');const i=sessionDraft.length;sessionDraft.push({exerciseId:'custom-'+uid(),name:'自訂動作 '+(i+1),sets:[{reps:null,weight:null,seconds:null}]});$('logged-exercises').insertAdjacentHTML('beforeend',`<section class="session-exercise" data-exercise="${i}"><label class="field"><span>動作名稱</span><input class="exercise-name-input" data-index="${i}" maxlength="120" value="自訂動作 ${i+1}" required></label><div class="set-rows">${setRow(i,0)}</div><button type="button" class="text-button" data-action="add-set" data-index="${i}">＋ 一組</button></section>`);break;}case'clear':showDialog('清除所有健康與訓練資料',`<p class="form-hint">此操作會清除本瀏覽器的個人設定、健康與訓練紀錄。其他工具資料不受影響。</p><button type="button" class="text-button" data-action="backup">先下載完整備份 ↗</button>${field('請輸入「清除」', '<input name="confirmText" required autocomplete="off">')}`,async fd=>{if(fd.get('confirmText')!=='清除')throw new Error('請輸入「清除」確認。');await update(s=>{const fresh=H.emptyState();s.profile=fresh.profile;s.program=fresh.program;s.checkins=[];s.sessions=[];s.settings=fresh.settings;});notify('健康與訓練資料已清除');},'清除資料');break;}}catch(err){if(dialog.open){$('dialog-error').textContent=err.message;$('dialog-error').hidden=false;}else error(err.message);}});
+document.addEventListener('click',async event=>{const b=event.target.closest('[data-action],[data-view]');if(!b||b.disabled)return;if(b.dataset.view){event.preventDefault();setView(b.dataset.view);return;}const id=b.dataset.id;try{switch(b.dataset.action){case'profile':profileDialog();break;case'care-profile':careProfileDialog();break;case'care-log':careLogDialog(id);break;case'care-delete':confirm('刪除這筆生活紀錄？','這天自行填寫的飲食與睡眠紀錄會被刪除。',async()=>{await update(s=>s.careLogs=s.careLogs.filter(x=>x.id!==id));notify('生活紀錄已刪除');},'刪除');break;case'month-create':monthDialog();break;case'month-select':date=b.dataset.date;render();$('month-detail')?.scrollIntoView({behavior:'smooth',block:'start'});break;case'month-today':date=today;setView('month');break;case'checkin':checkinDialog();break;case'edit-checkin':checkinDialog(id);break;case'log-planned':logDialog(null,true);break;case'log-custom':logDialog();break;case'edit-session':logDialog(id);break;case'close-dialog':if(!busy){dialog.close();await reload();}break;case'prev-day':if(date>'1900-01-01'){date=H.shiftDate(date,-1);render();}break;case'next-day':if(date<$('date').max){date=H.shiftDate(date,1);render();}break;case'select-day':date=b.dataset.date;if(date>today)setView('plan');else render();break;case'records-prev':recordsPage=Math.max(1,recordsPage-1);render();break;case'records-next':recordsPage++;render();break;case'sessions-prev':sessionPage=Math.max(1,sessionPage-1);render();break;case'sessions-next':sessionPage++;render();break;case'rest-timer':startTimer(Number(b.dataset.seconds));break;case'stop-timer':clearInterval(timerHandle);$('rest-timer').hidden=true;break;case'backup':await backup();break;case'restore':$('restore-file').click();break;case'export-checkins':exportCSV('checkins');break;case'export-sessions':exportCSV('sessions');break;case'delete-checkin':confirm('刪除這筆健康紀錄？','刪除後圖表也會更新。',async()=>{await update(s=>s.checkins=s.checkins.filter(x=>x.id!==id));notify('紀錄已刪除');},'刪除');break;case'delete-session':confirm('刪除這次訓練？','實際活動時間與次數會一起更新。',async()=>{await update(s=>s.sessions=s.sessions.filter(x=>x.id!==id));notify('紀錄已刪除');},'刪除');break;case'persist':{const granted=await navigator.storage?.persist?.();notify(granted?'已允許持久保存，仍建議保留備份。':'瀏覽器未允許持久保存，請自行保留備份。');break;}case'add-set':{const i=Number(b.dataset.index),x=sessionDraft[i];if(x.sets.length>=30)throw new Error('單一動作最多 30 組。');const j=x.sets.length;x.sets.push({reps:null,weight:null,seconds:null});b.closest('.session-exercise').querySelector('.set-rows').insertAdjacentHTML('beforeend',setRow(i,j));break;}case'add-exercise':{if(sessionDraft.length>=30)throw new Error('每次紀錄最多 30 個動作。');const i=sessionDraft.length;sessionDraft.push({exerciseId:'custom-'+uid(),name:'自訂動作 '+(i+1),sets:[{reps:null,weight:null,seconds:null}]});$('logged-exercises').insertAdjacentHTML('beforeend',`<section class="session-exercise" data-exercise="${i}"><label class="field"><span>動作名稱</span><input class="exercise-name-input" data-index="${i}" maxlength="120" value="自訂動作 ${i+1}" required></label><div class="set-rows">${setRow(i,0)}</div><button type="button" class="text-button" data-action="add-set" data-index="${i}">＋ 一組</button></section>`);break;}case'clear':showDialog('清除所有健康與訓練資料',`<p class="form-hint">此操作會清除本瀏覽器的個人設定、月計畫、健康、訓練及飲食睡眠紀錄。其他工具資料不受影響。</p><button type="button" class="text-button" data-action="backup">先下載完整備份 ↗</button>${field('請輸入「清除」', '<input name="confirmText" required autocomplete="off">')}`,async fd=>{if(fd.get('confirmText')!=='清除')throw new Error('請輸入「清除」確認。');await update(s=>{const fresh=H.emptyState();s.profile=fresh.profile;s.program=fresh.program;s.careProfile=fresh.careProfile;s.careLogs=[];s.checkins=[];s.sessions=[];s.settings=fresh.settings;});notify('健康與訓練資料已清除');},'清除資料');break;}}catch(err){if(dialog.open){$('dialog-error').textContent=err.message;$('dialog-error').hidden=false;}else error(err.message);}});
 document.addEventListener('change',e=>{if(e.target.id==='date'){const value=e.target.value;if(H.validDate(value)&&value>='1900-01-01'&&value<=$('date').max){date=value;recordsPage=sessionPage=1;render();}else e.target.value=date;}if(e.target.id==='metric'){metric=e.target.value;render();}});
 document.addEventListener('input',e=>{if(e.target.classList.contains('exercise-name-input'))sessionDraft[Number(e.target.dataset.index)].name=e.target.value.trim();});
 $('restore-file').addEventListener('change',async e=>{try{await restore(e.target.files[0]);}catch(err){error('無法還原：'+err.message);}finally{e.target.value='';}});
