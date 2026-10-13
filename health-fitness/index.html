@@ -6,7 +6,8 @@
 <meta name="robots" content="noindex,nofollow">
 <meta name="referrer" content="no-referrer">
 <meta name="theme-color" content="#f6f5f0">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-S3LmpIiHiQs3ztAiriOldVrMZs2ixx3VaUei4mQ/3YU='; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<link rel="icon" href="data:,">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-v6f2X0Wb4hBsmm5RIIQQJfqqV9FUUmE3MgbuT2D61/4='; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
 <title>日日動 · 健康紀錄與每日健身規劃</title>
 <style>
 :root {
@@ -14,6 +15,7 @@
   --paper: #fffefa;
   --ink: #213d3d;
   --muted: #65716c;
+  --muted-strong: #4b5a55;
   --line: #dfe3db;
   --green: #285752;
   --teal: #285752;
@@ -103,8 +105,8 @@ main:focus { outline: none; }
 .hero-label { display: flex; align-items: center; gap: 8px; color: var(--green); font-size: 10px; font-weight: 550; letter-spacing: .1em; }
 .hero-label::before { content: ""; width: 17px; height: 1px; background: var(--terracotta); }
 .hero-title { margin: 9px 0 9px; font-size: clamp(23px, 2.7vw, 30px); font-weight: 550; letter-spacing: -.035em; line-height: 1.4; }
-.hero-copy > p:not(.hero-label) { color: #52665c; font-size: 12px; line-height: 1.85; }
-.hero-meta { display: flex; flex-wrap: wrap; gap: 7px 18px; margin-top: 15px; color: #52665c; font-size: 11px; }
+.hero-copy > p:not(.hero-label) { color: #435a50; font-size: 13px; line-height: 1.85; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 7px 18px; margin-top: 15px; color: #435a50; font-size: 12px; }
 .hero-meta span { display: inline-flex; align-items: center; gap: 6px; }
 .hero-meta svg { width: 14px; height: 14px; }
 .hero-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; position: relative; flex-shrink: 0; }
@@ -115,6 +117,7 @@ main:focus { outline: none; }
 .hero-art span:nth-child(2) { color: #8c9d88; font-size: 28px; letter-spacing: -.035em; }
 .hero-art span:last-child { color: transparent; -webkit-text-stroke: 1px #739785; }
 .plan-note { margin: -7px 1px 21px; padding-left: 12px; border-left: 2px solid #cbb7a2; }
+.phase-tag + .plan-note { margin-top: 8px; }
 .panel { min-width: 0; padding: 24px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper); }
 .panel + .panel { margin-top: 20px; }
 .grid-main, .grid-equal { display: grid; gap: 20px; align-items: start; margin-bottom: 20px; }
@@ -126,7 +129,7 @@ main:focus { outline: none; }
 .section-head .muted { margin-top: 5px; }
 .section-head .button, .section-head .text-button { flex-shrink: 0; }
 .section-head .eyebrow { margin-bottom: 4px; }
-.note { color: var(--muted); font-size: 11px; line-height: 1.85; margin-top: 16px; overflow-wrap: anywhere; }
+.note { color: var(--muted-strong); font-size: 12px; line-height: 1.85; margin-top: 16px; overflow-wrap: anywhere; }
 .note a, .muted a, .form-hint a { color: var(--green); text-decoration: underline; text-underline-offset: 3px; }
 .week-strip { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 9px; margin-bottom: 22px; }
 .day-card { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; min-height: 103px; padding: 13px 12px; border: 1px solid var(--line); border-radius: 12px; color: var(--ink); background: var(--paper); text-align: left; line-height: 1.5; }
@@ -134,7 +137,7 @@ button.day-card:hover { border-color: #94b2a4; background: #f1f5ed; }
 .day-card.selected, .day-card[aria-pressed="true"] { border-color: var(--green); background: var(--green); color: #fffdf5; }
 .day-card > span:first-child { color: var(--muted); font-size: 10px; }
 .day-card .day-date { white-space: nowrap; display: block; margin: 3px 0 8px; font-size: 21px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: -.04em; }
-.day-card .day-kind { display: block; margin-top: auto; color: var(--muted); font-size: 10px; overflow-wrap: anywhere; }
+.day-card .day-kind { display: block; margin-top: auto; color: var(--muted-strong); font-size: 12px; overflow-wrap: anywhere; }
 .day-card { position: relative; }
 .day-dot { position: absolute; top: 11px; right: 10px; display: block; width: 5px; height: 5px; border-radius: 50%; background: var(--terracotta); }
 .day-card.selected .day-dot, .day-card[aria-pressed="true"] .day-dot { background: #e1bc96; }
@@ -146,21 +149,21 @@ button.day-card:hover { border-color: #94b2a4; background: #f1f5ed; }
 .exercise:last-child { padding-bottom: 1px; }
 .exercise-number { display: grid; place-items: center; width: 28px; height: 28px; margin-top: 1px; border-radius: 8px; background: var(--soft); color: var(--green); font-size: 10px; font-variant-numeric: tabular-nums; }
 .exercise-name { font-size: 13px; font-weight: 550; line-height: 1.7; overflow-wrap: anywhere; }
-.exercise-dose { color: var(--green); font-size: 11px; font-weight: 500; font-variant-numeric: tabular-nums; line-height: 1.8; }
+.exercise-dose { color: var(--green); font-size: 12px; font-weight: 500; font-variant-numeric: tabular-nums; line-height: 1.8; }
 .exercise > .exercise-dose { text-align: right; white-space: nowrap; padding-top: 1px; }
-.exercise-detail { grid-column: 2 / -1; margin-top: 3px; color: var(--muted); font-size: 11px; line-height: 1.8; overflow-wrap: anywhere; }
+.exercise-detail { grid-column: 2 / -1; margin-top: 3px; color: var(--muted-strong); font-size: 12px; line-height: 1.8; overflow-wrap: anywhere; }
 .exercise-name + .exercise-dose, .exercise-name + .exercise-detail { margin-top: 3px; }
 .exercise > div:not(.exercise-number) { min-width: 0; }
 .exercise > .text-button { align-self: start; justify-self: end; margin-top: 1px; font-size: 10px; white-space: nowrap; }
-.routine-note { display: grid; grid-template-columns: 30px minmax(0, 1fr); align-items: baseline; gap: 11px; padding: 12px 14px; border-radius: 9px; background: #f1f4ec; color: var(--muted); font-size: 11px; line-height: 1.9; }
-.routine-note strong { color: var(--green); font-size: 11px; font-weight: 550; }
+.routine-note { display: grid; grid-template-columns: 30px minmax(0, 1fr); align-items: baseline; gap: 11px; padding: 12px 14px; border-radius: 9px; background: #f1f4ec; color: var(--muted-strong); font-size: 12px; line-height: 1.9; }
+.routine-note strong { color: var(--green); font-size: 12px; font-weight: 550; }
 .routine-note p { min-width: 0; overflow-wrap: anywhere; }
 .routine-note + .exercise-list { margin-top: 19px; }
 .exercise-list + .routine-note { margin-top: 20px; }
 .tips { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 14px; margin-bottom: 20px; }
 .tip { min-width: 0; padding: 20px; border: 1px solid #e6ded2; border-radius: 13px; background: #f3eee4; }
 .tip h3 { margin-bottom: 8px; }
-.tip p { color: #6e7066; font-size: 11px; line-height: 1.85; }
+.tip p { color: var(--muted-strong); font-size: 12px; line-height: 1.85; }
 .tip .tip-number { display: block; margin-bottom: 10px; color: var(--terracotta); font-size: 10px; letter-spacing: .1em; font-variant-numeric: tabular-nums; }
 .tip.warning { background: #f9eee4; border-color: #e7d6c4; }
 .tips > .tip { margin: 0; }
@@ -180,7 +183,7 @@ button.day-card:hover { border-color: #94b2a4; background: #f1f5ed; }
 .record-row:last-child { padding-bottom: 2px; }
 .record-date { font-size: 12px; font-weight: 550; font-variant-numeric: tabular-nums; }
 .record-date small { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; font-weight: 400; }
-.record-values { display: flex; flex-wrap: wrap; gap: 4px 15px; min-width: 0; font-size: 11px; font-variant-numeric: tabular-nums; }
+.record-values { display: flex; flex-wrap: wrap; gap: 4px 15px; min-width: 0; font-size: 12px; font-variant-numeric: tabular-nums; }
 .record-row > div { min-width: 0; overflow-wrap: anywhere; }
 .record-values > p, .record-values > small, .record-values > details { flex-basis: 100%; min-width: 0; }
 .record-row > .text-button { justify-self: end; white-space: nowrap; font-size: 11px; }
@@ -238,7 +241,7 @@ button.phase-card:active { transform: translateY(1px); }
 .phase-card.current .phase-number { background: var(--green); color: #fffdf6; }
 .phase-range { display: block; margin-top: 9px; color: var(--muted); font-size: 10px; font-variant-numeric: tabular-nums; line-height: 1.7; overflow-wrap: anywhere; }
 .phase-card h3 { margin-top: 7px; color: var(--ink); font-size: 13px; font-weight: 550; }
-.phase-focus { margin-top: 7px; color: var(--muted); font-size: 11px; line-height: 1.85; overflow-wrap: anywhere; }
+.phase-focus { margin-top: 7px; color: var(--muted-strong); font-size: 12px; line-height: 1.85; overflow-wrap: anywhere; }
 .month-calendar { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; min-width: 0; }
 .month-weekday { min-width: 0; padding: 3px 3px 8px; color: var(--muted); font-size: 11px; line-height: 1.5; text-align: center; }
 .month-spacer { display: block; min-width: 0; border-radius: 11px; background: #edf0e633; pointer-events: none; }
@@ -252,7 +255,7 @@ button.phase-card:active { transform: translateY(1px); }
 .month-day:active { transform: translateY(1px); }
 .month-day-number { display: block; max-width: 100%; color: inherit; font-size: 22px; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: -.035em; line-height: 1.35; white-space: nowrap; }
 .month-day-number small { margin-right: 2px; font-size: 11px; font-weight: 400; letter-spacing: 0; }
-.month-day-kind { display: block; max-width: 100%; color: #4e6658; font-size: 11px; font-weight: 500; line-height: 1.6; overflow-wrap: anywhere; }
+.month-day-kind { display: block; max-width: 100%; color: #4e6658; font-size: 12px; font-weight: 500; line-height: 1.6; overflow-wrap: anywhere; }
 .month-day-phase { display: block; max-width: 100%; margin-top: auto; color: var(--muted); font-size: 10px; line-height: 1.6; overflow-wrap: anywhere; }
 .month-day.is-today .month-day-number { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 4px; }
 .month-day.has-session::after { content: ""; position: absolute; top: 12px; right: 9px; width: 5px; height: 5px; border-radius: 50%; background: var(--green); }
@@ -285,7 +288,7 @@ button.phase-card:active { transform: translateY(1px); }
 .care-summary { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px 20px; min-width: 0; margin: 19px 0; padding: 16px 19px; border: 1px solid #dce3d6; border-radius: 12px; background: #f0f4eb; }
 .care-summary > div { min-width: 0; }
 .care-summary h3 { color: var(--ink); font-size: 13px; font-weight: 550; }
-.care-summary p { max-width: 66ch; margin-top: 4px; color: var(--muted); font-size: 11px; line-height: 1.8; overflow-wrap: anywhere; }
+.care-summary p { max-width: 66ch; margin-top: 4px; color: var(--muted-strong); font-size: 12px; line-height: 1.8; overflow-wrap: anywhere; }
 .care-summary .eyebrow { margin: 0 0 5px; color: var(--green); font-size: 9px; }
 .care-summary .button, .care-summary .text-button { flex-shrink: 0; }
 .care-summary .section-head { width: 100%; margin: 0; }
@@ -333,7 +336,7 @@ button.phase-card:active { transform: translateY(1px); }
 .meal-items li { padding-left: 2px; overflow-wrap: anywhere; }
 .meal-items li + li { margin-top: 3px; }
 .meal-items li::marker { color: #9aae93; font-size: .85em; }
-.meal-tip { margin-top: 11px; padding-top: 10px; border-top: 1px solid #e6eadd; color: var(--muted); font-size: 11px; line-height: 1.85; overflow-wrap: anywhere; }
+.meal-tip { margin-top: 11px; padding-top: 10px; border-top: 1px solid #e6eadd; color: var(--muted-strong); font-size: 12px; line-height: 1.85; overflow-wrap: anywhere; }
 .sleep-timeline { position: relative; display: grid; gap: 0; min-width: 0; margin: 19px 0 0; padding-left: 19px; }
 .sleep-timeline::before { content: ""; position: absolute; top: 29px; bottom: 29px; left: 3px; width: 1px; background: #c9d8c5; }
 .sleep-event { position: relative; display: grid; grid-template-columns: 103px minmax(0, 1fr); align-items: center; column-gap: 18px; min-width: 0; min-height: 87px; padding: 13px 0; border-bottom: 1px solid var(--line); }
@@ -347,15 +350,15 @@ button.phase-card:active { transform: translateY(1px); }
 .sleep-event > .time-date { grid-column: 1; grid-row: 1; }
 .sleep-event > .time-value { grid-column: 1; grid-row: 2; }
 .sleep-event > .time-label { grid-column: 2; grid-row: 1 / 3; }
-.care-tips { margin-top: 19px; padding: 14px 16px; border: 1px solid #e0e6d6; border-radius: 10px; background: #f0f4e9; color: #5b6d55; font-size: 11px; line-height: 1.9; overflow-wrap: anywhere; }
+.care-tips { margin-top: 19px; padding: 14px 16px; border: 1px solid #e0e6d6; border-radius: 10px; background: #f0f4e9; color: var(--muted-strong); font-size: 12px; line-height: 1.9; overflow-wrap: anywhere; }
 .care-tips h3 { margin-bottom: 7px; color: var(--green); font-size: 12px; font-weight: 550; }
 .care-tips p + p { margin-top: 8px; }
 .care-tips ul, .care-tips ol { margin: 0; padding-left: 17px; }
 ul.care-tips, ol.care-tips { padding-left: 32px; }
 .care-tips li + li { margin-top: 7px; }
 .care-tips li::marker { color: #8caa82; }
-.care-source-links { display: flex; align-items: center; flex-wrap: wrap; gap: 3px 17px; margin-top: 17px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--muted); font-size: 10px; line-height: 1.7; }
-.care-source-links a { display: inline-flex; align-items: center; min-height: 34px; max-width: 100%; color: var(--green); font-size: 10px; text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere; }
+.care-source-links { display: flex; align-items: center; flex-wrap: wrap; gap: 3px 17px; margin-top: 17px; padding-top: 12px; border-top: 1px solid var(--line); color: var(--muted-strong); font-size: 12px; line-height: 1.7; }
+.care-source-links a { display: inline-flex; align-items: center; min-height: 34px; max-width: 100%; color: var(--green); font-size: 12px; text-decoration: underline; text-underline-offset: 3px; overflow-wrap: anywhere; }
 .care-source-links a:hover { color: #183f3b; text-decoration-thickness: 2px; }
 .care-source-links a:active { opacity: .75; }
 .care-log-list { display: grid; gap: 0; min-width: 0; }
@@ -371,13 +374,13 @@ ul.care-tips, ol.care-tips { padding-left: 32px; }
 .care-log-entry > .text-button { font-size: 11px; white-space: nowrap; }
 .care-log-entry > .note { grid-column: 1 / -1; margin-top: 0; }
 .care-log-entry .record-date { display: block; font-size: 11px; }
-.care-status { display: inline-flex; align-items: center; max-width: 100%; padding: 4px 9px; border: 1px solid #d9e3d2; border-radius: 6px; background: #edf3e7; color: #54704e; font-size: 10px; font-weight: 500; line-height: 1.6; overflow-wrap: anywhere; }
+.care-status { display: inline-flex; align-items: center; max-width: 100%; padding: 4px 9px; border: 1px solid #d9e3d2; border-radius: 6px; background: #edf3e7; color: #54704e; font-size: 12px; font-weight: 500; line-height: 1.6; overflow-wrap: anywhere; }
 .care-status[data-status="setup"], .care-status.setup { border-color: #dfe3d8; background: #f0f2eb; color: var(--muted); }
 .care-status[data-status="review"], .care-status.review { border-color: #e4d6c6; background: #f6ede2; color: #805d45; }
 .care-form-section { min-width: 0; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
 .care-form-section:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
 .care-form-section > h3, .care-form-section > legend { margin-bottom: 13px; color: var(--ink); font-size: 14px; font-weight: 550; line-height: 1.7; }
-.care-form-section > p { margin-bottom: 14px; color: var(--muted); font-size: 11px; line-height: 1.85; }
+.care-form-section > p { margin-bottom: 14px; color: var(--muted-strong); font-size: 12px; line-height: 1.85; }
 .care-form-section .checkbox-line + .checkbox-line { margin-top: 10px; }
 .care-form-section .form-hint { margin-bottom: 15px; }
 .data-table { max-width: 100%; margin-top: 18px; color: var(--muted); font-size: 11px; overflow-x: auto; }
@@ -388,7 +391,7 @@ ul.care-tips, ol.care-tips { padding-left: 32px; }
 .data-table th { color: var(--ink); font-weight: 500; }
 .data-table th:first-child, .data-table td:first-child { text-align: left; }
 .settings-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: start; }
-.settings-grid p { margin-top: 9px; color: var(--muted); font-size: 12px; line-height: 1.85; }
+.settings-grid p { margin-top: 9px; color: var(--muted-strong); font-size: 12px; line-height: 1.85; }
 .settings-grid .button-row { margin-top: 18px; }
 .facts { display: grid; gap: 0; margin: 16px 0 0; }
 .facts > div { display: flex; align-items: baseline; justify-content: space-between; gap: 15px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 12px; }
@@ -399,12 +402,12 @@ ul.care-tips, ol.care-tips { padding-left: 32px; }
 .button-row { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; }
 .danger-zone { margin-top: 21px; padding-top: 17px; border-top: 1px solid var(--line); }
 .danger-zone h3 { color: var(--red); }
-.danger-zone p { font-size: 11px; }
+.danger-zone p { font-size: 12px; }
 .alert { margin: 8px 0 16px; padding: 13px 16px; border: 1px solid #e1c4b8; border-radius: 10px; background: #fff2e9; color: #884635; font-size: 12px; line-height: 1.85; overflow-wrap: anywhere; }
 .alert a { text-decoration: underline; }
-.app-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 28px; padding: 21px 0 29px; border-top: 1px solid var(--line); color: var(--muted); font-size: 10px; }
+.app-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 28px; padding: 21px 0 29px; border-top: 1px solid var(--line); color: var(--muted-strong); font-size: 12px; }
 .footer-note { display: inline-flex; align-items: center; gap: 7px; }
-.app-footer .text-button { font-size: 10px; }
+.app-footer .text-button { font-size: 12px; }
 dialog { width: min(610px, calc(100% - 32px)); max-width: none; max-height: calc(100dvh - 40px); padding: 27px; border: 1px solid var(--line); border-radius: 19px; background: var(--paper); color: var(--ink); overflow-y: auto; overscroll-behavior: contain; box-shadow: 0 24px 90px #193d3729; }
 dialog::backdrop { background: #203d3959; backdrop-filter: blur(3px); }
 .dialog-heading { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 22px; }
@@ -414,9 +417,9 @@ dialog::backdrop { background: #203d3959; backdrop-filter: blur(3px); }
 #dialog-form, #dialog-body { min-width: 0; }
 .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .field { display: block; min-width: 0; }
-.field > span, .field-label { display: block; margin-bottom: 6px; color: var(--muted); font-size: 11px; }
-.field > label { display: block; margin-bottom: 6px; color: var(--muted); font-size: 11px; }
-.field small { display: block; margin-top: 6px; color: var(--muted); font-size: 10px; line-height: 1.7; }
+.field > span, .field-label { display: block; margin-bottom: 6px; color: var(--muted-strong); font-size: 12px; }
+.field > label { display: block; margin-bottom: 6px; color: var(--muted-strong); font-size: 12px; }
+.field small { display: block; margin-top: 6px; color: var(--muted-strong); font-size: 12px; line-height: 1.7; }
 .field.wide, .wide { grid-column: 1 / -1; }
 input, select, textarea { display: block; width: 100%; min-width: 0; min-height: 42px; padding: 9px 11px; border: 1px solid #d7ddd2; border-radius: 8px; background: #fffefa; font-size: 13px; line-height: 1.5; }
 input::placeholder, textarea::placeholder { color: #919a90; opacity: 1; }
@@ -429,11 +432,11 @@ legend { padding: 0; margin-bottom: 8px; font-size: 12px; }
 .checkbox-line input { flex: 0 0 17px; width: 17px; height: 17px; min-height: 0; margin: 3px 0 0; padding: 0; accent-color: var(--green); }
 .checkbox-line span { margin: 0; color: inherit; font-size: inherit; }
 .chip-group { display: flex; flex-wrap: wrap; gap: 7px; }
-.chip { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 36px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); font-size: 11px; cursor: pointer; }
+.chip { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); font-size: 12px; cursor: pointer; }
 .chip input { width: 14px; height: 14px; min-height: 0; margin: 0; padding: 0; accent-color: var(--green); }
 .chip:has(input:checked) { border-color: #9bb7a4; background: #e9f0e5; color: var(--green); }
 .chip:has(input:focus-visible) { outline: 3px solid #91b4a3; outline-offset: 3px; }
-.form-hint { margin: 0 0 17px; padding: 12px 14px; border-radius: 9px; background: #f0f3eb; color: #617061; font-size: 11px; line-height: 1.85; }
+.form-hint { margin: 0 0 17px; padding: 12px 14px; border-radius: 9px; background: #f0f3eb; color: var(--muted-strong); font-size: 12px; line-height: 1.85; }
 .form-hint strong { color: var(--ink); font-weight: 550; }
 .warning { color: #85523e; border-color: #e4d2bf; background: #f7eee4; }
 .form-hint.warning { color: #85523e; background: #f7eee4; }
@@ -457,6 +460,29 @@ legend { padding: 0; margin-bottom: 8px; font-size: 12px; }
 body:has(#rest-timer:not([hidden])) .app-shell { padding-bottom: 81px; }
 body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-area-inset-bottom) + 80px)); }
 .noscript-note { max-width: 600px; margin: 24px auto; padding: 18px; color: var(--red); font-size: 13px; text-align: center; }
+
+/* 安全提醒、免責說明、量測提醒、備份提醒（批次 1） */
+.stop-card { margin: 0 0 21px; padding: 16px 20px; border: 1px solid #e4cdbd; border-left: 4px solid var(--terracotta); border-radius: 12px; background: var(--warm); color: var(--ink); font-size: 14px; line-height: 1.8; overflow-wrap: anywhere; }
+.stop-card strong { color: #7d3f2b; font-weight: 600; }
+.panel + .stop-card { margin-top: 16px; }
+.disclaimer { margin: 0 0 21px; padding: 0 2px; color: #3f514c; font-size: 13px; line-height: 1.8; overflow-wrap: anywhere; }
+.measure-note { padding: 10px 13px; border-radius: 9px; background: #f0f3eb; color: #3f514c; font-size: 13px; line-height: 1.75; overflow-wrap: anywhere; }
+.field.measure-note { margin: 0; }
+.note.measure-note { margin-top: 14px; font-size: 13px; color: #3f514c; }
+.backup-line { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 2px 16px; margin: 0 0 18px; padding: 6px 14px; border: 1px solid var(--line); border-radius: 11px; background: var(--paper); color: var(--muted-strong); font-size: 13px; line-height: 1.7; }
+.backup-line p { display: flex; flex-wrap: wrap; gap: 0 12px; min-width: 0; margin: 0; padding: 4px 0; }
+.backup-line strong { color: var(--ink); font-weight: 550; }
+.backup-line .text-button { min-height: 36px; font-size: 13px; flex-shrink: 0; }
+.backup-line.stale { border-color: #e4d2bf; border-left: 4px solid var(--terracotta); background: var(--warm); color: #6b3f2e; }
+.backup-line.stale strong { color: #5f3626; }
+/* 設定頁「最近備份」時間異常的那一句說明：與今天頁提醒底色同一組顏色（對比約 7.4:1） */
+.settings-grid .backup-odd-note { margin: 14px 0 0; padding: 8px 14px; border: 1px solid #e4d2bf; border-left: 4px solid var(--terracotta); border-radius: 11px; background: var(--warm); color: #6b3f2e; font-size: 13px; line-height: 1.7; overflow-wrap: anywhere; }
+/* 編輯既有健康紀錄時改日期的說明：空的時候高度為 0（保留在無障礙樹裡讓朗讀器能播報），有字時才露出（文字對底色約 5.6:1） */
+.date-move-note .form-hint { margin: 10px 0 0; font-size: 13px; line-height: 1.7; overflow-wrap: anywhere; }
+@media (max-width: 560px) {
+  .stop-card { padding: 14px 16px; }
+  .backup-line .text-button { min-height: 44px; }
+}
 
 @media (max-width: 1000px) {
   .app-shell { padding: 0 26px; }
@@ -501,7 +527,7 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
   .month-actions { justify-content: flex-start; }
   .month-phases { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .month-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .phase-focus { font-size: 11px; }
+  .phase-focus { font-size: 12px; }
   .navigation { flex-wrap: wrap; gap: 9px; }
   .navigation nav { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); flex: 1 0 100%; width: 100%; gap: 3px; }
   .nav-button { min-width: 0; min-height: 44px; padding: 8px 5px; font-size: 12px; }
@@ -549,16 +575,16 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
   .panel + .panel { margin-top: 16px; }
   h2 { font-size: 17px; }
   .section-head { gap: 10px; margin-bottom: 17px; }
-  .section-head .muted { font-size: 11px; }
+  .section-head .muted { font-size: 12px; }
   .hero { flex-direction: column; gap: 19px; padding: 23px 21px; margin-bottom: 17px; border-radius: 14px; }
   .hero-title { margin: 9px 0; font-size: 26px; }
-  .hero-copy > p:not(.hero-label) { font-size: 11px; }
-  .hero-meta { gap: 5px 13px; margin-top: 13px; font-size: 10px; }
+  .hero-copy > p:not(.hero-label) { font-size: 12px; }
+  .hero-meta { gap: 5px 13px; margin-top: 13px; font-size: 12px; }
   .hero-actions { flex-direction: row; align-items: center; width: 100%; }
   .hero-actions .button { min-height: 40px; }
   .hero-copy .hero-actions { margin-top: 18px; }
   .hero-art { display: none; }
-  .plan-note { margin: -5px 1px 18px; font-size: 10px; }
+  .plan-note { margin: -5px 1px 18px; }
   .onboarding { flex-direction: column; gap: 16px; padding: 22px 21px; margin-bottom: 17px; border-radius: 14px; }
   .onboarding p { font-size: 11px; }
   .onboarding .button { min-height: 40px; }
@@ -566,22 +592,22 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
   .day-card { align-items: center; min-height: 92px; padding: 10px 3px; border-radius: 9px; text-align: center; }
   .day-card > span:first-child { font-size: 9px; }
   .day-card .day-date { font-size: 14px; margin: 4px 0 6px; }
-  .day-card .day-kind { font-size: 9px; line-height: 1.6; }
+  .day-card .day-kind { font-size: 10px; line-height: 1.6; } /* 一週七格擠在手機寬度內；暫停等狀態在下方課表區以 14px 以上的字另行寫明 */
   .day-dot { top: 6px; right: 4px; width: 4px; height: 4px; }
   .panel + .week-strip { margin-top: 17px; }
   .exercise { grid-template-columns: 27px minmax(0, 1fr); gap: 4px 10px; padding: 15px 0; }
   .exercise-number { width: 26px; height: 27px; }
   .exercise-name { font-size: 12px; }
   .exercise > .exercise-dose { grid-column: 2; text-align: left; white-space: normal; padding-top: 0; }
-  .exercise-detail { font-size: 10px; }
-  .exercise-dose { font-size: 11px; }
+  .exercise-detail { font-size: 12px; }
+  .exercise-dose { font-size: 12px; }
   .exercise > .text-button { grid-column: 2; grid-row: 2; justify-self: start; margin-top: 3px; padding: 4px 0; font-size: 10px; }
-  .routine-note { grid-template-columns: 27px minmax(0, 1fr); gap: 9px; padding: 11px 12px; font-size: 10px; }
-  .routine-note strong { font-size: 10px; }
+  .routine-note { grid-template-columns: 27px minmax(0, 1fr); gap: 9px; padding: 11px 12px; font-size: 12px; }
+  .routine-note strong { font-size: 12px; }
   .record-row { grid-template-columns: minmax(0, 1fr) auto; gap: 7px 10px; padding: 15px 0; }
   .record-date { grid-column: 1; }
   .record-date small { display: inline; margin-left: 6px; }
-  .record-values { grid-column: 1; grid-row: 2; gap: 3px 12px; font-size: 11px; }
+  .record-values { grid-column: 1; grid-row: 2; gap: 3px 12px; font-size: 12px; }
   .record-row > .button, .record-row > .icon-button, .record-row > .button-row, .record-row > .text-button { grid-column: 2; grid-row: 1 / 3; }
   .record-row > .text-button { align-self: center; }
   .record-row .button-row { flex-direction: column; gap: 4px; }
@@ -590,7 +616,7 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
   .empty { padding: 27px 20px; }
   .empty p { font-size: 11px; }
   .settings-grid { gap: 16px; }
-  .settings-grid p { font-size: 11px; }
+  .settings-grid p { font-size: 12px; }
   .facts > div { font-size: 11px; }
   .app-footer { align-items: flex-start; flex-direction: column; gap: 9px; margin-top: 23px; padding: 20px 0 max(25px, env(safe-area-inset-bottom)); }
   dialog { width: calc(100% - 24px); max-height: calc(100dvh - 24px); padding: 22px 19px; border-radius: 16px; }
@@ -598,16 +624,16 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
   .dialog-heading h2 { font-size: 22px; }
   .form-grid { gap: 14px 12px; }
   input, select, textarea { font-size: 16px; padding: 9px 10px; }
-  .field > span, .field-label, .field > label { font-size: 11px; }
-  .field small { font-size: 10px; }
+  .field > span, .field-label, .field > label { font-size: 12px; }
+  .field small { font-size: 12px; }
   .session-exercise { padding: 12px; }
   .set-row { grid-template-columns: 23px repeat(3, minmax(0, 1fr)); gap: 6px; }
   .set-row input { font-size: 16px; padding: 8px 6px; }
   .set-row .mini-label { font-size: 9px; }
   .metric-select select, select.metric-select { font-size: 16px; max-width: 160px; }
   .chip-group { gap: 6px; }
-  .chip { padding: 6px 9px; min-height: 37px; font-size: 11px; }
-  .form-hint { padding: 11px 12px; font-size: 11px; }
+  .chip { padding: 6px 9px; min-height: 44px; font-size: 12px; }
+  .form-hint { padding: 11px 12px; font-size: 12px; }
   .dialog-actions { margin-top: 21px; padding-top: 16px; }
   .dialog-actions .button { min-height: 42px; padding: 10px 17px; }
   .data-table th, .data-table td { padding: 7px 5px; font-size: 10px; }
@@ -632,14 +658,14 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
   .phase-number { min-width: 24px; height: 24px; font-size: 10px; }
   .phase-range { font-size: 10px; margin-top: 8px; }
   .phase-card h3 { font-size: 12px; }
-  .phase-focus { margin-top: 6px; font-size: 11px; line-height: 1.8; }
+  .phase-focus { margin-top: 6px; font-size: 12px; line-height: 1.8; }
   .month-calendar { gap: 5px; }
   .month-weekday { padding: 3px 0 6px; font-size: 10px; }
   .month-spacer { border-radius: 8px; }
   .month-day { align-items: center; gap: 5px; min-height: 94px; padding: 11px 3px 9px; border-radius: 8px; text-align: center; }
   .month-day-number { font-size: clamp(14px, 3.8vw, 18px); letter-spacing: -.04em; }
   .month-day-number small { display: block; margin-right: 0; font-size: 9px; }
-  .month-day-kind { font-size: 10px; line-height: 1.55; }
+  .month-day-kind { font-size: 12px; line-height: 1.5; }
   .month-day-phase { font-size: 10px; line-height: 1.5; }
   .month-day.has-session::after { top: 7px; right: 4px; width: 4px; height: 4px; }
   .month-legend { gap: 7px 12px; margin-top: 14px; font-size: 10px; }
@@ -653,7 +679,7 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
   .care-intro .button { min-height: 44px; }
   .care-summary { margin: 17px 0; padding: 15px 17px; border-radius: 11px; }
   .care-summary h3 { font-size: 13px; }
-  .care-summary p { font-size: 11px; }
+  .care-summary p { font-size: 12px; }
   .care-summary .button { min-height: 44px; }
   .care-summary > .text-button { min-height: 44px; }
   .care-grid { gap: 16px; margin-bottom: 17px; }
@@ -661,19 +687,19 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
   .meal-card { padding: 15px; }
   .meal-card h3 { font-size: 14px; }
   .meal-items { font-size: 12px; line-height: 1.9; }
-  .meal-tip { font-size: 11px; }
+  .meal-tip { font-size: 12px; }
   .sleep-timeline { margin-top: 16px; }
   .sleep-event { grid-template-columns: 97px minmax(0, 1fr); min-height: 83px; column-gap: 14px; }
   .sleep-event .time-value { font-size: 25px; }
   .sleep-event .time-label { font-size: 12px; }
-  .care-tips { margin-top: 17px; padding: 13px 14px; font-size: 11px; }
+  .care-tips { margin-top: 17px; padding: 13px 14px; font-size: 12px; }
   ul.care-tips, ol.care-tips { padding-left: 30px; }
   .care-source-links { gap: 2px 14px; margin-top: 15px; padding-top: 9px; }
-  .care-source-links a { min-height: 44px; font-size: 11px; }
+  .care-source-links a { min-height: 44px; font-size: 12px; }
   .care-log-entry { gap: 7px 12px; padding: 15px 0; }
   .care-log-entry p { font-size: 12px; }
   .care-log-entry > .text-button { min-height: 44px; padding: 6px 2px; }
-  .care-status { font-size: 10px; }
+  .care-status { font-size: 12px; }
   .care-form-section { margin-top: 21px; padding-top: 17px; }
   .care-form-section > h3, .care-form-section > legend { font-size: 14px; }
   .training-nutrition { margin-bottom: 17px; }
@@ -1109,7 +1135,11 @@ body:has(#rest-timer:not([hidden])) #toast { bottom: max(100px, calc(env(safe-ar
     const lastBackupAt = text(settings.lastBackupAt, '備份時間', 30, false);
     if (lastBackupAt) {
       const timestamp = new Date(lastBackupAt);
-      if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(lastBackupAt) || !Number.isFinite(timestamp.getTime()) || timestamp.toISOString() !== lastBackupAt || lastBackupAt.slice(0, 10) < FIRST_DATE || timestamp.getTime() > Date.now()) fail('備份時間', '請使用有效且不晚於現在的 ISO 時間。');
+      // The backup time is informational. A value later than this device's clock
+      // (device date once set wrong, a clock corrected backwards, a backup file from
+      // another device) must never lock the records or block saving and backing up;
+      // the page labels it 時間異常 instead. Format and lower-bound checks stay strict.
+      if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(lastBackupAt) || !Number.isFinite(timestamp.getTime()) || timestamp.toISOString() !== lastBackupAt || lastBackupAt.slice(0, 10) < FIRST_DATE) fail('備份時間', '請使用有效的 ISO 時間（例如 2026-01-01T00:00:00.000Z）。');
     }
     const checkins = list(value.checkins, '健康紀錄', 100000).map(function (item, index) { return cleanCheckin(item, index, latest); });
     const sessions = list(value.sessions, '訓練紀錄', 100000).map(function (item, index) { return cleanSession(item, index, latest); });
@@ -1779,6 +1809,43 @@ const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const uid=()=>crypto.randomUUID(),num=v=>v===null||v===undefined?'—':Number(v).toLocaleString('zh-TW',{maximumFractionDigits:1});
 const goals={habit:'建立運動習慣',fatloss:'減脂與肌力',strength:'增肌與力量',fitness:'提升體能'},kinds={strength:'肌力訓練',cardio:'有氧活動',recovery:'恢復與伸展',other:'其他活動',setup:'先設定',review:'調整安排'};
 const weekdays=['一','二','三','四','五','六','日'];
+// 安全提醒與免責文字（固定文案）
+const stopLead='出現以下狀況請立刻停止運動：',stopRest='胸痛或胸悶、頭暈或快要昏倒、不尋常的喘不過氣、劇烈或越來越痛的疼痛。休息後沒有改善，請就醫。';
+const disclaimer='這是起步模板，不是醫療建議，也不能取代醫師、物理治療師或營養師的判斷。',measureNote='如果量到的數字讓你擔心，或同時有不舒服的症狀，請聯絡醫療人員。';
+// 工具箱「資料保險箱」狀態：只寫有無資料與時間，不放任何內容；失敗不影響本工具
+const toolboxKey='toolbox.backup.v1',ID='health-fitness';
+function markToolbox(patch){try{const K=toolboxKey;let o;try{o=JSON.parse(localStorage.getItem(K)||'')}catch(e){}if(!o||o.v!==1||typeof o.tools!=='object'||!o.tools)o={v:1,tools:{}};const cur=o.tools[ID]||{hasData:false,updatedAt:null,lastBackupAt:null};o.tools[ID]=Object.assign(cur,patch);localStorage.setItem(K,JSON.stringify(o));}catch(e){}}
+function toolboxRecord(){try{const o=JSON.parse(localStorage.getItem(toolboxKey)||''),r=o&&o.v===1&&o.tools&&o.tools[ID];return r&&typeof r==='object'?r:null;}catch(e){return null;}}
+function hasUserData(s){return Boolean(s.profile||s.program||s.careProfile||s.checkins.length||s.sessions.length||s.careLogs.length);}
+let tbHas=null,tbAt=0;
+function noteSaved(s){const has=hasUserData(s),now=Date.now();if(has){if(tbHas===true&&now-tbAt<60000)return;}else if(tbHas===false)return;tbHas=has;tbAt=now;markToolbox({hasData:has,updatedAt:new Date(now).toISOString()});}
+// 時間戳要能解析，且不早於 1000 年。更早的值（例如 0999 年）轉成「YYYY-MM-DD」字串時年份沒補零（變成 999-06-01），
+// 再拿去算「N 天前」會得到 NaN；共用紀錄是別處寫的、不可信，這種值一律當成沒有備份時間，不拿來顯示或比較。
+const FIRST_TIME_MS=Date.parse('1000-01-01T00:00:00Z');
+const validTime=x=>typeof x==='string'&&Number.isFinite(Date.parse(x))&&Date.parse(x)>=FIRST_TIME_MS;
+// 載入時對帳（共用契約）：有資料、紀錄卻說沒有或沒有紀錄 → 補 hasData:true；紀錄裡已有有效的 updatedAt 一律保留，不用「現在」覆蓋；
+// 沒有時才取已知的最近時間（本機或紀錄裡的備份時間，且不晚於現在），都沒有才用現在。沒有資料、紀錄卻說有 → 改 false。
+// 載入時對帳，晚於現在的備份時間不抄進共用紀錄（紀錄不得宣稱還沒發生的備份）；本頁自己仍會把它顯示成「時間異常」。
+// 例外是剛還原完備份那一刻（見 syncToolboxAfterRestore）：照還原那份檔自己的備份時間寫入（沒有就清掉），因為使用者剛親手換入那份備份檔。
+function reconcileToolbox(){const rec=toolboxRecord(),has=hasUserData(state),mine=validTime(state.settings.lastBackupAt)?state.settings.lastBackupAt:'',patch={},nowIso=new Date().toISOString(),known=rec&&validTime(rec.updatedAt)?rec.updatedAt:'',fallback=[mine,rec&&rec.lastBackupAt].filter(x=>validTime(x)&&Date.parse(x)<=Date.now()).sort((a,b)=>Date.parse(b)-Date.parse(a))[0]||nowIso;if(has&&!(rec&&rec.hasData===true)){patch.hasData=true;patch.updatedAt=known||fallback;}else if(has&&!known)patch.updatedAt=fallback;if(!has&&rec&&rec.hasData===true){patch.hasData=false;patch.updatedAt=nowIso;}if(mine&&Date.parse(mine)<=Date.now()&&!(rec&&validTime(rec.lastBackupAt)&&Date.parse(rec.lastBackupAt)>=Date.parse(mine)))patch.lastBackupAt=mine;if(Object.keys(patch).length)markToolbox(patch);}
+// 還原備份成功後立刻更新共用紀錄（不必重新整理）：有無資料以還原後的內容為準，updatedAt 是現在，
+// lastBackupAt 只取還原那份備份檔自己的備份時間（state.settings.lastBackupAt，已是還原後的內容），檔裡沒有就清成 null。
+// 不再和還原前的共用紀錄比大小取較晚者：使用者剛親手換入那份檔，舊紀錄裡「時間異常」的未來時間不該留下來；兩邊（本頁與資料保險箱）因此都跟檔案一致。
+// 這裡不經過 noteSaved 的 60 秒節流（用 update 的 quiet 旗標略過），並重置節流狀態；檔案本身的備份時間是未來時間時照實寫入，兩邊都會標成時間異常。
+function syncToolboxAfterRestore(){const has=hasUserData(state),now=Date.now(),mine=state.settings.lastBackupAt;tbHas=has;tbAt=now;markToolbox({hasData:has,updatedAt:new Date(now).toISOString(),lastBackupAt:validTime(mine)?mine:null});}
+function taipeiDay(iso){const t=Date.parse(iso);if(!Number.isFinite(t))return '';const p=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Taipei',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date(t)).map(x=>[x.type,x.value]));return `${p.year}-${p.month}-${p.day}`;}
+function lastBackup(){const list=[toolboxRecord()?.lastBackupAt,state.settings.lastBackupAt].filter(validTime);return list.length?list.reduce((a,b)=>Date.parse(a)>=Date.parse(b)?a:b):'';}
+// 備份時間比現在還晚（裝置日期曾設錯、時鐘被校回去、或時間戳壞掉）：載入與儲存都照常放行（core 不再因此拒絕），
+// 這裡照實顯示那個日期並標「時間異常」，不假裝成正常的「今天／N 天前」，並提醒重新備份。
+// 晚於現在超過 5 分鐘、或日期比今天晚才算異常；幾分鐘內的時鐘校時誤差不嚇人。年份 ≥ 10000 的字串比較不可靠，所以另用毫秒數判斷。
+const CLOCK_SKEW_MS=5*60*1000;
+function backupStamp(){const iso=lastBackup(),day=iso?taipeiDay(iso):'';return {iso,day,odd:!!day&&(day>today||Date.parse(iso)>Date.now()+CLOCK_SKEW_MS)};}
+// 「時間異常」在今天頁與設定頁用同一種日期寫法（YYYY-MM-DD，台北日期）與同一句說明，由這兩個小函式統一產生。
+const backupOddNote='這個備份時間比現在還晚，可能是裝置日期或時間不對。建議現在備份一次。';
+const backupOddDate=b=>`${b.day}（時間異常）`;
+function backupLine(){const b=backupStamp(),day=b.day,has=hasUserData(state);let days=0,text='還沒有備份過';if(day){days=b.odd?0:Math.max(0,Math.round((Date.parse(today+'T00:00:00Z')-Date.parse(day+'T00:00:00Z'))/86400000));text='上次備份：'+(b.odd?backupOddDate(b):`${day}（${days===0?'今天':days+' 天前'}）`);}const stale=has&&(!day||b.odd||days>14);return `<section class="backup-line${stale?' stale':''}" aria-label="備份提醒"><p><strong>${esc(text)}</strong>${stale?`<span>${b.odd?backupOddNote:'資料只存在這個瀏覽器，建議現在備份一次。'}</span>`:''}</p>${has?'<button class="text-button" type="button" data-action="backup">下載完整備份 <span aria-hidden="true">↗</span></button>':''}</section>`;}
+function stopCard(){return `<aside class="stop-card" aria-label="運動安全提醒"><p><strong>${esc(stopLead)}</strong>${esc(stopRest)}</p></aside>`;}
+function disclaimerLine(){return `<p class="disclaimer">${esc(disclaimer)}</p>`;}
 const views=[{id:'today',label:'今天',title:'把身體，照顧進日常',subtitle:'今天的安排與身體紀錄，從這裡開始。'},{id:'plan',label:'每週課表',title:'練習，也留時間恢復',subtitle:'依可用時間與器材安排，一次看見這一週。'},{id:'month',label:'月計畫',title:'把接下來一個月，安排好',subtitle:'從你選的日期開始，30 天訓練與恢復一起規劃。'},{id:'care',label:'飲食睡眠',title:'吃好、睡好，留力氣給生活',subtitle:'每天的三餐搭配與睡眠時段，配合你的訓練一起安排。'},{id:'records',label:'健康紀錄',title:'身體的變化，慢慢記下',subtitle:'留下量測與感受，空白就保持空白。'},{id:'progress',label:'訓練進度',title:'看見累積的每一次',subtitle:'實際練過的內容、時間與份量，都留在這裡。'}];
 const metricMeta={weight:{name:'體重',unit:'kg',step:'any',min:1,max:700},waist:{name:'腰圍',unit:'cm',step:'any',min:1,max:300},sleep:{name:'睡眠',unit:'小時',step:'any',min:0,max:24},steps:{name:'步數',unit:'步',step:1,min:0,max:200000},restingHR:{name:'靜息心率',unit:'次／分',step:1,min:1,max:300},systolic:{name:'收縮壓',unit:'mmHg',step:1,min:1,max:400},diastolic:{name:'舒張壓',unit:'mmHg',step:1,min:1,max:300}};
 let state,db,ready=false,busy=false,view='today',date=H.today(),today=date,metric='weight',recordsPage=1,sessionPage=1,submitHandler,channel,toastTimer,timerHandle,timerEnd=0,sessionDraft=[];
@@ -1798,16 +1865,16 @@ function syncClock(){const next=H.today();if(next===today)return false;if(date==
 async function openDB(){return new Promise((resolve,reject)=>{const r=indexedDB.open('eric-health-training',1);r.onupgradeneeded=()=>r.result.createObjectStore('health');r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.onblocked=()=>reject(new Error('請關閉其他舊版分頁，再重新整理。'));});}
 async function read(){return new Promise((resolve,reject)=>{const q=db.transaction('health').objectStore('health').get('main');q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error);});}
 async function reload(){if(syncClock()&&ready)render();if(!ready||busy||dialog.open)return;const revision=state.revision;try{const saved=await read();if(busy||dialog.open||!ready||state.revision!==revision)return;if(saved&&saved.revision!==revision){state=H.validateState(saved);render();notify('已載入另一個分頁的更新');}}catch(e){error('無法讀取更新：'+e.message);}}
-async function update(change){if(!ready||busy)throw new Error('資料尚未就緒，請稍後再試。');const expected=state.revision;if(expected>=Number.MAX_SAFE_INTEGER)throw new Error('儲存版本已達上限，請先備份。');const draft=structuredClone(state);change(draft);draft.revision=expected+1;const clean=H.validateState(draft);busy=true;$('storage-status').textContent='儲存中…';try{await new Promise((resolve,reject)=>{const tx=db.transaction('health','readwrite'),store=tx.objectStore('health'),q=store.get('main');let reason;q.onsuccess=()=>{if((q.result?.revision||0)!==expected){reason=new Error('另一個分頁已更新資料，請取消並重新開啟表單。');tx.abort();return;}store.put(clean,'main');};tx.oncomplete=resolve;tx.onerror=()=>reject(reason||tx.error||new Error('儲存失敗'));tx.onabort=()=>reject(reason||tx.error||new Error('儲存中止'));});state=clean;channel?.postMessage({revision:state.revision});$('global-error').hidden=true;render();return clean;}finally{busy=false;$('storage-status').textContent='儲存在此裝置';}}
+async function update(change,quiet=false){if(!ready||busy)throw new Error('資料尚未就緒，請稍後再試。');const expected=state.revision;if(expected>=Number.MAX_SAFE_INTEGER)throw new Error('儲存版本已達上限，請先備份。');const draft=structuredClone(state);change(draft);draft.revision=expected+1;const clean=H.validateState(draft);busy=true;$('storage-status').textContent='儲存中…';try{await new Promise((resolve,reject)=>{const tx=db.transaction('health','readwrite'),store=tx.objectStore('health'),q=store.get('main');let reason;q.onsuccess=()=>{if((q.result?.revision||0)!==expected){reason=new Error('另一個分頁已更新資料，請取消並重新開啟表單。');tx.abort();return;}store.put(clean,'main');};tx.oncomplete=resolve;tx.onerror=()=>reject(reason||tx.error||new Error('儲存失敗'));tx.onabort=()=>reject(reason||tx.error||new Error('儲存中止'));});state=clean;if(!quiet)noteSaved(clean);channel?.postMessage({revision:state.revision});$('global-error').hidden=true;render();return clean;}finally{busy=false;$('storage-status').textContent='儲存在此裝置';}}
 function setView(id){view=views.some(v=>v.id===id)||id==='settings'?id:'today';if(!['plan','month','care'].includes(view)&&date>today)date=today;if(view==='month'&&state.program&&(date<state.program.startDate||date>state.program.endDate))date=today>=state.program.startDate&&today<=state.program.endDate?today:state.program.startDate;history.replaceState(null,'','#'+view);render();window.scrollTo({top:0,behavior:'instant'});}
 function weekStrip(){return `<div class="week-strip">${H.weekPlan(state,date).map((d,i)=>`<button class="day-card${d.date===date?' selected':''}" data-action="select-day" data-date="${d.date}" aria-pressed="${d.date===date}"><span>週${weekdays[i]}</span><strong class="day-date">${Number(d.date.slice(5,7))}/${Number(d.date.slice(8))}</strong><span class="day-kind">${esc(kinds[d.kind])}</span>${state.sessions.some(s=>s.date===d.date)?'<span class="day-dot" aria-label="有訓練紀錄"></span>':''}</button>`).join('')}</div>`;}
 function exercises(plan){if(!plan.exercises.length)return '';return `<div class="exercise-list">${plan.exercises.map((x,i)=>`<article class="exercise"><span class="exercise-number">${String(i+1).padStart(2,'0')}</span><div><h3 class="exercise-name">${esc(x.name)}</h3><p class="exercise-dose">${x.sets} 組 · ${esc(x.reps)}</p><p class="exercise-detail">${esc(x.detail)}</p></div>${x.rest>0?`<button class="text-button" data-action="rest-timer" data-seconds="${x.rest}">休息 ${x.rest} 秒</button>`:''}</article>`).join('')}</div>`;}
-function planPanel(plan){if(plan.kind==='setup')return `<section class="hero"><div class="hero-copy"><p class="hero-label">YOUR NEXT CHAPTER</p><h2 class="hero-title">先認識你的日常</h2><p>設定目標、器材與可用時間，讓每天的安排更貼近生活。</p><div class="hero-actions"><button class="button primary" data-action="profile">設定我的訓練條件</button><button class="button" data-action="checkin">先記錄身體狀況</button></div></div><div class="hero-art" aria-hidden="true"><span>MOVE</span><span>AT YOUR</span><span>PACE.</span></div></section>`;const review=plan.kind==='review';return `<section class="hero${review?' review':''}"><div class="hero-copy"><p class="hero-label">${esc(date===today?'TODAY’S PLAN':formatDate(date))} · ${esc(kinds[plan.kind])}</p><h2 class="hero-title">${esc(plan.title)}</h2><p>${esc(plan.subtitle)}</p><div class="hero-meta">${plan.minutes?`<span>${plan.minutes} 分鐘</span>`:''}<span>${review?'依你的條件調整':plan.phase?'30 天計畫 · 起步模板':'起步課表模板'}</span>${state.profile?`<span>${esc(goals[plan.phase&&state.program?state.program.profile.goal:state.profile.goal])}</span>`:''}</div><div class="hero-actions">${review?'<button class="button primary" data-action="profile">查看訓練條件</button>':`<button class="button primary" data-action="log-planned" ${date>today?'disabled':''}>紀錄這次訓練</button>`}<button class="button" data-action="checkin">${date>=today?'記錄今日狀況':'記錄這天狀況'}</button></div></div><div class="hero-art" aria-hidden="true"><span>${plan.kind==='recovery'?'REST':'MOVE'}</span><span>AT YOUR</span><span>PACE.</span></div></section>${plan.phase?`<p class="phase-tag">第 ${plan.phase.index} 階段 · ${esc(plan.phase.title)}</p>`:''}${plan.note?`<p class="note plan-note">${esc(plan.note)}</p>`:''}${!review?`<section class="panel"><div class="section-head"><h2>今天怎麼練</h2><span class="muted">依感受保留餘力</span></div>${plan.warmup.length?`<div class="routine-note"><strong>暖身</strong><p>${plan.warmup.map(esc).join(' · ')}</p></div>`:''}${exercises(plan)}${plan.cooldown.length?`<div class="routine-note"><strong>收操</strong><p>${plan.cooldown.map(esc).join(' · ')}</p></div>`:''}</section>`:''}`;}
+function planPanel(plan){if(plan.kind==='setup')return `<section class="hero"><div class="hero-copy"><p class="hero-label">YOUR NEXT CHAPTER</p><h2 class="hero-title">先認識你的日常</h2><p>設定目標、器材與可用時間，讓每天的安排更貼近生活。</p><div class="hero-actions"><button class="button primary" data-action="profile">設定我的訓練條件</button><button class="button" data-action="checkin">先記錄身體狀況</button></div></div><div class="hero-art" aria-hidden="true"><span>MOVE</span><span>AT YOUR</span><span>PACE.</span></div></section>`;const review=plan.kind==='review';return `<section class="hero${review?' review':''}"><div class="hero-copy"><p class="hero-label">${esc(date===today?'TODAY’S PLAN':formatDate(date))} · ${esc(kinds[plan.kind])}</p><h2 class="hero-title">${esc(plan.title)}</h2><p>${esc(plan.subtitle)}</p><div class="hero-meta">${plan.minutes?`<span>${plan.minutes} 分鐘</span>`:''}<span>${review?'依你的條件調整':plan.phase?'30 天計畫 · 起步模板':'起步課表模板'}</span>${state.profile?`<span>${esc(goals[plan.phase&&state.program?state.program.profile.goal:state.profile.goal])}</span>`:''}</div><div class="hero-actions">${review?'<button class="button primary" data-action="profile">查看訓練條件</button>':`<button class="button primary" data-action="log-planned" ${date>today?'disabled':''}>紀錄這次訓練</button>`}<button class="button" data-action="checkin">${date>=today?'記錄今日狀況':'記錄這天狀況'}</button></div></div><div class="hero-art" aria-hidden="true"><span>${plan.kind==='recovery'?'REST':'MOVE'}</span><span>AT YOUR</span><span>PACE.</span></div></section>${plan.phase?`<p class="phase-tag">第 ${plan.phase.index} 階段 · ${esc(plan.phase.title)}</p>`:''}${plan.note?`<p class="note plan-note">${esc(plan.note)}</p>`:''}${!review?`<section class="panel"><div class="section-head"><h2>今天怎麼練</h2><span class="muted">依感受保留餘力</span></div>${plan.warmup.length?`<div class="routine-note"><strong>暖身</strong><p>${plan.warmup.map(esc).join(' · ')}</p></div>`:''}${exercises(plan)}${plan.cooldown.length?`<div class="routine-note"><strong>收操</strong><p>${plan.cooldown.map(esc).join(' · ')}</p></div>`:''}</section>`:''}${stopCard()}`;}
 function latestCards(){const s=H.summary(state,date),c=state.checkins.find(x=>x.date===date);return `<div class="stats">${stat('本週活動',num(s.weekMinutes)+' 分鐘','以實際訓練紀錄計算',true)}${stat('本週訓練',num(s.weekSessions)+' 次','含肌力、有氧與恢復')}${stat('體重 7 日均值',s.weightAverage===null?'—':num(s.weightAverage)+' kg','近 7 天至少 4 天資料')}${stat('這天睡眠',c?.sleep==null?'—':num(c.sleep)+' 小時',c?'依自行記錄':'尚無紀錄')}</div>`;}
 function checkinValues(c){const out=[];for(const [key,m]of Object.entries(metricMeta)){if(c[key]!==null&&c[key]!==undefined)out.push(`${m.name} ${num(c[key])} ${m.unit}`);}if(c.energy!==null)out.push(`精神 ${c.energy}/5`);if(c.soreness!==null)out.push(`痠感 ${c.soreness}/5`);if(c.pain===true)out.push('有疼痛／不適');if(c.pain===false)out.push('目前無疼痛／不適（自述）');return out.join(' · ');}
 function checkinRow(c){return `<article class="record-row"><span class="record-date">${esc(formatDate(c.date))}</span><div class="record-values"><p>${esc(checkinValues(c))||'僅備註'}</p>${c.note?`<small>${esc(c.note)}</small>`:''}</div><button class="text-button" data-action="edit-checkin" data-id="${esc(c.id)}">編輯</button></article>`;}
-function todayView(){const p=H.dayPlan(state,date),c=state.checkins.find(x=>x.date===date);return `${monthEntry()}${careSummary()}${planPanel(p)}${weekStrip()}${latestCards()}<div class="grid-equal"><section class="panel"><div class="section-head"><h2>這天的身體紀錄</h2><button class="text-button" data-action="checkin">${c?'更新紀錄':'新增紀錄'}</button></div>${c?checkinRow(c):empty('想記多少，就記多少','睡眠、步數、體重或一句感受，都可以。')}</section><section class="panel"><div class="section-head"><h2>訓練筆記</h2><button class="text-button" data-view="progress">所有紀錄 ↗</button></div>${state.sessions.filter(x=>x.date===date).length?state.sessions.filter(x=>x.date===date).map(sessionRow).join(''):empty('留下實際練過的內容','完成活動後，記下時間與訓練感受。','log-custom','記錄活動')}</section></div>`;}
-function planView(){return `${weekStrip()}${planPanel(H.dayPlan(state,date))}${careSummary()}<section class="panel"><div class="section-head"><h2>你的安排方式</h2><button class="text-button" data-action="profile">調整條件</button></div><div class="tips"><article class="tip"><h3>肌力日之間留恢復時間</h3><p>重新開始時先安排每週 2 次全身肌力，中間至少隔一天。只有 1 天就完成一次，有第 3 天可選輕鬆有氧；可用日期相鄰時保留恢復間隔。</p></article><article class="tip"><h3>先熟悉，再增加</h3><p>先選能穩定完成次數、仍保留約 3–4 次餘力的重量。連續兩次訓練都能輕鬆完成上限次數，再加器械最小一格；動作變形就退回原重量。</p></article><article class="tip"><h3>課表可以一起修訂</h3><p>將最近訓練的動作、實際組次與感受告訴我，我會據此協助調整下一週。</p></article></div><p class="note">網頁依設定產生起步模板；對話中的個人化規劃需另外提供你的條件與回饋。</p></section>`;}
+function todayView(){const p=H.dayPlan(state,date),c=state.checkins.find(x=>x.date===date);return `${backupLine()}${monthEntry()}${careSummary()}${planPanel(p)}${disclaimerLine()}${weekStrip()}${latestCards()}<div class="grid-equal"><section class="panel"><div class="section-head"><h2>這天的身體紀錄</h2><button class="text-button" data-action="checkin">${c?'更新紀錄':'新增紀錄'}</button></div>${c?checkinRow(c):empty('想記多少，就記多少','睡眠、步數、體重或一句感受，都可以。')}</section><section class="panel"><div class="section-head"><h2>訓練筆記</h2><button class="text-button" data-view="progress">所有紀錄 ↗</button></div>${state.sessions.filter(x=>x.date===date).length?state.sessions.filter(x=>x.date===date).map(sessionRow).join(''):empty('留下實際練過的內容','完成活動後，記下時間與訓練感受。','log-custom','記錄活動')}</section></div>`;}
+function planView(){return `${weekStrip()}${planPanel(H.dayPlan(state,date))}${careSummary()}<section class="panel"><div class="section-head"><h2>你的安排方式</h2><button class="text-button" data-action="profile">調整條件</button></div><div class="tips"><article class="tip"><h3>肌力日之間留恢復時間</h3><p>重新開始時先安排每週 2 次全身肌力，中間至少隔一天。只有 1 天就完成一次，有第 3 天可選輕鬆有氧；可用日期相鄰時保留恢復間隔。</p></article><article class="tip"><h3>先熟悉，再增加</h3><p>先選能穩定完成次數、仍保留約 3–4 次餘力的重量。連續兩次訓練都能輕鬆完成上限次數，再加器械最小一格；動作變形就退回原重量。</p></article><article class="tip"><h3>課表可以隨時調整</h3><p>把最近訓練的動作、實際組次與感受記下來，調整下一週或跟教練討論時可以參考。</p></article></div><p class="note">網頁依設定產生起步模板；需要更個人化的安排，可以和教練或物理治療師討論。</p></section>`;}
 
 const monthStageCopy=[
   ['熟悉動作','先熟悉器材與動作，選擇保留餘力的重量。'],
@@ -1850,11 +1917,11 @@ function monthDialog(){
 }
 
 function chart(key){const m=metricMeta[key],start=safeShift(date,-27),rows=state.checkins.filter(x=>x.date>=start&&x.date<=date&&x[key]!==null).sort((a,b)=>a.date.localeCompare(b.date));if(!rows.length)return empty('還沒有這項紀錄','圖表只呈現已記下的量測值，不會補上空白日期。');const vals=rows.map(x=>x[key]),lo=Math.min(...vals),hi=Math.max(...vals),pad=Math.max((hi-lo)*.16,key==='steps'?100:1),min=lo-pad,max=hi+pad,w=640,h=180;const points=rows.map(r=>({x:44+(Date.parse(r.date+'T00:00:00Z')-Date.parse(start+'T00:00:00Z'))/86400000/27*(w-64),y:15+(max-r[key])/(max-min)*(h-48),row:r}));return `<svg class="metric-chart" viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(m.name)}近28天原始紀錄，詳細數字見下方表格"><line x1="44" y1="150" x2="620" y2="150" stroke="#dcded8"/><text x="2" y="19" fill="currentColor" font-size="10">${num(max)}</text><text x="2" y="151" fill="currentColor" font-size="10">${num(min)}</text>${points.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="4" fill="#315b63"><title>${p.row.date} · ${num(p.row[key])} ${m.unit}</title></circle>`).join('')}<text x="44" y="175" fill="currentColor" font-size="10">${dateLabel(start)}</text><text x="588" y="175" fill="currentColor" font-size="10">${dateLabel(date)}</text></svg><p class="note">每個點是一筆原始紀錄，空白日期不連線；${esc(m.unit)}。不依數值判定正常或異常。</p>`;}
-function recordsView(){const rows=state.checkins.filter(x=>x.date<=date).sort((a,b)=>b.date.localeCompare(a.date));const pages=Math.max(1,Math.ceil(rows.length/20));recordsPage=Math.min(recordsPage,pages);return `<section class="panel"><div class="section-head"><div><h2>近 28 天的紀錄</h2><p class="muted">保留原始值與量測日期</p></div><select class="metric-select" id="metric" aria-label="選擇量測項目">${Object.entries(metricMeta).map(([key,m])=>option(key,m.name,metric)).join('')}</select></div>${chart(metric)}</section><section class="panel"><div class="section-head"><h2>健康日誌</h2><div class="button-row"><button class="text-button" data-action="export-checkins">匯出 CSV</button><button class="button small" data-action="checkin">＋ 記錄狀況</button></div></div>${rows.length?rows.slice((recordsPage-1)*20,recordsPage*20).map(checkinRow).join(''):empty('從一筆紀錄開始','量測或感受，都可以留在這裡。','checkin','新增健康紀錄')}</section>${pagination('records',recordsPage,pages)}`;}
+function recordsView(){const rows=state.checkins.filter(x=>x.date<=date).sort((a,b)=>b.date.localeCompare(a.date));const pages=Math.max(1,Math.ceil(rows.length/20));recordsPage=Math.min(recordsPage,pages);return `<section class="panel"><div class="section-head"><div><h2>近 28 天的紀錄</h2><p class="muted">保留原始值與量測日期</p></div><select class="metric-select" id="metric" aria-label="選擇量測項目">${Object.entries(metricMeta).map(([key,m])=>option(key,m.name,metric)).join('')}</select></div>${chart(metric)}${['restingHR','systolic','diastolic'].includes(metric)?`<p class="note measure-note">${esc(measureNote)}</p>`:''}</section><section class="panel"><div class="section-head"><h2>健康日誌</h2><div class="button-row"><button class="text-button" data-action="export-checkins">匯出 CSV</button><button class="button small" data-action="checkin">＋ 記錄狀況</button></div></div>${rows.length?rows.slice((recordsPage-1)*20,recordsPage*20).map(checkinRow).join(''):empty('從一筆紀錄開始','量測或感受，都可以留在這裡。','checkin','新增健康紀錄')}</section>${pagination('records',recordsPage,pages)}`;}
 function pagination(kind,page,total){return total>1?`<div class="button-row pagination"><button class="button small" data-action="${kind}-prev" ${page===1?'disabled':''}>上一頁</button><span>${page} / ${total}</span><button class="button small" data-action="${kind}-next" ${page===total?'disabled':''}>下一頁</button></div>`:'';}
 function sessionRow(s){const count=s.exercises.reduce((n,x)=>n+x.sets.length,0);return `<article class="record-row"><span class="record-date">${esc(formatDate(s.date))}</span><div class="record-values"><strong>${esc(s.title)}</strong><p>${esc(kinds[s.kind])} · ${s.minutes} 分鐘${count?` · ${count} 組`:''}${s.effort?` · 費力度 ${s.effort}/10`:''}</p>${s.note?`<small>${esc(s.note)}</small>`:''}${s.exercises.length?`<details class="data-table"><summary>查看動作與組次</summary>${s.exercises.map(x=>`<p><strong>${esc(x.name)}</strong>：${x.sets.map(t=>`${t.reps!==null?t.reps+'次':''}${t.weight!==null?' / '+t.weight+'kg':''}${t.seconds!==null?' / '+t.seconds+'秒':''}`).map(esc).join('；')}</p>`).join('')}</details>`:''}</div><button class="text-button" data-action="edit-session" data-id="${esc(s.id)}">編輯</button></article>`;}
 function progressView(){const s=H.summary(state,date),rows=state.sessions.filter(x=>x.date<=date).sort((a,b)=>b.date.localeCompare(a.date)),pages=Math.max(1,Math.ceil(rows.length/15));sessionPage=Math.min(sessionPage,pages);const starts=[...new Set(Array.from({length:6},(_,i)=>safeShift(H.weekDates(date)[0],(i-5)*7)))];const weeks=starts.map(d=>{const end=H.shiftDate(d,6),cutoff=end>date?date:end,sum=H.summary(state,cutoff);return{date:d,minutes:sum.weekMinutes,count:sum.weekSessions};}),max=Math.max(1,...weeks.map(w=>w.minutes));return `<div class="stats">${stat('本週活動時間',s.weekMinutes+' 分鐘','依實際紀錄',true)}${stat('本週訓練次數',s.weekSessions+' 次','各次活動分開計算')}${stat('本週肌力天數',s.strengthDays+' 天','同一天只計一次')}${stat('累積訓練',rows.length+' 次','截至選擇日期')}</div><section class="panel"><div class="section-head"><h2>六週活動時間</h2><button class="button small" data-action="log-custom">＋ 記錄活動</button></div><div class="activity-bars">${weeks.map(w=>`<div class="activity-column"><span>${w.minutes} 分</span><div class="activity-track"><i style="height:${w.minutes/max*100}%"></i></div><small>${dateLabel(w.date)}</small></div>`).join('')}</div><p class="note">標示每週一日期，本週僅計入截至選擇日期的紀錄；活動時間不代表運動強度。</p></section><section class="panel"><div class="section-head"><h2>每一次練習</h2><button class="text-button" data-action="export-sessions">匯出 CSV</button></div>${rows.length?rows.slice((sessionPage-1)*15,sessionPage*15).map(sessionRow).join(''):empty('還沒有訓練紀錄','完成活動後，再記下實際內容。','log-custom','記錄一次活動')}</section>${pagination('sessions',sessionPage,pages)}`;}
-function settingsView(){const p=state.profile;return `<div class="settings-grid"><section class="panel"><div class="section-head"><h2>我的訓練條件</h2><button class="text-button" data-action="profile">${p?'編輯':'開始設定'}</button></div>${p?`<div class="facts"><div><span>目標</span><strong>${esc(goals[p.goal])}</strong></div><div><span>器材</span><strong>${esc({bodyweight:'徒手',dumbbell:'啞鈴',gym:'健身房'}[p.equipment])}</strong></div><div><span>可用日期</span><strong>${p.days.map(d=>'週'+weekdays[d-1]).join('、')}</strong></div><div><span>每次時間</span><strong>${p.minutes} 分鐘</strong></div></div>`:'<p class="muted">資料留空時，不會自動套用訓練課表。</p>'}<p class="note">你提供的目標與限制只保存在目前瀏覽器。更新條件會改變一般模板；已建立的月計畫保留原安排，需重新建立才套用新器材與日期。運動限制與不適回報會立即暫停課表。</p></section><section class="panel"><h2>把資料留在自己手上</h2><p class="muted">健康資料只存在這個瀏覽器；沒有穿戴裝置或醫療院所串接，也不會自動同步其他裝置。</p><div class="facts"><div><span>健康紀錄</span><strong>${state.checkins.length} 筆</strong></div><div><span>訓練紀錄</span><strong>${state.sessions.length} 筆</strong></div><div><span>生活紀錄</span><strong>${state.careLogs.length} 筆</strong></div><div><span>最近備份</span><strong>${state.settings.lastBackupAt?esc(new Date(state.settings.lastBackupAt).toLocaleString('zh-TW')):'尚未備份'}</strong></div></div><div class="button-row"><button class="button primary" data-action="backup">下載完整備份</button><button class="button" data-action="restore">還原備份</button><button class="text-button" data-action="persist">申請持久保存</button></div><p class="note">JSON 可還原月計畫、飲食作息設定及所有紀錄；健康與訓練 CSV 供你查閱。下載檔案可能包含敏感健康資料，請自行保管。</p></section><section class="panel"><div class="section-head"><h2>飲食與作息</h2><button class="text-button" data-action="care-profile">調整設定</button></div><p class="note">依飲食偏好、需避開的食物及固定起床時間產生每日生活模板。實際紀錄由你自行填寫。</p><button class="button" data-view="care">查看每日安排 ↗</button></section><section class="panel"><h2>課表如何安排</h2><p>此版本依你設定的時間、器材與經驗產生起步模板。我可以在對話中，依你提供的訓練回饋調整個人化課表。</p><p class="note">一般成人可逐步累積每週至少 150 分鐘中等強度活動及至少 2 天肌力。這是長期參考方向，不是第一週必須完成的份量；中等強度常可說話、難以唱歌。若有慢性病或運動限制，請先確認適合的活動種類與份量。</p><div class="button-row"><a class="text-button" href="https://www.cdc.gov/physical-activity-basics/adding-adults/what-counts.html" target="_blank" rel="noopener noreferrer">CDC 活動與強度指引 ↗</a><a class="text-button" href="https://www.cdc.gov/physical-activity-basics/adding-adults/index.html" target="_blank" rel="noopener noreferrer">CDC 開始活動的方式 ↗</a><a class="text-button" href="https://acsm.org/resistance-training-guidelines-update-2026/" target="_blank" rel="noopener noreferrer">ACSM 2026 肌力訓練指引 ↗</a></div></section><section class="panel"><h2>健康紀錄的用途</h2><p>這個系統只記錄和呈現數字，不做判讀。數值的意義、正不正常、要不要處理，請問醫師或藥師。我可以幫你把資料整理成看診時好講的樣子——哪一項、哪幾次、間隔多久。</p><div class="danger-zone"><button class="text-button" data-action="clear">清除此瀏覽器的健康資料</button></div></section></div>`;}
+function settingsView(){const p=state.profile,b=backupStamp();return `${disclaimerLine()}<div class="settings-grid"><section class="panel"><div class="section-head"><h2>我的訓練條件</h2><button class="text-button" data-action="profile">${p?'編輯':'開始設定'}</button></div>${p?`<div class="facts"><div><span>目標</span><strong>${esc(goals[p.goal])}</strong></div><div><span>器材</span><strong>${esc({bodyweight:'徒手',dumbbell:'啞鈴',gym:'健身房'}[p.equipment])}</strong></div><div><span>可用日期</span><strong>${p.days.map(d=>'週'+weekdays[d-1]).join('、')}</strong></div><div><span>每次時間</span><strong>${p.minutes} 分鐘</strong></div></div>`:'<p class="muted">資料留空時，不會自動套用訓練課表。</p>'}<p class="note">你提供的目標與限制只保存在目前瀏覽器。更新條件會改變一般模板；已建立的月計畫保留原安排，需重新建立才套用新器材與日期。運動限制與不適回報會立即暫停課表。</p></section><section class="panel"><h2>把資料留在自己手上</h2><p class="muted">健康資料只存在這個瀏覽器；沒有穿戴裝置或醫療院所串接，也不會自動同步其他裝置。</p><div class="facts"><div><span>健康紀錄</span><strong>${state.checkins.length} 筆</strong></div><div><span>訓練紀錄</span><strong>${state.sessions.length} 筆</strong></div><div><span>生活紀錄</span><strong>${state.careLogs.length} 筆</strong></div><div><span>最近備份</span><strong>${b.iso?esc(b.odd?backupOddDate(b):new Date(b.iso).toLocaleString('zh-TW')):'尚未備份'}</strong></div></div>${b.odd&&hasUserData(state)?`<p class="backup-odd-note">${backupOddNote}</p>`:''}<div class="button-row"><button class="button primary" data-action="backup">下載完整備份</button><button class="button" data-action="restore">還原備份</button><button class="text-button" data-action="persist">申請持久保存</button></div><p class="note">JSON 可還原月計畫、飲食作息設定及所有紀錄；健康與訓練 CSV 供你查閱。下載檔案可能包含敏感健康資料，請自行保管。</p></section><section class="panel"><div class="section-head"><h2>飲食與作息</h2><button class="text-button" data-action="care-profile">調整設定</button></div><p class="note">依飲食偏好、需避開的食物及固定起床時間產生每日生活模板。實際紀錄由你自行填寫。</p><button class="button" data-view="care">查看每日安排 ↗</button></section><section class="panel"><h2>課表如何安排</h2><p>此版本依你設定的時間、器材與經驗產生起步模板。想調整時，可以更新訓練條件，或與教練討論個人化的安排。</p><p class="note">一般成人可逐步累積每週至少 150 分鐘中等強度活動及至少 2 天肌力。這是長期參考方向，不是第一週必須完成的份量；中等強度常可說話、難以唱歌。若有慢性病或運動限制，請先確認適合的活動種類與份量。</p><div class="button-row"><a class="text-button" href="https://www.cdc.gov/physical-activity-basics/adding-adults/what-counts.html" target="_blank" rel="noopener noreferrer">CDC 活動與強度指引 ↗</a><a class="text-button" href="https://www.cdc.gov/physical-activity-basics/adding-adults/index.html" target="_blank" rel="noopener noreferrer">CDC 開始活動的方式 ↗</a><a class="text-button" href="https://acsm.org/resistance-training-guidelines-update-2026/" target="_blank" rel="noopener noreferrer">ACSM 2026 肌力訓練指引 ↗</a></div></section><section class="panel"><h2>健康紀錄的用途</h2><p>這個系統只記錄和呈現數字，不做判讀。數值的意義、正不正常、要不要處理，請問醫師或藥師。看診時，可以把相關紀錄整理後帶給醫師參考。</p><div class="danger-zone"><button class="text-button" data-action="clear">清除此瀏覽器的健康資料</button></div></section></div>`;}
 function render(){if(!ready)return;syncClock();if(view==='month'&&state.program&&(date<state.program.startDate||date>state.program.endDate))date=today>=state.program.startDate&&today<=state.program.endDate?today:state.program.startDate;const v=views.find(x=>x.id===view);$('nav').innerHTML=views.map(x=>`<button class="nav-button" data-view="${x.id}"${view===x.id?' aria-current="page"':''}>${x.label}</button>`).join('');$('page-title').textContent=v?.title||'你的資料與設定';$('page-subtitle').textContent=v?.subtitle||'照自己的節奏安排，也照顧資料的保存。';$('page-eyebrow').textContent='DAILY HEALTH & TRAINING';$('date-control').hidden=view==='settings'||view==='month';$('date').value=date;$('date').min='1900-01-01';$('date').max=['plan','month','care'].includes(view)?[H.shiftDate(today,42),state.program?.endDate||today].sort().pop():today;document.querySelector('[data-action="prev-day"]').disabled=date<='1900-01-01';document.querySelector('[data-action="next-day"]').disabled=date>=$('date').max;if($('quick-add')){$('quick-add').disabled=false;$('quick-add').dataset.action=view==='care'?'care-log':'checkin';$('quick-add').querySelector('span').textContent=view==='care'?(date>=today?'記錄今日生活':'記錄這天生活'):(date>=today?'記錄今天':'記錄這天');}$('main').innerHTML=view==='today'?todayView():view==='plan'?planView():view==='month'?monthView():view==='care'?careView():view==='records'?recordsView():view==='progress'?progressView():settingsView();}
 const allergenLabels={milk:'乳類',egg:'蛋',soy:'大豆',wheat:'小麥',gluten:'含麩質穀物',peanut:'花生',nuts:'堅果',sesame:'芝麻',fish:'魚',shellfish:'甲殼／貝類'};
 function careSummary(){
@@ -1898,22 +1965,25 @@ function careLogDialog(id){
 
 function profileDialog(){const p=state.profile;showDialog('讓課表配合你的生活',`<p class="form-hint">這些資料用來選擇起步模板。有疼痛、慢性病或醫師限制時，先保留條件，課表再另行調整。</p><div class="form-grid">${field('年齡',`<input name="age" type="number" min="1" max="120" value="${p?.age||''}" required>`)}${field('訓練目標',`<select name="goal">${Object.entries(goals).map(([k,v])=>option(k,v,p?.goal||'habit')).join('')}</select>`)}${field('目前經驗',`<select name="experience">${option('new','剛開始／重新開始',p?.experience||'new')}${option('regular','已有規律訓練',p?.experience)}</select>`)}${field('可使用的器材',`<select name="equipment">${option('bodyweight','徒手＋穩固椅子',p?.equipment||'bodyweight')}${option('dumbbell','啞鈴',p?.equipment)}${option('gym','健身房器械',p?.equipment)}</select>`)}${field('每次可用時間',`<select name="minutes">${[20,30,45,60].map(n=>option(String(n),n+' 分鐘',String(p?.minutes||30))).join('')}</select>`)}${field('開始日期',`<input name="startDate" type="date" min="1900-01-01" max="${today}" data-past-date value="${p?.startDate||today}" required>`)}<fieldset class="field wide"><legend>每週可運動的日子</legend><div class="chip-group">${weekdays.map((d,i)=>`<label class="chip"><input type="checkbox" name="days" value="${i+1}" ${(p?.days||[1,3,5]).includes(i+1)?'checked':''}><span>週${d}</span></label>`).join('')}</div></fieldset>${field('是否有疼痛、傷勢、慢性病或醫師交代的運動限制？',`<select name="limitations" required><option value="">請選擇</option>${option('none','目前沒有已知限制',p?.limitations)}${option('yes','有，需要調整',p?.limitations)}${option('unsure','不確定，先討論',p?.limitations)}</select>`,true)}${field('條件與偏好（選填）',`<textarea name="notes" rows="3" maxlength="2000" placeholder="例如：喜歡騎車、器材種類、需要避開的動作">${esc(p?.notes||'')}</textarea>`,true)}</div><p class="note">起步模板目前適用自述無限制的 18–64 歲成人；其他情況保留紀錄功能，待個別討論課表。</p>`,async fd=>{const profile={age:Number(fd.get('age')),goal:fd.get('goal'),experience:fd.get('experience'),equipment:fd.get('equipment'),days:fd.getAll('days').map(Number),minutes:Number(fd.get('minutes')),limitations:fd.get('limitations'),notes:fd.get('notes').trim(),startDate:fd.get('startDate')};await update(s=>s.profile=profile);notify('訓練條件已儲存');});}
 function nullable(fd,key){const raw=String(fd.get(key)??'').trim();return raw===''?null:Number(raw);}
-function checkinDialog(id){const existing=id?state.checkins.find(x=>x.id===id):state.checkins.find(x=>x.date===(date>today?today:date));const d=existing?.date||(date>today?today:date);showDialog(existing?'更新健康紀錄':'記錄今日狀況',`<p class="form-hint">每個欄位都可留空。請依量測工具上的數字填寫；血壓的兩個數值請一起填入。</p><div class="form-grid">${field('日期',`<input type="date" name="date" min="1900-01-01" max="${today}" data-past-date value="${d}" required>`,true)}${Object.entries(metricMeta).map(([key,m])=>field(m.name+' · '+m.unit,`<input name="${key}" type="number" inputmode="decimal" step="${m.step}" min="${m.min}" max="${m.max}" value="${existing?.[key]??''}" placeholder="未記錄">`)).join('')}${field('精神感受',`<select name="energy">${option('','未記錄','')}${[1,2,3,4,5].map(n=>option(String(n),n+' / 5'+(n===1?' · 很疲倦':n===5?' · 很有精神':''),String(existing?.energy))).join('')}</select>`)}${field('肌肉痠感',`<select name="soreness">${option('','未記錄','')}${[1,2,3,4,5].map(n=>option(String(n),n+' / 5'+(n===1?' · 幾乎沒有':n===5?' · 很明顯':''),String(existing?.soreness))).join('')}</select>`)}${field('今天有疼痛或身體不適嗎？',`<select name="pain">${option('','未填／維持上次狀態',existing?.pain==null?'':String(existing.pain))}${option('true','有疼痛或不適，先暫停原課表',String(existing?.pain))}${option('false','目前沒有疼痛或不適',String(existing?.pain))}</select>`,true,'回報有不適後，課表持續暫停；之後明確回報沒有不適，才恢復模板。')}${field('一句感受或量測條件',`<textarea name="note" maxlength="4000" rows="3" placeholder="例如：晨起量測、今天精神不錯">${esc(existing?.note||'')}</textarea>`,true)}</div>${existing?`<div class="danger-zone"><button type="button" class="text-button" data-action="delete-checkin" data-id="${existing.id}">刪除這筆紀錄</button></div>`:''}`,async fd=>{const value={id:existing?.id||uid(),date:fd.get('date'),...Object.fromEntries(Object.keys(metricMeta).map(k=>[k,nullable(fd,k)])),energy:nullable(fd,'energy'),soreness:nullable(fd,'soreness'),pain:fd.get('pain')===''?(existing?.pain??null):fd.get('pain')==='true',note:fd.get('note').trim()};if(!value.note&&value.pain===null&&!Object.keys(metricMeta).some(k=>value[k]!==null)&&value.energy===null&&value.soreness===null)throw new Error('請填入至少一項紀錄或感受。');await update(s=>{if(s.checkins.some(c=>c.date===value.date&&c.id!==value.id))throw new Error('這一天已有紀錄，請回到該日編輯。');const i=s.checkins.findIndex(x=>x.id===value.id);if(i>=0)s.checkins[i]=value;else s.checkins.push(value);});notify('健康紀錄已儲存');});}
+function checkinDialog(id){const existing=id?state.checkins.find(x=>x.id===id):state.checkins.find(x=>x.date===(date>today?today:date));const d=existing?.date||(date>today?today:date);showDialog(existing?'更新健康紀錄':'記錄今日狀況',`<p class="form-hint">每個欄位都可留空。請依量測工具上的數字填寫；血壓的兩個數值請一起填入。</p><div class="form-grid"><div class="wide">${field('日期',`<input type="date" name="date" min="1900-01-01" max="${today}" data-past-date${existing?` data-original-date="${esc(existing.date)}" aria-describedby="date-move-note"`:''} value="${d}" required>`)}${existing?'<div id="date-move-note" class="date-move-note" aria-live="polite"></div>':''}</div>${Object.entries(metricMeta).map(([key,m])=>field(m.name+' · '+m.unit,`<input name="${key}" type="number" inputmode="decimal" step="${m.step}" min="${m.min}" max="${m.max}" value="${existing?.[key]??''}" placeholder="未記錄">`)+(key==='diastolic'?`<p class="field wide measure-note">${esc(measureNote)}</p>`:'')).join('')}${field('精神感受',`<select name="energy">${option('','未記錄','')}${[1,2,3,4,5].map(n=>option(String(n),n+' / 5'+(n===1?' · 很疲倦':n===5?' · 很有精神':''),String(existing?.energy))).join('')}</select>`)}${field('肌肉痠感',`<select name="soreness">${option('','未記錄','')}${[1,2,3,4,5].map(n=>option(String(n),n+' / 5'+(n===1?' · 幾乎沒有':n===5?' · 很明顯':''),String(existing?.soreness))).join('')}</select>`)}${field('今天有疼痛或身體不適嗎？',`<select name="pain">${option('','未填／維持上次狀態',existing?.pain==null?'':String(existing.pain))}${option('true','有疼痛或不適，先暫停原課表',String(existing?.pain))}${option('false','目前沒有疼痛或不適',String(existing?.pain))}</select>`,true,'回報有不適後，課表持續暫停；之後明確回報沒有不適，才恢復模板。')}${field('一句感受或量測條件',`<textarea name="note" maxlength="4000" rows="3" placeholder="例如：晨起量測、今天精神不錯">${esc(existing?.note||'')}</textarea>`,true)}</div>${existing?`<div class="danger-zone"><button type="button" class="text-button" data-action="delete-checkin" data-id="${existing.id}">刪除這筆紀錄</button></div>`:''}`,async fd=>{const value={id:existing?.id||uid(),date:fd.get('date'),...Object.fromEntries(Object.keys(metricMeta).map(k=>[k,nullable(fd,k)])),energy:nullable(fd,'energy'),soreness:nullable(fd,'soreness'),pain:fd.get('pain')===''?(existing?.pain??null):fd.get('pain')==='true',note:fd.get('note').trim()};if(!value.note&&value.pain===null&&!Object.keys(metricMeta).some(k=>value[k]!==null)&&value.energy===null&&value.soreness===null)throw new Error('請填入至少一項紀錄或感受。');await update(s=>{if(s.checkins.some(c=>c.date===value.date&&c.id!==value.id))throw new Error('這一天已有紀錄，請回到該日編輯。');const i=s.checkins.findIndex(x=>x.id===value.id);if(i>=0)s.checkins[i]=value;else s.checkins.push(value);});notify('健康紀錄已儲存');});}
 function setRow(exerciseIndex,setIndex,set={reps:null,weight:null,seconds:null}){return `<div class="set-row"><span>${setIndex+1}</span><label><span class="mini-label">次數</span><input type="number" inputmode="numeric" name="reps-${exerciseIndex}-${setIndex}" min="0" max="1000" step="1" value="${set.reps??''}" placeholder="次"></label><label><span class="mini-label">重量 kg</span><input type="number" inputmode="decimal" name="weight-${exerciseIndex}-${setIndex}" min="0" max="1000" step="any" value="${set.weight??''}" placeholder="kg"></label><label><span class="mini-label">時間 秒</span><input type="number" inputmode="numeric" name="seconds-${exerciseIndex}-${setIndex}" min="0" max="86400" step="any" value="${set.seconds??''}" placeholder="秒"></label></div>`;}
 function logDialog(id,planned=false){const old=state.sessions.find(x=>x.id===id),p=planned?H.dayPlan(state,date):null;if(planned&&['setup','review'].includes(p.kind)){profileDialog();return;}sessionDraft=old?structuredClone(old.exercises):p?p.exercises.map(x=>({exerciseId:x.id,name:x.name,sets:Array.from({length:x.sets},()=>({reps:null,weight:null,seconds:null}))})):[];showDialog(old?'編輯訓練紀錄':'記下實際練過的內容',`<div class="form-grid">${field('日期',`<input type="date" name="date" min="1900-01-01" max="${today}" data-past-date value="${old?.date||(date>today?today:date)}" required>`)}${field('活動類型',`<select name="kind">${['strength','cardio','recovery','other'].map(k=>option(k,kinds[k],old?.kind||p?.kind||'other')).join('')}</select>`)}${field('活動名稱',`<input name="title" maxlength="160" placeholder="例如：全身肌力、散步、游泳" value="${esc(old?.title||p?.title||'')}" required>`,true)}${field('實際時間 · 分鐘',`<input name="minutes" type="number" min="0" max="1440" step="any" value="${old?.minutes??''}" placeholder="${p?.minutes||'30'}" required>`)}${field('主觀費力度 · 1–10',`<select name="effort">${option('','不填','')}${Array.from({length:10},(_,i)=>option(String(i+1),String(i+1)+(i===0?' · 很輕鬆':i===9?' · 最大努力':''),String(old?.effort))).join('')}</select>`)}</div><div id="logged-exercises">${sessionDraft.map((x,i)=>`<section class="session-exercise" data-exercise="${i}"><label class="field"><span>動作名稱</span><input class="exercise-name-input" data-index="${i}" maxlength="120" value="${esc(x.name)}" required></label><p class="note">重量依每一個啞鈴或器械標示填寫，維持相同記法；徒手可填 0。</p><div class="set-rows">${x.sets.map((s,j)=>setRow(i,j,s)).join('')}</div><button type="button" class="text-button" data-action="add-set" data-index="${i}">＋ 一組</button></section>`).join('')}</div><div class="button-row"><button type="button" class="button small" data-action="add-exercise">＋ 加入動作</button></div>${field('訓練感受（選填）',`<textarea name="note" maxlength="4000" rows="3" placeholder="例如：最後一組仍有餘力、某動作需要替代">${esc(old?.note||'')}</textarea>`,true)}<p class="note">動作組數可選填；沒有填入次數或秒數的空白組不會儲存。紀錄不等於完成課表所有動作。</p>${old?`<div class="danger-zone"><button type="button" class="text-button" data-action="delete-session" data-id="${old.id}">刪除這次訓練</button></div>`:''}`,async fd=>{const entries=sessionDraft.map((x,i)=>({exerciseId:x.exerciseId,name:x.name,sets:x.sets.map((_,j)=>({reps:nullable(fd,`reps-${i}-${j}`),weight:nullable(fd,`weight-${i}-${j}`),seconds:nullable(fd,`seconds-${i}-${j}`)})).filter(s=>{if(s.weight!==null&&s.reps===null&&s.seconds===null)throw new Error('有填重量的組，請一起填入次數或秒數。');return s.reps!==null||s.seconds!==null;})})).filter(x=>x.sets.length);const value={id:old?.id||uid(),date:fd.get('date'),kind:fd.get('kind'),title:fd.get('title').trim(),minutes:Number(fd.get('minutes')),effort:nullable(fd,'effort'),note:fd.get('note').trim(),exercises:entries};await update(s=>{const i=s.sessions.findIndex(x=>x.id===value.id);if(i>=0)s.sessions[i]=value;else s.sessions.push(value);});notify('這次訓練已記下');});}
 function download(name,content,type){const url=URL.createObjectURL(new Blob([content],{type})),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
-async function backup(){if(!ready)return;const saved=await read(),snapshot=H.validateState(saved||H.emptyState());const stamp=new Date().toISOString();snapshot.settings.lastBackupAt=stamp;download(`日日動-完整備份-${today}-${Date.now()}.json`,JSON.stringify(snapshot),'application/json');try{await update(s=>s.settings.lastBackupAt=stamp);notify('完整備份已下載');}catch(e){notify('已下載目前資料；備份時間未寫回：'+e.message);}}
-async function restore(file){if(!file)return;if(file.size>20*1024*1024)throw new Error('檔案超過 20 MiB。');let data;try{data=JSON.parse(await file.text());}catch{throw new Error('請選擇有效的 JSON 備份檔。');}const imported=H.validateState(data);showDialog('還原健康與訓練資料',`<p class="form-hint">備份含 ${imported.checkins.length} 筆健康紀錄、${imported.sessions.length} 筆訓練與 ${imported.careLogs.length} 筆生活紀錄${imported.program?'，包含一份 30 天月計畫':'，未包含月計畫'}。還原會取代目前所有健康、訓練、生活紀錄與設定。舊備份未包含的月計畫或飲食作息資料也會清空。</p><button type="button" class="text-button" data-action="backup">先下載目前資料的備份 ↗</button><label class="checkbox-line"><input type="checkbox" name="confirmed" required>我已確認，使用備份取代目前資料。</label>`,async fd=>{if(fd.get('confirmed')!=='on')throw new Error('請先確認。');await update(s=>{s.profile=imported.profile;s.program=imported.program;s.careProfile=imported.careProfile;s.careLogs=imported.careLogs;s.checkins=imported.checkins;s.sessions=imported.sessions;s.settings=imported.settings;});recordsPage=sessionPage=1;notify('資料已還原');},'確認還原');}
+async function backup(){if(!ready)return;const saved=await read(),snapshot=H.validateState(saved||H.emptyState());const stamp=new Date().toISOString();snapshot.settings.lastBackupAt=stamp;download(`日日動-完整備份-${today}-${Date.now()}.json`,JSON.stringify(snapshot),'application/json');markToolbox({lastBackupAt:stamp});tbAt=0;try{await update(s=>s.settings.lastBackupAt=stamp,true);notify('完整備份已下載');}catch(e){notify('已下載目前資料；備份時間未寫回：'+e.message);render();}}
+async function restore(file){if(!file)return;if(file.size>20*1024*1024)throw new Error('檔案超過 20 MiB。');let data;try{data=JSON.parse(await file.text());}catch{throw new Error('請選擇有效的 JSON 備份檔。');}const imported=H.validateState(data);showDialog('還原健康與訓練資料',`<p class="form-hint">備份含 ${imported.checkins.length} 筆健康紀錄、${imported.sessions.length} 筆訓練與 ${imported.careLogs.length} 筆生活紀錄${imported.program?'，包含一份 30 天月計畫':'，未包含月計畫'}。還原會取代目前所有健康、訓練、生活紀錄與設定。舊備份未包含的月計畫或飲食作息資料也會清空。</p><button type="button" class="text-button" data-action="backup">先下載目前資料的備份 ↗</button><label class="checkbox-line"><input type="checkbox" name="confirmed" required>我已確認，使用備份取代目前資料。</label>`,async fd=>{if(fd.get('confirmed')!=='on')throw new Error('請先確認。');await update(s=>{s.profile=imported.profile;s.program=imported.program;s.careProfile=imported.careProfile;s.careLogs=imported.careLogs;s.checkins=imported.checkins;s.sessions=imported.sessions;s.settings=imported.settings;},true);syncToolboxAfterRestore();render();recordsPage=sessionPage=1;notify('資料已還原');},'確認還原');}
 function exportCSV(kind){const cell=x=>{let v=String(x??'');if(/^\s*[=+\-@]/.test(v))v="'"+v;return '"'+v.replaceAll('"','""')+'"';};const rows=kind==='checkins'?[['日期',...Object.values(metricMeta).map(m=>m.name+' '+m.unit),'精神1-5','痠感1-5','疼痛/不適','備註'],...state.checkins.map(c=>[c.date,...Object.keys(metricMeta).map(k=>c[k]),c.energy,c.soreness,c.pain===true?'有':c.pain===false?'無（自述）':'',c.note])]:[['日期','類型','名稱','分鐘','費力度','備註','動作與組次'],...state.sessions.map(s=>[s.date,kinds[s.kind],s.title,s.minutes,s.effort,s.note,s.exercises.map(x=>x.name+': '+x.sets.map(t=>[t.reps===null?'':t.reps+'次',t.weight===null?'':t.weight+'kg',t.seconds===null?'':t.seconds+'秒'].filter(Boolean).join('/')).join('; ')).join(' | ')])];download(`日日動-${kind==='checkins'?'健康':'訓練'}紀錄-${today}.csv`,'\uFEFF'+rows.map(r=>r.map(cell).join(',')).join('\r\n'),'text/csv;charset=utf-8');notify('CSV 已下載');}
 function startTimer(seconds){if(!Number.isFinite(seconds)||seconds<1||seconds>600)return;clearInterval(timerHandle);timerEnd=Date.now()+seconds*1000;let box=$('rest-timer');if(!box){box=document.createElement('div');box.id='rest-timer';box.innerHTML='<span id="rest-remaining"></span><button class="text-button" data-action="stop-timer">結束</button>';document.body.append(box);}box.hidden=false;const tick=()=>{const left=Math.max(0,Math.ceil((timerEnd-Date.now())/1000));$('rest-remaining').textContent=left?`休息 ${Math.floor(left/60)}:${String(left%60).padStart(2,'0')}`:'休息計時結束';if(!left)clearInterval(timerHandle);};tick();timerHandle=setInterval(tick,250);}
 form.addEventListener('submit',async e=>{e.preventDefault();if(busy||!submitHandler)return;$('dialog-error').hidden=true;$('save-button').disabled=true;try{await submitHandler(new FormData(form));dialog.close();}catch(err){$('dialog-error').textContent=err.message;$('dialog-error').hidden=false;}finally{$('save-button').disabled=false;}});
 dialog.addEventListener('cancel',e=>{if(busy)e.preventDefault();else setTimeout(reload,0);});
-document.addEventListener('click',async event=>{const b=event.target.closest('[data-action],[data-view]');if(!b||b.disabled)return;if(b.dataset.view){event.preventDefault();setView(b.dataset.view);return;}const id=b.dataset.id;try{switch(b.dataset.action){case'profile':profileDialog();break;case'care-profile':careProfileDialog();break;case'care-log':careLogDialog(id);break;case'care-delete':confirm('刪除這筆生活紀錄？','這天自行填寫的飲食與睡眠紀錄會被刪除。',async()=>{await update(s=>s.careLogs=s.careLogs.filter(x=>x.id!==id));notify('生活紀錄已刪除');},'刪除');break;case'month-create':monthDialog();break;case'month-select':date=b.dataset.date;render();$('month-detail')?.scrollIntoView({behavior:'smooth',block:'start'});break;case'month-today':date=today;setView('month');break;case'checkin':checkinDialog();break;case'edit-checkin':checkinDialog(id);break;case'log-planned':logDialog(null,true);break;case'log-custom':logDialog();break;case'edit-session':logDialog(id);break;case'close-dialog':if(!busy){dialog.close();await reload();}break;case'prev-day':if(date>'1900-01-01'){date=H.shiftDate(date,-1);render();}break;case'next-day':if(date<$('date').max){date=H.shiftDate(date,1);render();}break;case'select-day':date=b.dataset.date;if(date>today)setView('plan');else render();break;case'records-prev':recordsPage=Math.max(1,recordsPage-1);render();break;case'records-next':recordsPage++;render();break;case'sessions-prev':sessionPage=Math.max(1,sessionPage-1);render();break;case'sessions-next':sessionPage++;render();break;case'rest-timer':startTimer(Number(b.dataset.seconds));break;case'stop-timer':clearInterval(timerHandle);$('rest-timer').hidden=true;break;case'backup':await backup();break;case'restore':$('restore-file').click();break;case'export-checkins':exportCSV('checkins');break;case'export-sessions':exportCSV('sessions');break;case'delete-checkin':confirm('刪除這筆健康紀錄？','刪除後圖表也會更新。',async()=>{await update(s=>s.checkins=s.checkins.filter(x=>x.id!==id));notify('紀錄已刪除');},'刪除');break;case'delete-session':confirm('刪除這次訓練？','實際活動時間與次數會一起更新。',async()=>{await update(s=>s.sessions=s.sessions.filter(x=>x.id!==id));notify('紀錄已刪除');},'刪除');break;case'persist':{const granted=await navigator.storage?.persist?.();notify(granted?'已允許持久保存，仍建議保留備份。':'瀏覽器未允許持久保存，請自行保留備份。');break;}case'add-set':{const i=Number(b.dataset.index),x=sessionDraft[i];if(x.sets.length>=30)throw new Error('單一動作最多 30 組。');const j=x.sets.length;x.sets.push({reps:null,weight:null,seconds:null});b.closest('.session-exercise').querySelector('.set-rows').insertAdjacentHTML('beforeend',setRow(i,j));break;}case'add-exercise':{if(sessionDraft.length>=30)throw new Error('每次紀錄最多 30 個動作。');const i=sessionDraft.length;sessionDraft.push({exerciseId:'custom-'+uid(),name:'自訂動作 '+(i+1),sets:[{reps:null,weight:null,seconds:null}]});$('logged-exercises').insertAdjacentHTML('beforeend',`<section class="session-exercise" data-exercise="${i}"><label class="field"><span>動作名稱</span><input class="exercise-name-input" data-index="${i}" maxlength="120" value="自訂動作 ${i+1}" required></label><div class="set-rows">${setRow(i,0)}</div><button type="button" class="text-button" data-action="add-set" data-index="${i}">＋ 一組</button></section>`);break;}case'clear':showDialog('清除所有健康與訓練資料',`<p class="form-hint">此操作會清除本瀏覽器的個人設定、月計畫、健康、訓練及飲食睡眠紀錄。其他工具資料不受影響。</p><button type="button" class="text-button" data-action="backup">先下載完整備份 ↗</button>${field('請輸入「清除」', '<input name="confirmText" required autocomplete="off">')}`,async fd=>{if(fd.get('confirmText')!=='清除')throw new Error('請輸入「清除」確認。');await update(s=>{const fresh=H.emptyState();s.profile=fresh.profile;s.program=fresh.program;s.careProfile=fresh.careProfile;s.careLogs=[];s.checkins=[];s.sessions=[];s.settings=fresh.settings;});notify('健康與訓練資料已清除');},'清除資料');break;}}catch(err){if(dialog.open){$('dialog-error').textContent=err.message;$('dialog-error').hidden=false;}else error(err.message);}});
+document.addEventListener('click',async event=>{const b=event.target.closest('[data-action],[data-view]');if(!b||b.disabled)return;if(b.dataset.view){event.preventDefault();setView(b.dataset.view);return;}const id=b.dataset.id;try{switch(b.dataset.action){case'profile':profileDialog();break;case'care-profile':careProfileDialog();break;case'care-log':careLogDialog(id);break;case'care-delete':confirm('刪除這筆生活紀錄？','這天自行填寫的飲食與睡眠紀錄會被刪除。',async()=>{await update(s=>s.careLogs=s.careLogs.filter(x=>x.id!==id));notify('生活紀錄已刪除');},'刪除');break;case'month-create':monthDialog();break;case'month-select':date=b.dataset.date;render();$('month-detail')?.scrollIntoView({behavior:'smooth',block:'start'});break;case'month-today':date=today;setView('month');break;case'checkin':checkinDialog();break;case'edit-checkin':checkinDialog(id);break;case'log-planned':logDialog(null,true);break;case'log-custom':logDialog();break;case'edit-session':logDialog(id);break;case'close-dialog':if(!busy){dialog.close();await reload();}break;case'prev-day':if(date>'1900-01-01'){date=H.shiftDate(date,-1);render();}break;case'next-day':if(date<$('date').max){date=H.shiftDate(date,1);render();}break;case'select-day':date=b.dataset.date;if(date>today)setView('plan');else render();break;case'records-prev':recordsPage=Math.max(1,recordsPage-1);render();break;case'records-next':recordsPage++;render();break;case'sessions-prev':sessionPage=Math.max(1,sessionPage-1);render();break;case'sessions-next':sessionPage++;render();break;case'rest-timer':startTimer(Number(b.dataset.seconds));break;case'stop-timer':clearInterval(timerHandle);$('rest-timer').hidden=true;break;case'backup':await backup();break;case'restore':$('restore-file').click();break;case'export-checkins':exportCSV('checkins');break;case'export-sessions':exportCSV('sessions');break;case'delete-checkin':confirm('刪除這筆健康紀錄？','刪除後圖表也會更新。',async()=>{await update(s=>s.checkins=s.checkins.filter(x=>x.id!==id));notify('紀錄已刪除');},'刪除');break;case'delete-session':confirm('刪除這次訓練？','實際活動時間與次數會一起更新。',async()=>{await update(s=>s.sessions=s.sessions.filter(x=>x.id!==id));notify('紀錄已刪除');},'刪除');break;case'persist':{const granted=await navigator.storage?.persist?.();notify(granted?'已允許持久保存，仍建議保留備份。':'瀏覽器未允許持久保存，請自行保留備份。');break;}case'add-set':{const i=Number(b.dataset.index),x=sessionDraft[i];if(x.sets.length>=30)throw new Error('單一動作最多 30 組。');const j=x.sets.length;x.sets.push({reps:null,weight:null,seconds:null});b.closest('.session-exercise').querySelector('.set-rows').insertAdjacentHTML('beforeend',setRow(i,j));break;}case'add-exercise':{if(sessionDraft.length>=30)throw new Error('每次紀錄最多 30 個動作。');const i=sessionDraft.length;sessionDraft.push({exerciseId:'custom-'+uid(),name:'自訂動作 '+(i+1),sets:[{reps:null,weight:null,seconds:null}]});$('logged-exercises').insertAdjacentHTML('beforeend',`<section class="session-exercise" data-exercise="${i}"><label class="field"><span>動作名稱</span><input class="exercise-name-input" data-index="${i}" maxlength="120" value="自訂動作 ${i+1}" required></label><div class="set-rows">${setRow(i,0)}</div><button type="button" class="text-button" data-action="add-set" data-index="${i}">＋ 一組</button></section>`);break;}case'clear':showDialog('清除所有健康與訓練資料',`<p class="form-hint">此操作會清除本瀏覽器的個人設定、月計畫、健康、訓練及飲食睡眠紀錄。其他工具資料不受影響。</p><button type="button" class="text-button" data-action="backup">先下載完整備份 ↗</button>${field('請輸入「清除」', '<input name="confirmText" required autocomplete="off">')}`,async fd=>{if(fd.get('confirmText')!=='清除')throw new Error('請輸入「清除」確認。');await update(s=>{const fresh=H.emptyState();s.profile=fresh.profile;s.program=fresh.program;s.careProfile=fresh.careProfile;s.careLogs=[];s.checkins=[];s.sessions=[];s.settings=fresh.settings;});markToolbox({hasData:false,updatedAt:new Date().toISOString(),lastBackupAt:null});notify('健康與訓練資料已清除');},'清除資料');break;}}catch(err){if(dialog.open){$('dialog-error').textContent=err.message;$('dialog-error').hidden=false;}else error(err.message);}});
 document.addEventListener('change',e=>{if(e.target.id==='date'){const value=e.target.value;if(H.validDate(value)&&value>='1900-01-01'&&value<=$('date').max){date=value;recordsPage=sessionPage=1;render();}else e.target.value=date;}if(e.target.id==='metric'){metric=e.target.value;render();}});
 document.addEventListener('input',e=>{if(e.target.classList.contains('exercise-name-input'))sessionDraft[Number(e.target.dataset.index)].name=e.target.value.trim();});
+// 編輯既有的健康紀錄時改日期：先在儲存前說清楚「這會把紀錄移到另一天」（儲存時本來就是改那一筆的日期，不是複製）。
+function dateMoveNote(input){const box=$('date-move-note'),from=input.dataset.originalDate,to=input.value,show=d=>d.replaceAll('-','/');if(!box)return;box.innerHTML=from&&H.validDate(to)&&to!==from?`<p class="form-hint warning">這會把 ${esc(show(from))} 的紀錄移到 ${esc(show(to))}。</p>`:'';}
+['input','change'].forEach(type=>document.addEventListener(type,e=>{if(e.target.matches?.('input[data-original-date]'))dateMoveNote(e.target);}));
 $('restore-file').addEventListener('change',async e=>{try{await restore(e.target.files[0]);}catch(err){error('無法還原：'+err.message);}finally{e.target.value='';}});
-window.addEventListener('focus',reload);setInterval(()=>{if(syncClock()&&ready)render();},60000);
-(async()=>{try{db=await openDB();db.onversionchange=()=>{db.close();ready=false;error('資料格式已更新，請重新整理。');};const raw=await read();state=raw?H.validateState(raw):H.emptyState();ready=true;$('storage-status').textContent='儲存在此裝置';try{channel=new BroadcastChannel('eric-health-updates');channel.onmessage=()=>{if(dialog.open)error('另一個分頁已更新，請先取消目前表單再重新開啟。');else reload();};}catch{}setView(location.hash.slice(1));}catch(err){error('無法開啟本機資料：'+err.message+'；原資料不會被覆寫。');$('main').innerHTML=empty('目前無法開啟紀錄','請確認瀏覽器允許儲存網站資料。');$('storage-status').textContent='儲存不可用';}})();
+window.addEventListener('storage',e=>{if(e.key===toolboxKey&&ready&&view==='today'&&!dialog.open)render();});window.addEventListener('focus',reload);setInterval(()=>{if(syncClock()&&ready)render();},60000);
+(async()=>{try{db=await openDB();db.onversionchange=()=>{db.close();ready=false;error('資料格式已更新，請重新整理。');};const raw=await read();state=raw?H.validateState(raw):H.emptyState();ready=true;reconcileToolbox();$('storage-status').textContent='儲存在此裝置';try{channel=new BroadcastChannel('eric-health-updates');channel.onmessage=()=>{if(dialog.open)error('另一個分頁已更新，請先取消目前表單再重新開啟。');else reload();};}catch{}setView(location.hash.slice(1));}catch(err){error('無法開啟本機資料：'+err.message+'；原資料不會被覆寫。');$('main').innerHTML=empty('目前無法開啟紀錄','請確認瀏覽器允許儲存網站資料。');$('storage-status').textContent='儲存不可用';}})();
 })();
 
 </script>

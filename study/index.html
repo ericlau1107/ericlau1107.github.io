@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; media-src 'none'; base-uri 'none'; form-action 'none'">
+<title>語言每日複習</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main class="wrap" id="main">
+  <header>
+    <h1>語言每日複習</h1>
+    <p class="lede">日語、韓語、英語單字，每天花幾分鐘複習。學習進度只存在這個瀏覽器裡，沒有雲端副本。</p>
+  </header>
+  <div id="banners"></div>
+  <nav class="tabs" id="tabs" aria-label="功能"></nav>
+  <div id="view"><p class="note">載入中…</p></div>
+  <noscript><p class="note">這個工具需要開啟 JavaScript 才能使用。</p></noscript>
+</main>
+<dialog id="dlg" aria-labelledby="dlgT" aria-describedby="dlgB">
+  <h2 id="dlgT"></h2>
+  <div id="dlgB"></div>
+  <div class="dlg-actions">
+    <button class="btn" type="button" id="dlgNo">取消</button>
+    <button class="btn primary" type="button" id="dlgYes">確認</button>
+  </div>
+</dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="data.js" defer></script>
+<script src="app.js" defer></script>
+</body>
+</html>

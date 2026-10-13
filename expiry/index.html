@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; media-src 'none'; base-uri 'none'; form-action 'none'">
+<title>證件與到期日管家</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+<script src="data.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body>
+<main class="wrap" id="main">
+  <header>
+    <h1>證件與到期日管家</h1>
+    <p class="lede">記下證件、保險、訂閱和保固什麼時候到期，再匯出到 Google 行事曆，到期前會先提醒你。資料只存在這個瀏覽器裡。</p>
+  </header>
+
+  <div class="notices" id="notices">
+    <div class="banner banner-stale" id="staleBanner" role="alert" hidden>
+      <p>這個分頁的資料已過期（另一個分頁有更新），請重新整理</p>
+      <button class="btn" id="reloadBtn" type="button">重新整理</button>
+    </div>
+    <div class="banner" id="noStorage" role="status" hidden>
+      <p>這個瀏覽器不讓網頁保存資料，所以你輸入的內容不會被保留，關掉頁面就沒了。可以先用，記得下載備份。</p>
+    </div>
+    <div class="banner" id="brokenBanner" role="alert" hidden>
+      <p>這個瀏覽器裡存的資料讀不出來，為了不蓋掉它，已暫停儲存。你可以在下方「從備份還原」，或「清除全部資料」重新開始。</p>
+    </div>
+    <div class="banner" id="skippedBanner" role="status" hidden>
+      <p id="skippedText"></p>
+    </div>
+  </div>
+
+  <noscript><p class="note">這個頁面需要 JavaScript 才能使用。</p></noscript>
+
+  <section aria-labelledby="h-summary" id="summarySec" hidden>
+    <h2 class="sr-only" id="h-summary">到期狀況總覽</h2>
+    <ul class="summary" id="summary"></ul>
+  </section>
+
+  <section aria-labelledby="h-add">
+    <h2 class="tape" id="h-add">新增項目</h2>
+    <div class="card" id="addCard">
+      <p class="privacy" id="privacyNote">不要輸入證件號碼或卡號，這裡只需要名稱和日期。</p>
+      <button class="btn primary" id="openForm" type="button">＋ 新增項目</button>
+
+      <form id="itemForm" novalidate hidden>
+        <h3 id="formTitle">填寫項目</h3>
+        <div class="quick" id="quickWrap">
+          <p class="lbl" id="quickLbl">常用名稱，點一下帶入</p>
+          <div class="chips" id="quick" role="group" aria-labelledby="quickLbl"></div>
+        </div>
+        <div class="grid">
+          <div class="field">
+            <label for="fName">名稱</label>
+            <input id="fName" type="text" maxlength="40" autocomplete="off" placeholder="例如：護照" aria-describedby="eName">
+            <p class="err" id="eName" hidden></p>
+          </div>
+          <div class="field">
+            <label for="fCat">類別</label>
+            <select id="fCat"></select>
+          </div>
+          <div class="field">
+            <label for="fDate">到期日</label>
+            <input id="fDate" type="date" min="2000-01-01" max="2100-12-31" aria-describedby="eDate">
+            <p class="err" id="eDate" hidden></p>
+          </div>
+          <div class="field">
+            <label for="fRepeat">循環</label>
+            <select id="fRepeat" aria-describedby="hRepeat"></select>
+            <p class="hint" id="hRepeat">訂閱、保單這種會續約的，選每月或每年，清單會自動算出下一次到期日。</p>
+          </div>
+          <div class="field wide">
+            <label for="fRem">提前提醒天數</label>
+            <input id="fRem" type="text" inputmode="text" enterkeyhint="done" autocomplete="off" autocapitalize="off" spellcheck="false" aria-describedby="hRem eRem">
+            <div class="chips" id="remChips" role="group" aria-label="常用提醒天數，點一下加入或取消"></div>
+            <p class="hint" id="hRem">可以直接點上面的天數，或自己輸入，用逗號或空白隔開，例如 60, 30, 7。留空就只在到期日提醒一次。</p>
+            <p class="err" id="eRem" hidden></p>
+          </div>
+          <div class="field wide">
+            <label for="fNote">備註（選填）</label>
+            <textarea id="fNote" rows="2" maxlength="200" placeholder="例如：在哪裡辦的、放在哪裡" aria-describedby="eNote"></textarea>
+            <p class="err" id="eNote" hidden></p>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn primary" id="saveBtn" type="submit">儲存</button>
+          <button class="btn" id="cancelBtn" type="button">取消</button>
+        </div>
+        <p class="err" id="eForm" role="alert" hidden></p>
+      </form>
+      <p class="msg" id="formMsg" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-list">
+    <h2 class="tape" id="h-list">到期清單</h2>
+    <div class="listtools" id="listTools">
+      <div class="field search">
+        <label for="q">搜尋</label>
+        <input id="q" type="search" placeholder="名稱或備註" autocomplete="off">
+      </div>
+      <div class="filters" id="filters" role="group" aria-label="依類別篩選"></div>
+    </div>
+    <p class="count" id="count" role="status" aria-live="polite"></p>
+    <ul class="rows" id="rows" aria-label="到期清單"></ul>
+    <p class="empty" id="empty" hidden></p>
+    <p class="msg" id="listMsg" role="status" aria-live="polite"></p>
+    <div class="actions undo" id="undoWrap" hidden>
+      <button class="btn" id="undoBtn" type="button">復原這次續約</button>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-export">
+    <h2 class="tape" id="h-export">匯出到行事曆</h2>
+    <div class="card">
+      <p>把每個項目的到期日，和每個提醒日，都存成整天事件的 .ics 檔。Google 行事曆匯入時會忽略內建的提醒設定，所以提醒日也要做成獨立的事件。</p>
+      <label class="check" for="futureOnly"><input type="checkbox" id="futureOnly" checked><span>只匯出還沒到的提醒日期</span></label>
+      <div class="actions">
+        <button class="btn primary" id="exportAll" type="button">匯出全部 .ics</button>
+      </div>
+      <p class="hint" id="exportInfo"></p>
+      <p class="hint">匯入 Google 行事曆：用電腦開 calendar.google.com，按右上角「設定」→「匯入及匯出」→「匯入」，選剛下載的 .ics 檔。</p>
+      <p class="hint">同一個項目重新匯出再匯入，會更新原本的事件，不會重複；但改過提醒天數之後，舊的提醒事件要到行事曆裡自己刪掉。</p>
+      <p class="msg" id="exportMsg" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-backup">
+    <h2 class="tape" id="h-backup">備份與還原</h2>
+    <div class="card">
+      <p class="lastbackup" id="backupLine">還沒有備份過</p>
+      <p class="hint nudge" id="backupNudge" hidden>建議現在下載一份備份，免得資料不見。</p>
+      <p class="hint">資料只存在這個瀏覽器裡。清除網站資料、換手機或換瀏覽器就會不見，請定期下載備份。備份檔裡是你輸入的名稱、日期和備註，請自己收好。</p>
+      <div class="actions">
+        <button class="btn primary" id="backupBtn" type="button">下載備份</button>
+        <button class="btn" id="restoreBtn" type="button">從備份還原</button>
+        <button class="btn danger" id="clearBtn" type="button">清除全部資料</button>
+      </div>
+      <input type="file" id="restoreFile" accept=".json,application/json" hidden>
+      <div class="confirm" id="restorePanel" role="group" aria-label="確認還原" hidden></div>
+      <div class="confirm" id="clearPanel" role="group" aria-label="確認清除" hidden></div>
+      <p class="msg" id="backupMsg" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <p class="foot">這個工具不會連到網路，也不會把資料傳到任何地方。</p>
+</main>
+</body>
+</html>

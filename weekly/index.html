@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; media-src 'none'; base-uri 'none'; form-action 'none'">
+<title>每週回顧</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+<script src="core.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body>
+<main class="wrap" id="main">
+  <header>
+    <h1>每週回顧</h1>
+    <p class="lede">選一週，一頁看完這週的花費、運動、語言複習、到期事項和拍攝日，再留下三句回顧。這裡只讀取其他工具的資料，不會改動它們；回顧筆記只存在這個瀏覽器裡。</p>
+  </header>
+
+  <div class="notices" id="notices">
+    <div class="banner banner-stale" id="staleBanner" role="alert" hidden>
+      <p>這個分頁的資料已過期（另一個分頁有更新），請重新整理</p>
+      <button class="btn" id="reloadBtn" type="button">重新整理</button>
+    </div>
+    <div class="banner" id="noStorage" role="status" hidden>
+      <p>這個瀏覽器不讓網頁保存資料，所以回顧筆記不會被留下，關掉頁面就沒了。其他區塊還是可以看。</p>
+    </div>
+    <div class="banner" id="brokenBanner" role="alert" hidden>
+      <p>這個瀏覽器裡存的回顧筆記讀不出來，為了不蓋掉它，已暫停儲存。你可以在最下方「從備份還原」，或「清除全部筆記」重新開始。</p>
+    </div>
+  </div>
+
+  <noscript><p class="note">這個頁面需要 JavaScript 才能使用。</p></noscript>
+
+  <nav class="weeknav" aria-label="選擇週次">
+    <div class="weekbtns">
+      <button class="btn" id="prevWeek" type="button">‹ 上一週</button>
+      <button class="btn" id="thisWeek" type="button">本週</button>
+      <button class="btn" id="nextWeek" type="button">下一週 ›</button>
+    </div>
+    <p class="weeklabel" id="weekLabel" role="status" aria-live="polite"><b class="weektag" id="weekTag"></b><span id="weekRange"></span></p>
+    <button class="textbtn" id="reloadData" type="button">重新讀取</button>
+  </nav>
+
+  <section aria-labelledby="h-money">
+    <h2 class="tape" id="h-money">花費</h2>
+    <div class="card" id="bodyMoney" aria-busy="true"><p class="loading">讀取中…</p></div>
+  </section>
+
+  <div class="pair">
+    <section aria-labelledby="h-health">
+      <h2 class="tape" id="h-health">運動</h2>
+      <div class="card" id="bodyHealth" aria-busy="true"><p class="loading">讀取中…</p></div>
+    </section>
+    <section aria-labelledby="h-study">
+      <h2 class="tape" id="h-study">語言複習</h2>
+      <div class="card" id="bodyStudy" aria-busy="true"><p class="loading">讀取中…</p></div>
+    </section>
+  </div>
+
+  <div class="pair">
+    <section aria-labelledby="h-expiry">
+      <h2 class="tape" id="h-expiry">到期事項</h2>
+      <div class="card" id="bodyExpiry" aria-busy="true"><p class="loading">讀取中…</p></div>
+    </section>
+    <section aria-labelledby="h-sheets">
+      <h2 class="tape" id="h-sheets">拍攝日</h2>
+      <div class="card" id="bodySheets" aria-busy="true"><p class="loading">讀取中…</p></div>
+    </section>
+  </div>
+
+  <section aria-labelledby="h-backup">
+    <h2 class="tape" id="h-backup">備份提醒</h2>
+    <div class="card" id="bodyBackup" aria-busy="true"><p class="loading">讀取中…</p></div>
+  </section>
+
+  <section aria-labelledby="h-notes">
+    <h2 class="tape" id="h-notes">回顧筆記</h2>
+    <div class="card">
+      <div class="offer" id="draftPanel" role="group" aria-label="找回沒存下來的文字" hidden></div>
+      <p class="privacy">三格都是選填，想到什麼寫什麼。不要寫密碼、證號或卡號。</p>
+      <p class="noteweek" id="noteWeek"></p>
+      <div class="field">
+        <label for="nGood">這週做得好的事</label>
+        <textarea id="nGood" rows="3" maxlength="1000" data-field="good" autocomplete="off"></textarea>
+      </div>
+      <div class="field">
+        <label for="nNext">下週最重要的一件事</label>
+        <textarea id="nNext" rows="3" maxlength="1000" data-field="next" autocomplete="off"></textarea>
+      </div>
+      <div class="field">
+        <label for="nTweak">想調整的一件事</label>
+        <textarea id="nTweak" rows="3" maxlength="1000" data-field="tweak" autocomplete="off"></textarea>
+      </div>
+      <p class="savestate" id="saveState" role="status" aria-live="polite"></p>
+      <div id="draftLive" role="status" aria-live="polite"><div class="draftnote" id="draftNote" hidden></div></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-backupnotes">
+    <h2 class="tape" id="h-backupnotes">備份與還原（回顧筆記）</h2>
+    <div class="card">
+      <p class="lastbackup" id="backupLine">還沒有備份過</p>
+      <p class="hint nudge" id="backupNudge" hidden>建議現在下載一份備份，免得筆記不見。</p>
+      <p class="hint">回顧筆記只存在這個瀏覽器裡。清除網站資料、換手機或換瀏覽器就會不見，請定期下載備份。這裡只備份回顧筆記，花費、運動等資料要到各自的工具備份。</p>
+      <div class="actions">
+        <button class="btn primary" id="backupBtn" type="button">下載備份</button>
+        <button class="btn" id="restoreBtn" type="button">從備份還原</button>
+        <button class="btn danger" id="clearBtn" type="button">清除全部筆記</button>
+      </div>
+      <input type="file" id="restoreFile" accept=".json,application/json" hidden>
+      <div class="confirm" id="restorePanel" role="group" aria-label="確認還原" hidden></div>
+      <div class="confirm" id="clearPanel" role="group" aria-label="確認清除" hidden></div>
+      <p class="msg" id="backupMsg" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <p class="foot">這個工具不會連到網路，也不會把資料傳到任何地方。</p>
+</main>
+</body>
+</html>

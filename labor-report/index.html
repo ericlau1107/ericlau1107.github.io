@@ -3,7 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
 <title>勞報單產生器</title>
+<link rel="icon" href="data:,">
 <!-- 個資不寫在這個檔案的程式碼裡：基本資料只存在使用者自己的瀏覽器（localStorage）。私人版由 build.py 另外帶入 LR_SEED 當「第一次的預填值」。 -->
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700&family=IBM+Plex+Mono:wght@500&display=swap">
@@ -102,21 +105,104 @@ details .row{margin-top:8px}
 /* 紀錄 */
 .hist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
 .hist li{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;border:1px solid var(--rule);border-radius:8px;padding:8px 10px;font-size:13.5px}
-.hist li b{font-weight:700} .hist li span{color:var(--ink-3);font-size:12.5px;display:block}
-.hist button{padding:7px 10px;font-size:13px}
+.hist li b{font-weight:700;overflow-wrap:anywhere}
+.hist li .meta{display:block;color:var(--ink-3);font-size:12.5px}   /* 只有這一個直接的說明行是 block；裡面的 .nw（日期、金額）維持行內、不拆開，不會被這條規則一起變成一行一個 */
+.hist .nw{display:inline;white-space:nowrap}
+.hist button{padding:7px 10px;font-size:13px;min-height:44px}
+@media (max-width:520px){ .hist li{grid-template-columns:1fr 1fr} .hist li>div{grid-column:1/-1} }   /* 手機：說明行佔滿整列寬（不跟兩顆按鈕搶位子），按鈕換到下面一排、各佔一半 */
 .empty{color:var(--ink-3);font-size:13px;margin:0}
+/* 多分頁：資料過期橫幅（黏在最上面，過期後不能操作，只能下載這個分頁的資料或重新整理） */
+.stale{position:sticky;top:0;z-index:20;display:flex;gap:6px 14px;flex-wrap:wrap;align-items:center;justify-content:flex-start;padding:12px 20px;
+  background:var(--seal-soft);border-bottom:2px solid var(--bad);color:var(--ink);font-size:14px;font-weight:700;text-align:left}
+.stale button{background:var(--bad);border-color:var(--bad);color:var(--accent-ink);min-height:44px}
+.stale button.alt{background:var(--panel);border-color:var(--bad);color:var(--ink)}
+#stale-text{flex:1 1 100%;text-align:left;line-height:1.5}
+.stale small{flex:1 1 100%;max-width:72ch;margin-inline:0;text-align:left;font-size:13.5px;font-weight:400;line-height:1.55}
+.stale small.msg,.stale small.msg.ok,.stale small.msg.bad{color:var(--ink);min-height:0;margin-top:0;margin-bottom:0;font-size:13.5px;overflow-wrap:anywhere}
+.stale-btns{flex:1 1 100%;display:flex;gap:8px 10px;flex-wrap:wrap;justify-content:flex-start;margin-top:4px}   /* 按鈕自己一整排（不跟說明擠在同一排的右邊） */
+@media (max-width:700px){ .stale{padding:8px 14px;gap:4px 12px;max-height:40vh;max-height:40dvh;overflow-y:auto} .stale small,.stale small.msg{font-size:13px;line-height:1.45} .stale-btns{margin-top:2px} }   /* 手機：橫幅最多佔畫面 40% 高（內容通常遠不到；真的超過就在橫幅裡捲動，不會把表單擠出畫面） */
+body.is-stale #setup,body.is-stale #work,body.is-stale #income,body.is-stale #nav{opacity:.5}
+.calc .note.warn{color:var(--bad);font-weight:700}
+.stamp{font-size:13px;color:var(--ink-2)}
+/* 鍵盤焦點：程式移動焦點到標題時要看得到（標題不是互動元件，只在鍵盤操作後顯示框線） */
+[tabindex="-1"]:focus{outline:none}
+[tabindex="-1"]:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:4px}
+h2[tabindex="-1"]{width:fit-content;max-width:100%}
+/* 功能切換：開勞報單／收入與報稅總覽 */
+.nav{display:flex;gap:6px;padding:4px;margin:0 0 16px;max-width:560px;background:var(--field);border:1px solid var(--rule);border-radius:10px}
+.nav button{flex:1;min-height:44px;border:0;border-radius:7px;background:transparent;color:var(--ink-2);font:700 15px/1.2 var(--sans)}
+.nav button[aria-current="page"]{background:var(--panel);color:var(--accent);box-shadow:var(--shadow)}
+button.linkbtn{border:0;background:none;padding:0 2px;min-height:44px;color:var(--accent);font:700 14px/1.3 var(--sans);text-decoration:underline;text-underline-offset:3px}
+button.more{width:100%;min-height:44px;margin-top:8px}
+/* 收入與報稅總覽 */
+.i-head{display:flex;gap:12px 20px;flex-wrap:wrap;align-items:flex-end;justify-content:space-between}
+.i-ctl{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.i-ctl label.f{min-width:min(100%,240px)}
+.i-ctl select,.i-ctl button{min-height:44px}
+.i-ctl select{font-size:16px}
+.i-note{margin:12px 0 0;padding:10px 12px;border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 7px 7px 0;font-size:14px;font-weight:700;color:var(--ink)}
+.i-hint{margin:10px 0 0;font-size:13.5px;color:var(--ink-2);max-width:70ch}
+.i-hint.warn{color:var(--bad);font-weight:700}
+/* 這張對應「開過的勞報單」哪一筆（下載會更新它還是另外新增）；重試存紀錄按鈕 */
+.sheetbar{margin-top:12px;padding:10px 12px;border-left:4px solid var(--accent);background:var(--accent-soft);border-radius:0 7px 7px 0;font-size:13.5px;color:var(--ink);display:flex;gap:8px 12px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.sheetbar p{margin:0;flex:1 1 240px}
+.sheetbar button,#w-retry,#s-lock,#s-cancel{min-height:44px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:10px}
+.tile{background:var(--field);border:1px solid var(--rule);border-radius:9px;padding:10px 12px;min-width:0}
+.tile .k{font-size:13px;color:var(--ink-2)}
+.tile .v{font:700 20px/1.35 var(--mono);font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.tile .v.tbd{font:700 17px/1.5 var(--sans);color:var(--ink-2)}
+.tile .s{font-size:12.5px;color:var(--ink-2);min-height:1.2em}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:16px;align-items:start}
+table.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+.tbl caption{text-align:left;font:700 16px/1.4 var(--serif);padding:0 0 8px}
+.tbl th{padding:8px 10px;border-bottom:2px solid var(--rule);font:700 12.5px/1.3 var(--sans);color:var(--ink-2);text-align:right;white-space:nowrap}
+.tbl th:first-child{text-align:left}
+.tbl td{padding:8px 10px;border-bottom:1px solid var(--rule);text-align:right;vertical-align:top;font:500 13.5px/1.5 var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tbl td:first-child{text-align:left;font-family:var(--sans);font-weight:700;white-space:normal;min-width:4.5em}
+.tbl td.l,.tbl th.l{text-align:left;font-family:var(--sans);white-space:normal}
+.tbl td.l{font-weight:500}
+.tbl td small{display:block;font:400 12.5px/1.45 var(--sans);color:var(--ink-2);white-space:normal}
+.tbl td.tbd{font-family:var(--sans);color:var(--ink-2)}
+.tbl .cv{display:block}
+.tbl .bar{display:block;height:6px;margin-top:5px;border-radius:3px;background:var(--rule);overflow:hidden}
+.tbl .bar i{display:block;height:100%;background:var(--accent)}
+@media (max-width:700px){
+  .tbl,.tbl tbody,.tbl tr,.tbl td,.tbl caption{display:block}
+  .tbl thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .tbl tr{border:1px solid var(--rule);border-radius:8px;padding:6px 12px;margin-bottom:8px;background:var(--panel)}
+  .tbl td{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border:0;padding:4px 0;text-align:right}
+  .tbl td::before{content:attr(data-label);flex:none;font:500 12.5px/1.4 var(--sans);color:var(--ink-2);text-align:left}
+  .tbl td{white-space:normal}
+  .tbl td:first-child{display:block;font-size:14.5px;padding-bottom:6px}
+  .tbl td:first-child::before{content:none}
+  .tbl td.l{display:block;text-align:left}
+  .tbl td.l::before{display:block;margin-bottom:1px}
+  .tbl td small{text-align:inherit}
+  .tbl .cv{text-align:right}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.nw{white-space:nowrap}
 </style>
 </head>
 <body>
+<div id="stale-banner" class="stale" role="alert" hidden><span id="stale-text">另一個分頁存了比較新的資料，這個分頁已經不能再存。</span><small id="stale-sub"></small><small id="stale-status" class="msg" role="status" hidden></small><span class="stale-btns"><button id="stale-download" type="button">下載這個分頁的資料</button><button id="stale-reload" type="button" class="alt">重新整理</button></span></div>
 <header class="top"><h1>勞報單產生器</h1><p id="top-note">基本資料只存在這台瀏覽器，不會上傳</p></header>
 <main>
 
+<nav id="nav" class="nav" aria-label="功能" hidden>
+  <button type="button" id="nav-work" aria-current="page">開勞報單</button>
+  <button type="button" id="nav-income">收入與報稅總覽</button>
+</nav>
+
 <!-- 第一次使用：填基本資料，確認後鎖定 -->
 <section id="setup" class="card" hidden>
-  <h2>第一次使用：確認基本資料</h2>
-  <p class="lede">這些資料按下「確認並鎖定」後就固定下來，之後每張勞報單只需要改日期、專案名稱、金額。</p>
+  <h2 id="s-title">第一次使用：確認基本資料</h2>
+  <p class="lede" id="s-lede">這些資料按下「確認並鎖定」後就固定下來，之後每張勞報單只需要改日期、專案名稱、金額。</p>
   <div class="row"><label class="f" style="flex:1">從備份檔匯入（選填）<input type="file" id="s-import" accept="application/json,.json"></label></div>
+  <p class="lede" style="margin:4px 0 0">備份檔包含基本資料和開過的勞報單紀錄。基本資料會先帶進下面的表單；紀錄會先問你，只加入還沒有的，已經有的不會被蓋掉。</p>
+  <div class="sheetbar" id="s-imp" role="group" aria-labelledby="s-imp-t" hidden><p id="s-imp-t" tabindex="-1"></p><div class="row"><button type="button" class="primary" id="s-imp-ok">確認匯入</button><button type="button" id="s-imp-no">不匯入紀錄</button></div></div>
+  <p class="msg" id="s-imp-msg" role="status"></p>
   <h3>領款人</h3>
   <div class="grid2">
     <label class="f">姓名 *<input type="text" id="s-name" autocomplete="off" maxlength="200"></label>
@@ -158,7 +244,7 @@ details .row{margin-top:8px}
     <label class="f">職業工會加保<select id="s-bl-union"><option value="no">否</option><option value="yes">是</option></select></label>
     <label class="f">健保資格（外籍人士才看這項）<select id="s-bl-nhi"><option value="yes">有健保</option><option value="no">沒有健保</option></select></label>
   </div>
-  <div class="row" style="margin-top:18px"><button class="primary" id="s-lock">確認並鎖定</button></div>
+  <div class="row" style="margin-top:18px"><button class="primary" id="s-lock">確認並鎖定</button><button id="s-cancel" type="button" hidden>取消，維持原資料</button></div>
   <p class="msg" id="s-msg" role="status"></p>
 </section>
 
@@ -166,39 +252,42 @@ details .row{margin-top:8px}
 <section id="work" class="work" hidden>
   <div class="stack">
     <div class="card">
-      <h2>這張勞報單</h2>
+      <h2 id="w-title" tabindex="-1">這張勞報單</h2>
       <div class="seg" role="radiogroup" aria-label="勞報單格式" style="margin:10px 0 14px">
         <label><input type="radio" name="w-tpl" value="sanshang" id="w-tpl-sa">山上影像<small>收據（含居留證影本）</small></label>
-        <label><input type="radio" name="w-tpl" value="chengwei" id="w-tpl-bl">成為影像<small>勞務報酬單・自動算扣繳</small></label>
+        <label><input type="radio" name="w-tpl" value="chengwei" id="w-tpl-bl">成為影像<small><span class="nw">勞務報酬單</span>・<span class="nw">自動算扣繳</span></small></label>
       </div>
       <div class="grid2">
         <label class="f">工作日期<input type="date" id="w-start"></label>
         <label class="f">結束日期（同一天可留空）<input type="date" id="w-end"></label>
-        <label class="f" id="w-fill-l">填表日期<input type="date" id="w-fill"></label>
+        <label class="f" id="w-fill-l">填表日期（依這個日期的年度套用扣繳規則）<input type="date" id="w-fill"></label>
       </div>
       <div class="grid2" style="margin-top:10px">
         <label class="f">專案名稱<input type="text" id="w-project" placeholder="例如：Karzy Media" autocomplete="off" maxlength="200"></label>
         <label class="f">金額（新台幣）<input type="text" id="w-amount" class="num" inputmode="numeric" placeholder="16,000" autocomplete="off" maxlength="30"></label>
       </div>
       <dl class="calc" id="w-calc"></dl>
-      <div class="row" style="margin-top:14px"><button class="primary" id="w-pdf">下載 PDF</button></div>
+      <div class="sheetbar" id="w-sheet" hidden><p id="w-sheet-t"></p><button type="button" id="w-sheet-new">改存成新的一張</button></div>
+      <div class="row" style="margin-top:14px"><button class="primary" id="w-pdf">下載 PDF</button><button type="button" id="w-retry" hidden>再試一次存進紀錄</button></div>
       <p class="msg" id="w-msg" role="status"></p>
     </div>
     <div class="card">
       <h2>開過的勞報單</h2>
-      <p class="lede" style="margin-bottom:10px">每次下載 PDF 都會記在這裡，點「載入」可以直接沿用。</p>
+      <p class="lede" style="margin-bottom:4px">每次下載 PDF 都會記在這裡，點「載入」可以直接沿用。</p>
+      <button type="button" class="linkbtn" id="w-open-income">看年度收入與報稅總覽 →</button>
       <ul class="hist" id="w-hist"></ul>
+      <button type="button" class="more" id="w-hist-more" hidden></button>
     </div>
     <div class="card locked" id="p-card">
       <span class="seal" id="p-seal">已鎖定</span>
       <h2>基本資料</h2>
       <dl class="facts" id="p-facts"></dl>
-      <div class="row" style="margin-top:12px"><button id="p-export">下載備份檔</button></div>
-      <p class="msg" id="p-msg" role="status">備份檔可以在別台電腦或網站版「從備份檔匯入」。檔案含個資，請自己保管。</p>
+      <div class="row" style="margin-top:12px"><button id="p-export">下載備份檔</button><span class="stamp" id="p-backup" role="status"></span></div>
+      <p class="msg" id="p-msg" role="status">備份檔包含基本資料和開過的勞報單紀錄。可以在別台電腦或網站版「從備份檔匯入」。檔案含個資，請自己保管。</p>
       <details>
-        <summary>資料有誤，需要重設</summary>
-        <p class="lede" style="margin:8px 0 0">重設會清掉鎖定的基本資料（開過的紀錄會保留）。在下面輸入「重設」兩個字才能按。</p>
-        <div class="row"><input type="text" id="p-confirm" aria-label="輸入重設確認" style="max-width:140px"><button id="p-reset" disabled>重設基本資料</button></div>
+        <summary id="p-sum">資料有誤，需要重設（修改）</summary>
+        <p class="lede" style="margin:8px 0 0">會打開基本資料表單，已帶入現有的資料和證件影本，只改要改的欄位就好。舊資料要等你按「確認並鎖定」才會被換掉；中途按「取消，維持原資料」或直接關掉頁面，舊資料都不變（開過的紀錄也保留）。在下面輸入「重設」兩個字才能按。</p>
+        <div class="row"><input type="text" id="p-confirm" aria-label="輸入重設確認" style="max-width:140px"><button id="p-reset" disabled>修改基本資料</button></div>
       </details>
     </div>
   </div>
@@ -207,33 +296,125 @@ details .row{margin-top:8px}
     <div class="pv-wrap" id="pv-wrap"><iframe id="pv" title="勞報單預覽" tabindex="-1"></iframe></div>
   </div>
 </section>
+
+<!-- 收入與報稅總覽：把開過的勞報單按年度彙整（唯讀；不改任何儲存的資料） -->
+<section id="income" class="stack" aria-labelledby="i-title" hidden>
+  <div class="card">
+    <div class="i-head">
+      <div>
+        <h2 id="i-title" tabindex="-1">收入與報稅總覽</h2>
+        <p class="lede" style="margin:0">依「開過的勞報單」紀錄，按單據上的日期彙整年度與月份（這台瀏覽器最多留最近 500 張，刪掉紀錄這裡也會跟著少）。</p>
+      </div>
+      <div class="i-ctl">
+        <label class="f">年度<select id="i-year"></select></label>
+        <button class="primary" id="i-csv" type="button">下載 CSV</button>
+      </div>
+    </div>
+    <p class="i-note">實際以付款方開立的扣繳憑單為準</p>
+    <p class="i-hint" id="i-basis"></p>
+    <p class="i-hint warn" id="i-pending" role="status" hidden></p>
+    <p class="msg" id="i-msg" role="status"></p>
+  </div>
+  <div id="i-body" class="stack"></div>
+</section>
 </main>
 
 <script>window.LR_SEED = /*__SEED__*/null;</script>
 
 <script id="lr-core">
 /* ====== 計算與排版核心（純函式；tests/core.test.mjs 直接抽這段來測）====== */
-// 扣繳與補充保費規則：照「成為影像勞務報酬單」表上印的 115 年度說明（表單是成為影像提供的）。國稅局／健保署公告不同時以公告為準
-const TH = {
-  salaryStart: 90501, salaryRate: 0.05,       // 非固定薪資(50)：起扣點 90,501，5%
-  bizStart: 20010, bizRate: 0.10,             // 執行業務(9A/9B)、租賃(51)：起扣點 20,010，10%
-  frLimit: 44251, frLowRate: 0.06, frHighRate: 0.18,   // 外籍在台未滿 183 天：未達 44,251 扣 6%，達到扣 18%
-  nhiRate: 0.0211, nhiSalaryStart: 29500, nhiBizStart: 20000,
+// ====== 各年度扣繳／補充保費規則表 ======
+// key＝給付年度（西元，只取自表單的「填表日期」，沒填就待確認；2025＝民國 114 年、2026＝民國 115 年）。
+// 只收「出處查證過」的年度；表上沒有的年度（例如 2027）一律待確認，不沿用別年的數字（BRIEF 鐵律 3）。
+// 官方公告與表單不同時以公告為準；要加新年度：查證下列出處、在 RULES 加一筆、補 tests/core.test.mjs 的邊界案例。查證日 2026-10-12。
+// 出處（皆為官方）：
+//  [A] 各類所得扣繳率標準（財政部；全國法規資料庫，最後修正 110-06-30，2025、2026 年都適用）
+//      https://law.moj.gov.tw/LawClass/LawAll.aspx?PCode=G0340028
+//      第 2 條（居住者）：薪資 5%；執行業務報酬、租金、競技競賽機會中獎獎金 10%。第 13 條：每次應扣繳稅額不超過 2,000 元免扣繳
+//      第 3 條（非居住者）：薪資 18%，全月薪資給付總額在「行政院核定每月基本工資 1.5 倍以下」者 6%；
+//              執行業務者報酬、租金、競技競賽機會中獎獎金 20%（個人稿費、版稅、樂譜、作曲、編劇、漫畫、講演鐘點費，每次 5,000 元以下得免扣繳）；
+//              第十款「其他所得 20%」只寫營利事業，個人的其他所得不在條文內，所以非居住者的「其他」一律待確認
+//  [B] 財政部稅務入口網「各類所得的扣繳率」（自 114-01-01 適用）：非固定薪資(扣繳稅額表)起扣金額 88,501；每月基本工資 28,590
+//      https://www.etax.nat.gov.tw/etwmain/tax-info/innotative-tax-e-reference/withheld/regulation/Prj8q2V
+//  [C] 財政部稅務入口網「1505 薪資所得如何辦理扣繳？」（115-04-10 更新）：115 年度非固定薪資起扣標準 90,501
+//      https://www.etax.nat.gov.tw/etwmain/tax-info/understanding/tax-q-and-a/national/individual-income-tax/withheld-rule/rule/NM11BZY
+//  [D] 衛福部健保署「二代健保補充保險費-常見 Q&A」（115.1.5 版）：費率 2.11%（110-01-01 起，114 年範例同為 2.11%）；
+//      兼職薪資所得單次給付達基本工資（115 年 1 月 1 日起 29,500）；執行業務收入單次 2 萬起扣、單次上限 1 千萬
+//      https://www.nhi.gov.tw/ch/dl-26432-f744a781bf4043618d0bd5b4a4c5518a-1.pdf
+//      全民健康保險法第 31 條（單次給付逾 1,000 萬元的部分免予扣取）：https://law.moj.gov.tw/LawClass/LawAll.aspx?PCode=L0060001
+//  [E] bizStart 20,010 是推算值：官方網頁只寫「每次應扣繳稅額不超過 2,000 元免扣繳」（[A] 第 13 條）。10% × 20,009 ＝ 2,000.9，稅額無條件捨去後仍不超過 2,000；
+//      20,010 起才有 2,001。沿用成為影像範本與舊版程式的 20,010，與 [A] 不衝突，但官方沒有直接印這個數字。
+// 欄位：salaryStart＝非固定薪資(50)起扣點（薪資所得扣繳稅額表無配偶及受扶養親屬者的起扣標準）；
+//       bizStart＝執行業務(9A/9B)、租賃(51)、機會中獎獎金(91)的起扣點；frSalaryMax＝基本工資 1.5 倍（非居住者薪資 6%／18% 的分界，含）；
+//       frWritingExempt＝非居住者個人稿費類每次免扣上限（只在說明文字提示，不自動判斷）；nhiSalaryStart＝兼職薪資補充保費起扣點（＝基本工資）；nhiCap＝單次給付上限。
+const RULES = {
+  2025: { rocYear: 114, basicWage: 28590,
+    salaryStart: 88501, salaryRate: 0.05, bizStart: 20010, bizRate: 0.10,
+    frSalaryMax: 42885, frLowRate: 0.06, frHighRate: 0.18, frOtherRate: 0.20, frWritingExempt: 5000,
+    nhiRate: 0.0211, nhiSalaryStart: 28590, nhiBizStart: 20000, nhiCap: 10000000 },
+  2026: { rocYear: 115, basicWage: 29500,
+    salaryStart: 90501, salaryRate: 0.05, bizStart: 20010, bizRate: 0.10,
+    frSalaryMax: 44250, frLowRate: 0.06, frHighRate: 0.18, frOtherRate: 0.20, frWritingExempt: 5000,
+    nhiRate: 0.0211, nhiSalaryStart: 29500, nhiBizStart: 20000, nhiCap: 10000000 },
 };
-const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const ruleFor = year => (Number.isInteger(year) && Object.prototype.hasOwnProperty.call(RULES, year)) ? RULES[year] : null;
+// 規則表版本＝上方出處的查證日。改 RULES 的數字或加年度時一併更新；每張新紀錄的計算快照會記下當時用的版本
+const RULES_VERSION = '2026-10-12';
+// 給付年度（西元）：只看填表日期。填表日期沒填（或不是有效日期）就是 null＝待確認，不再偷偷改用工作日期的年度
+function ruleYear(R){
+  const o = roc(R && R.fill);
+  return o ? o.y + 1911 : null;
+}
+const noRuleNote = year => year ? `尚未設定 ${year} 年的扣繳規則，金額請自行確認` : '還沒有日期，無法套用扣繳規則，金額請自行確認';
+const pct = r => `${Math.round(r * 10000) / 100}%`;
+// 轉成文字：只收字串、數字、布林；物件、陣列、函式一律當空白。不用 String() 硬轉，因為 {toString:null} 這種物件硬轉會丟 TypeError（同網域其他頁面可能把怪東西寫進同一個儲存）
+const asText = v => (typeof v === 'string' ? v : (typeof v === 'number' || typeof v === 'boolean' ? String(v) : ''));
+const esc = s => asText(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const money = n => (n == null || n === '' || !isFinite(n)) ? '' : Number(n).toLocaleString('en-US');
 const pad2 = n => String(n).padStart(2, '0');
-// 西元 YYYY-MM-DD → 民國年月日；格式不對回 null
+// 支援的年份範圍：民國元年（1912）到 9999。roc()、下載前的檢查、儲存時的快照驗證都用同一個範圍，
+// 寫進去的東西讀回來一定通過（不會有「能下載、下次載入卻被當成壞資料」的年份）
+const YEAR_MIN = 1912, YEAR_MAX = 9999;
+// 西元 YYYY-MM-DD → 民國年月日；格式不對、年份超出範圍、或根本不是字串（物件、陣列、數字、null）回 null。
+// 先擋掉非字串再比對：正規式會把物件硬轉成字串，{toString:null} 這種會直接丟 TypeError，整頁初始化中斷
 function roc(iso){
-  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || '');
-  if (!m) return null;
+  if (typeof iso !== 'string') return null;
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso);
+  if (!m || +m[1] < YEAR_MIN || +m[1] > YEAR_MAX) return null;
   const d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
   if (d.getUTCFullYear() !== +m[1] || d.getUTCMonth() !== +m[2] - 1 || d.getUTCDate() !== +m[3]) return null;
   return { y: +m[1] - 1911, m: +m[2], d: +m[3] };
 }
+// 年份超出支援範圍的日期欄位：回傳清楚的訊息（沒有問題回空字串）。只看這張單據上真的看得到、會用到的日期欄位：
+// 工作日期、結束日期（兩種格式都有），填表日期只有成為影像有（山上影像表單上沒有這個欄位，藏著的值不檢查）
+function dateRangeIssue(R){
+  const chk = (iso, label) => {
+    if (typeof iso !== 'string') return '';   // 非字串不是「年份超出範圍」，交給別的檢查處理（也不能硬轉成字串）
+    const m = /^([+-]?\d+)-(\d{2})-(\d{2})$/.exec(iso);
+    if (!m) return '';
+    const y = Number(m[1]);
+    return y >= YEAR_MIN && y <= YEAR_MAX ? '' : `${label}的年份是 ${y} 年，超出可以用的範圍（${YEAR_MIN}–${YEAR_MAX} 年，民國元年起），請改成正確的年份`;
+  };
+  return chk(R && R.start, '工作日期') || chk(R && R.end, '結束日期') || (R && R.tpl === 'chengwei' ? chk(R.fill, '填表日期') : '');
+}
+// 這張單據「記在哪一年哪一個月」：只看這個格式的單據上真的看得到、實際使用的那個日期，不看藏起來或過期的欄位。
+//   成為影像勞務報酬單＝單上的「填表日期」；
+//   山上影像收據＝單上沒有填表日期欄位，用「工作期間」的第一天（＝工作日期；2026-10-13 使用者裁決，跨月跨年的單記在開始的那個月：9/29–10/2 記 9 月）。
+// 年度彙整、月份、計算快照的年度都從這裡來。R／紀錄只要有 tpl、start、end、fill 就行；沒有有效日期回 null
+const BOOKING_BASIS = {
+  chengwei: { label: '填表日期', rule: '成為影像＝單上的「填表日期」' },
+  sanshang: { label: '工作期間第一天', rule: '山上影像＝單上「工作期間」的第一天（工作日期；跨月的單記在開始的那個月），因為山上影像收據沒有填表日期欄位' },
+};
+const bookingRuleText = () => `年度與月份怎麼算：${BOOKING_BASIS.chengwei.rule}；${BOOKING_BASIS.sanshang.rule}。`;
+function bookingOf(R){
+  if (!R) return null;
+  const iso = R.tpl === 'sanshang' ? R.start : R.fill;   // 山上影像：只看工作日期（開始那天），結束日期不影響入帳
+  const o = roc(iso);
+  return o ? { iso, year: o.y + 1911, month: o.m, rocYear: o.y, basis: R.tpl === 'sanshang' ? 'sanshang' : 'chengwei' } : null;
+}
 // 金額字串 → 正整數；空白回 null；不合法回 NaN
 function parseAmount(s){
-  let t = String(s == null ? '' : s).trim().replace(/^NT\$?\s*/i, '').replace(/\s*元$/, '').replace(/\s+/g, '');
+  let t = asText(s).trim().replace(/^NT\$?\s*/i, '').replace(/\s*元$/, '').replace(/\s+/g, '');
   if (!t) return null;
   if (/[,，]/.test(t)){   // 有千分位就要逗號位置正確，例如 16,000；1,6 這種不收
     if (!/^\d{1,3}([,，]\d{3})+$/.test(t)) return NaN;
@@ -253,21 +434,89 @@ function parseStored(raw){
 }
 // 整理瀏覽器存的資料：舊格式升級（2026-10-09 blank→chengwei），結構不對的項目丟掉並回報 repaired（呼叫端要先另存原始內容）
 const TPL_IDS = ['sanshang', 'chengwei'];
+const SNAP_MISMATCH = 'year-mismatch';   // 計算快照的年度和單上日期對不上時，快照上留的標記（金額不採用、待確認）
+const SNAP_NORULE = 'no-rule';           // 這一年沒有查證過的扣繳規則、快照裡卻有稅額／保費／實領金額（正常操作不會產生，只可能是異常寫入）時留的標記（金額不採用、待確認）
+const SNAP_FLAGS = [SNAP_MISMATCH, SNAP_NORULE];
+// 穩定雜湊（只用來替沒有編號的舊紀錄算編號，不是安全用途）：64 位元，輸出 16 位小寫十六進位，格式和 SHEET_ID 相同
+function hash16(s){
+  let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+  for (let i = 0; i < s.length; i++){ const c = s.charCodeAt(i); h1 = Math.imul(h1 ^ c, 2654435761); h2 = Math.imul(h2 ^ c, 1597334677); }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (h1 >>> 0).toString(16).padStart(8, '0') + (h2 >>> 0).toString(16).padStart(8, '0');
+}
+const legacyIdBase = r => [r.tpl, r.start, r.end, r.fill, r.project, r.amount, r.at].join('\u0001');
 function normalizeDB(d){
-  const db = { v: 1, profile: null, history: [], last: null };
-  if (d == null) return { db, repaired: false };
-  if (typeof d !== 'object' || Array.isArray(d)) return { db, repaired: true };
+  const db = { v: 1, profile: null, history: [], last: null, rev: 0 };   // rev＝版本號（多分頁防覆蓋用）；舊資料沒有就當 0，rev 永遠放最後
+  if (d == null) return { db, repaired: false, gen: [] };
+  if (typeof d !== 'object' || Array.isArray(d)) return { db, repaired: true, gen: [] };
   let repaired = false;
+  if (d.rev != null){ if (Number.isSafeInteger(d.rev) && d.rev >= 0) db.rev = d.rev; else repaired = true; }
+  let tok = '';   // 寫入識別碼（每次寫入都換一個，見 planWrite）。沒有就是空字串；格式不對丟掉並標記修過
+  if (d.tok != null){ if (typeof d.tok === 'string' && WTOK.test(d.tok)) tok = d.tok; else repaired = true; }
   const tpl = t => (t === 'blank' ? 'chengwei' : t);
   const str = v => { if (v == null) return ''; if (typeof v !== 'string'){ repaired = true; return ''; } if (v.length > 200) repaired = true; return v.slice(0, 200); };   // 型別錯、截短都算改到原值
   const amt = v => (Number.isInteger(v) && v > 0 && v <= 99999999 ? v : null);
+  // 計算快照（2026-10-12 起每張新紀錄都帶）：年度、類別、身分、稅額、補充保費、實領、規則表版本。
+  // 任何欄位不合就整份丟掉並標記修過（那一筆之後改用現在的設定推算，總覽裡會標「（推算）」）；沒有快照的舊紀錄維持原樣、不補欄位
+  const snapOf = (v, rec) => {
+    if (v == null) return undefined;
+    const amount = rec.amount;
+    const bad = () => { repaired = true; return undefined; };
+    if (typeof v !== 'object' || Array.isArray(v)) return bad();
+    const year = v.year === undefined ? null : v.year;
+    if (year !== null && !(Number.isInteger(year) && year >= YEAR_MIN && year <= YEAR_MAX)) return bad();
+    if (!(CW_CAT_IDS.includes(v.cat) || SA_CAT_IDS.includes(v.cat))) return bad();
+    if (v.status !== null && !CW_STATUS_IDS.includes(v.status)) return bad();
+    const mny = x => x === null || (Number.isSafeInteger(x) && x >= 0 && x <= 99999999);
+    if (!mny(v.tax) || !mny(v.premium) || !mny(v.net)) return bad();
+    if (typeof v.rulesVersion !== 'string' || !v.rulesVersion || v.rulesVersion.length > 20) return bad();
+    if (v.tax !== null && v.premium !== null && v.net !== null && v.net !== amount - v.tax - v.premium) return bad();   // 前後對不起來就不信
+    let flag;
+    if (v.flag !== undefined){ if (!SNAP_FLAGS.includes(v.flag) || v.tax !== null || v.premium !== null || v.net !== null) return bad(); flag = v.flag; }
+    // 快照的年度要和這張單「記在哪一年」（bookingOf：成為影像＝填表日期、山上影像＝工作期間第一天）一致。對不上＝異常：
+    // 不採用快照裡的金額（改成待確認並標記原因）、年度改回單上日期的年度，標記修過（載入時會先另存原始內容並提示）
+    const b = bookingOf(rec), want = b ? b.year : null;
+    if (year !== want){
+      repaired = true;
+      return { year: want, cat: v.cat, status: v.status, tax: null, premium: null, net: null, rulesVersion: v.rulesVersion, flag: SNAP_MISMATCH };
+    }
+    // 沒有這一年的扣繳規則，快照卻有金額＝異常（正常操作在沒有規則的年度，快照的稅額、補充保費、實領一律是 null）：
+    // 一樣不採用金額（待確認），標記原因、標記修過（載入時會先另存原始內容並提示）。畫面本來就說這一年的金額都待確認，數字要和說明一致
+    if (year !== null && !ruleFor(year) && (v.tax !== null || v.premium !== null || v.net !== null)){
+      repaired = true;
+      return { year, cat: v.cat, status: v.status, tax: null, premium: null, net: null, rulesVersion: v.rulesVersion, flag: SNAP_NORULE };
+    }
+    const out = { year, cat: v.cat, status: v.status, tax: v.tax, premium: v.premium, net: v.net, rulesVersion: v.rulesVersion };
+    if (flag) out.flag = flag;
+    return out;
+  };
   if (d.history != null && !Array.isArray(d.history)) repaired = true;
+  // 固定編號（D3，2026-10-13 第四輪）：每一筆紀錄都有編號。格式對、沒重複的編號原樣留著；沒有編號的舊紀錄、或編號壞掉／重複的，補一個「穩定」的新編號——
+  // 由這筆紀錄的內容（加上同內容的第幾筆）算出來，所以同一份舊資料不管整理幾次、在這個頁面階段載入幾次，同一筆永遠得到同一個編號，也不會有兩筆撞號。
+  // 補上的編號只在記憶體；下一次存檔成功時一起存進去（存之前不算「資料變了」：舊紀錄只是補上預設值，載入時不因此備份，見 planLoad）。
+  // 編號壞掉或重複不一樣：那是資料有問題，標記修過（載入時先備份原始內容並提示）
+  const items = [], claimed = new Set();
   (Array.isArray(d.history) ? d.history : []).forEach(r => {
     if (r && typeof r === 'object' && TPL_IDS.includes(tpl(r.tpl)) && roc(r.start) && typeof r.project === 'string' && r.project.trim() && amt(r.amount)){
       const dd = v => { const x = str(v); if (x && !roc(x)){ repaired = true; return ''; } return x; };
       const pj = str(r.project), pt = pj.trim(); if (pt !== pj) repaired = true;
-      db.history.push({ tpl: tpl(r.tpl), start: r.start, end: dd(r.end), fill: dd(r.fill), project: pt, amount: r.amount, at: str(r.at) });
+      const rec = { tpl: tpl(r.tpl), start: r.start, end: dd(r.end), fill: dd(r.fill), project: pt, amount: r.amount, at: str(r.at) };
+      let id = '';
+      if (r.id != null){ if (typeof r.id === 'string' && SHEET_ID.test(r.id) && !claimed.has(r.id)){ id = r.id; claimed.add(id); } else repaired = true; }
+      items.push({ rec, id, had: r.id != null, sn: snapOf(r.snap, rec) });
     } else repaired = true;
+  });
+  const gen = [], occ = new Map();   // gen＝這次補上編號的舊紀錄（原本完全沒有編號）的新編號；occ＝同內容已經出現幾次
+  items.forEach(it => {
+    let id = it.id;
+    if (!id){
+      const base = legacyIdBase(it.rec); let n = occ.get(base) || 0;
+      do { id = hash16(`${base}\u0002${n++}`); } while (claimed.has(id));
+      occ.set(base, n); claimed.add(id);
+      if (!it.had) gen.push(id);
+    }
+    db.history.push(it.sn ? { ...it.rec, id, snap: it.sn } : { ...it.rec, id });   // 欄位順序：id 在 at 後面、snap 永遠放最後
   });
   if (d.last != null){
     if (typeof d.last === 'object' && !Array.isArray(d.last)){
@@ -294,17 +543,182 @@ function normalizeDB(d){
     }
     else repaired = true;
   }
-  return { db, repaired };
+  if (tok){ const { rev, ...rest } = db; return { db: { ...rest, tok, rev }, repaired, gen }; }   // tok 放在 rev 前面，rev 永遠最後
+  return { db, repaired, gen };
 }
 // 載入計畫：整理後重新序列化，跟原始字串逐字比對；任何差異（型別修正、截短、預設值、舊格式改名…）都先備份原始內容，
 // 所以不用逐一列舉「哪些整理會改值」。介面每次存的就是這個整理後的形式，整理一次後兩者相同，不會重複備份。
 // warn：'bad'＝讀不懂、'repaired'＝有項目被丟掉或修正（要提醒使用者）、null＝只是格式升級（安靜備份）
+// 舊資料沒有版本號（rev）、沒有寫入識別碼（tok）：比對時把沒有的欄位拿掉，只因為「補上預設值」不用備份
+// 整理過程丟任何例外（同網域其他頁面可能寫進奇怪的東西）：一律當成「讀不懂」，照樣備份並提示，頁面不會中斷
 function planLoad(raw){
   const r = parseStored(raw);
-  const n = normalizeDB(r.state === 'ok' ? r.data : null);
+  let n;
+  try { n = normalizeDB(r.state === 'ok' ? r.data : null); }
+  catch (e){ return { db: { v: 1, profile: null, history: [], last: null, rev: 0 }, backup: raw != null && raw !== '', warn: 'bad' }; }
   const warn = r.state === 'bad' ? 'bad' : (n.repaired ? 'repaired' : null);
-  const backup = r.state === 'bad' || (r.state === 'ok' && JSON.stringify(n.db) !== raw);
+  let canon = JSON.stringify(n.db);
+  if (r.state === 'ok'){
+    const { rev, tok, ...rest } = n.db, o = { ...rest };
+    // 這次才補上編號的舊紀錄：原始內容本來就沒有編號，比對時把補的編號拿掉（只是補上預設值，不用為此備份）
+    if (n.gen.length){ const g = new Set(n.gen); o.history = rest.history.map(h => { if (!g.has(h.id)) return h; const { id, ...x } = h; return x; }); }
+    if (tok) o.tok = tok;
+    if (Object.prototype.hasOwnProperty.call(r.data, 'rev')) o.rev = rev;
+    canon = JSON.stringify(o);
+  }
+  const backup = r.state === 'bad' || (r.state === 'ok' && canon !== raw);
   return { db: n.db, backup, warn };
+}
+
+/* ====== 多分頁防覆蓋（儲存層）======
+   每次寫入都帶兩個識別：版本號 rev（每次真的寫入 +1）和寫入識別碼 tok（每次寫入都換一個隨機的）。
+   一個分頁只有在「儲存裡的 rev 和 tok 都等於自己最後一次讀到或寫入的」時才能寫；rev 相同但 tok 不同＝別的分頁同時寫了，一樣算過期。
+   兩種模式，整個頁面階段固定、由「環境」決定，不看錯誤、不中途切換（2026-10-13 第四輪簡化，D1）：
+   - 有鎖模式：有 navigator.locks、而且網址不是 file:。「重讀、檢查、寫入」整段在跨分頁鎖裡做，同一時間只有一個分頁在做。
+     拿鎖的任何失敗（等太久、被拒絕、丟例外）一律＝沒有寫入、資料留在這個分頁、可以再試。
+   - 無鎖模式：沒有 navigator.locks（舊瀏覽器），或網址是 file:（私人版直接從本機檔案打開）。存檔走同步路徑，照樣比對 rev＋tok，
+     只能在下一次寫入前或收到 storage 事件時「事後發現」被蓋掉；頂端有一行提醒「不要同時開兩個分頁」。 */
+const WTOK = /^[0-9a-f]{16}$/;
+const LOCK_NAME = 'laborReport.v1.write';
+const LOCK_WAIT_MS = 5000;   // 等跨分頁鎖的上限（毫秒）
+// 這個頁面階段能不能用跨分頁鎖：回 navigator.locks，或 null＝無鎖模式（沒有 navigator.locks，或網址是 file:）。其他環境一律用鎖。
+function pickLocks(protocol, nav){
+  if (protocol === 'file:') return null;
+  let L = null;
+  try { L = nav ? nav.locks : null; } catch (e){ L = null; }
+  return L && typeof L.request === 'function' ? L : null;
+}
+// 拿不到鎖時對使用者說的話（store 回 err 'lock'、why 'timeout'｜'failed'）：不寫入、資料還在這個分頁、可以再按一次
+const LOCK_TEXT = {
+  timeout: '另一個分頁可能正在存檔，這次沒有存進去。資料還在這個分頁，請再按一次。',
+  failed: '暫時無法存檔，這次沒有存進去。資料還在這個分頁，請再按一次。',
+};
+const lockText = why => (why === 'timeout' ? LOCK_TEXT.timeout : LOCK_TEXT.failed);
+function randomHex16(){
+  const b = new Uint8Array(8);
+  try { crypto.getRandomValues(b); } catch (e){ for (let i = 0; i < 8; i++) b[i] = Math.floor(Math.random() * 256); }
+  return [...b].map(x => x.toString(16).padStart(2, '0')).join('');
+}
+const newWriteToken = () => randomHex16();
+const knownRev = db => (Number.isSafeInteger(db.rev) && db.rev >= 0 ? db.rev : 0);
+const knownTok = db => (typeof db.tok === 'string' && WTOK.test(db.tok) ? db.tok : '');
+function storedRev(raw){
+  const r = parseStored(raw);
+  return r.state === 'ok' && Number.isSafeInteger(r.data.rev) && r.data.rev >= 0 ? r.data.rev : 0;
+}
+function storedTok(raw){
+  const r = parseStored(raw);
+  return r.state === 'ok' && typeof r.data.tok === 'string' && WTOK.test(r.data.tok) ? r.data.tok : '';
+}
+// 存成的形式：其他欄位照原順序，tok 放在 rev 前面，rev 永遠最後
+function serializeDB(db, rev, tok){
+  const { rev: r0, tok: t0, ...rest } = db;
+  return JSON.stringify(tok ? { ...rest, tok, rev } : { ...rest, rev });
+}
+// 這個分頁看到的是不是儲存裡的最新版：'' ＝是；否則回原因：'cleared'＝資料被清掉、'newer'＝別的分頁寫了比較新的版本、'overwritten'＝版本號一樣但寫入識別碼不同（同時寫入，這個分頁存的被蓋掉）
+function checkIdentity(raw, db){
+  const rev = knownRev(db), tok = knownTok(db);
+  if (raw == null) return rev > 0 || tok ? 'cleared' : '';
+  if (storedRev(raw) !== rev) return 'newer';
+  if (storedTok(raw) !== tok) return 'overwritten';
+  return '';
+}
+// 回傳 { action: 'stale', why }（別的分頁更新過，拒寫）｜{ action: 'skip' }（內容沒變，不寫、不加版本號）｜{ action: 'write', json, rev, tok }
+function planWrite(raw, db, tok){
+  const why = checkIdentity(raw, db);
+  if (why) return { action: 'stale', why };
+  const rev = knownRev(db), cur = knownTok(db);
+  if (raw === serializeDB(db, rev, cur)) return { action: 'skip' };
+  const t = tok || newWriteToken();
+  return { action: 'write', json: serializeDB(db, rev + 1, t), rev: rev + 1, tok: t };
+}
+// 儲存層。env：{ key, storage:{getItem,setItem}, locks（pickLocks 的結果；null＝無鎖模式）, timers（{set,clear}，等鎖逾時用；沒給就不設逾時）, getDB(), isStale(), isBlocked(), onStale(why), onWrote(db) }
+//  atomic({build, adopt, valid})  回 Promise<{ ok, err, why? }>。這個分頁所有的寫入（鎖定、草稿自動存檔、下載後存紀錄、重試、刪除）都從這裡進來，
+//                   一個接一個照順序做（D5：每個分頁只有一條存檔佇列）。build() 在輪到它（有鎖模式＝拿到鎖）之後才呼叫、回傳要寫的內容（預設就是目前的資料）；
+//                   寫成功後同步呼叫 adopt(內容)，把結果收進目前的資料（所以寫失敗時目前的資料完全沒動）。
+//                   valid()（選填）在拿到鎖之後、組內容之前呼叫：回 false＝這個操作已經被取消，什麼都不做（回 err 'cancelled'）
+//                   err：''｜'stale'（別的分頁更新過，拒寫）｜'storage'（瀏覽器不讓存）｜'lock'（拿不到鎖，why 是 'timeout'＝等太久，'failed'＝其他任何失敗）｜'cancelled'
+//  canLock()        這個頁面階段是不是有鎖模式
+// 沒有 write／keepMine／probe：沒有任何繞過佇列的寫法，也沒有「蓋掉儲存裡現有內容」的破壞性路徑（D2）；也沒有依錯誤名稱判斷環境、中途切換模式的做法（D1）。
+function createStore(env){
+  const S = { err: '', lastError: null, lockWhy: '' };
+  const fail = (err, e) => { S.err = err; S.lastError = e || null; return false; };
+  const L = env.locks && typeof env.locks.request === 'function' ? env.locks : null;
+  function core(cand, adopt){
+    S.err = '';
+    if (env.isBlocked()) return fail('storage');
+    let plan;
+    try {
+      plan = planWrite(env.storage.getItem(env.key), cand);
+      if (plan.action === 'stale'){ S.err = 'stale'; env.onStale(plan.why); return false; }
+      if (plan.action === 'write'){
+        env.storage.setItem(env.key, plan.json);
+        cand.rev = plan.rev; cand.tok = plan.tok;
+      }
+    } catch (e){ return fail('storage', e); }
+    try { if (adopt) adopt(cand); if (plan.action === 'write' && env.onWrote) env.onWrote(cand); } catch (e){ S.lastError = e; }
+    return true;
+  }
+  const guarded = (cand, adopt) => { if (env.isStale()){ S.err = 'stale'; return false; } return core(cand, adopt); };
+  function runAtomic(sp){
+    try {
+      if (sp.valid && !sp.valid()) return { ok: false, err: 'cancelled' };   // 排隊等鎖的時候被取消了：什麼都不做
+      if (env.isStale()){ S.err = 'stale'; return { ok: false, err: 'stale' }; }   // 已經過期：連要寫什麼都不用組
+      const cand = sp.build ? sp.build() : env.getDB();
+      const ok = guarded(cand, sp.adopt);
+      return { ok, err: ok ? '' : S.err };
+    } catch (e){ fail('storage', e); return { ok: false, err: 'storage' }; }
+  }
+  // 有鎖模式：拿到鎖才做。等鎖最多 LOCK_WAIT_MS：超過就中止排隊並回報失敗（不寫入），免得一個卡住的鎖讓存檔（和下載按鈕）永遠等下去。中止只影響還沒拿到的請求。
+  // 任何失敗（等太久、被拒絕、request 本身丟例外、鎖沒有真的執行我們的內容）都是同一個結果：什麼都沒寫（連儲存都沒讀），回 lock，原因跟著結果走
+  function withLock(run){
+    S.lockWhy = '';
+    let started = false, timedOut = false, timer = null;
+    const T = env.timers, ctl = T && typeof AbortController === 'function' ? new AbortController() : null;
+    const done = () => { if (timer !== null){ T.clear(timer); timer = null; } };
+    const cb = () => { started = true; done(); return run(); };
+    const noLock = () => { S.err = 'lock'; S.lockWhy = timedOut ? 'timeout' : 'failed'; return { ok: false, err: 'lock', why: S.lockWhy }; };
+    let p;
+    try {
+      if (ctl) timer = T.set(() => { timedOut = true; ctl.abort(); }, LOCK_WAIT_MS);
+      p = Promise.resolve(ctl ? L.request(LOCK_NAME, { signal: ctl.signal }, cb) : L.request(LOCK_NAME, cb));
+    } catch (e){ p = Promise.reject(e); }
+    return p.then(r => (started ? r : noLock()), e => {
+      done(); S.lastError = e || null;
+      if (started) return { ok: false, err: 'storage' };   // 內容已經在鎖裡跑過、但中途出了問題（run 自己會接住例外，這裡是最後防線）
+      return noLock();
+    });
+  }
+  // 每個分頁一條佇列：前一個做完才開始下一個（閒著的時候馬上開始，所以有鎖模式也是在呼叫當下就送出鎖請求）
+  let running = false; const waiting = [];
+  function enqueue(task){
+    return new Promise(resolve => {
+      const go = () => {
+        running = true;
+        let p; try { p = Promise.resolve(task()); } catch (e){ p = Promise.reject(e); }
+        p.then(resolve, e => { fail('storage', e); resolve({ ok: false, err: 'storage' }); })
+          .then(() => { running = false; const next = waiting.shift(); if (next) next(); });
+      };
+      if (running) waiting.push(go); else go();
+    });
+  }
+  S.canLock = () => !!L;
+  // 無鎖模式：讀→檢查→寫入在同一個同步段、呼叫當下就寫完（沒有分頁能插進來；但 localStorage 讀取不保證跨分頁即時一致，所以靠 tok 事後發現）
+  S.atomic = spec => {
+    const sp = spec || {};
+    if (!L) return Promise.resolve(runAtomic(sp));
+    return enqueue(() => withLock(() => runAtomic(sp)));
+  };
+  return S;
+}
+// 備份狀態文字：上次備份：YYYY-MM-DD（N 天前）；沒有或日期壞掉＝尚未備份
+function backupLabel(iso, now){
+  const t = typeof iso === 'string' ? new Date(iso) : null;
+  if (!t || isNaN(t)) return '尚未備份';
+  const day = d => Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
+  const n = now && typeof now.getTime === 'function' ? now : new Date();   // 不用 instanceof（跨 iframe／測試環境會失準）
+  const days = Math.max(0, Math.round((day(n) - day(t)) / 86400000));
+  return `上次備份：${t.getFullYear()}-${pad2(t.getMonth() + 1)}-${pad2(t.getDate())}（${days ? days + ' 天前' : '今天'}）`;
 }
 // 備份檔或預填值 → 乾淨的基本資料。只收字串；選項只收已知值；證件影像只收本機產生的 data:image（擋外部網址）。
 // 有任何欄位因型別或值不對被清掉，回傳 changed=true（從瀏覽器載入時要先另存原始內容）
@@ -337,59 +751,78 @@ function sanitizeProfile(p){
   return { p: out, dropped, changed };
 }
 // 成為影像勞務報酬單：代扣所得稅（無條件捨去）與二代健保補充保費（四捨五入）
-function calcBlank(amount, s){
+// year＝給付年度（西元，用 ruleYear(R) 算）；該年度不在 RULES 裡就全部待確認（null），不沿用別年的數字
+function calcBlank(amount, s, year){
   const a = Math.round(amount || 0);
-  let rate = 0, taxNote = '';
-  if (s.status === 'fr'){
-    rate = a < TH.frLimit ? TH.frLowRate : TH.frHighRate;
-    taxNote = a < TH.frLimit ? '外籍在台未滿 183 天：未達 44,251，扣 6%' : '外籍在台未滿 183 天：達 44,251，扣 18%';
+  const T = ruleFor(year);
+  if (!T){ const n = noRuleNote(year); return { amount: a, tax: null, nhi: null, net: null, taxNote: n, nhiNote: n, year: year || null, noRule: true }; }
+  const valid = CW_CAT_IDS.includes(s.cat) && CW_STATUS_IDS.includes(s.status);
+  const catName = { business: '執行業務所得', rent: '租賃所得', prize: '機會中獎獎金' }[s.cat];
+  const isSalary = s.cat === 'salary' || s.cat === 'salaryFixed';
+  const isFlat = s.cat === 'business' || s.cat === 'rent' || s.cat === 'prize';   // 執行業務、租賃、獎金：同一套扣繳率
+  let rate = 0, taxNote = '', taxKnown = false;
+  // 表上沒有規則或要查表的：稅額是 null（待付款方確認），不能當成 0 元。認不得的類別或身分也一樣
+  if (!valid){
+    taxNote = '所得類別或身分認不得，這裡不計算，請付款方確認';
+  } else if (s.status === 'fr'){
+    // 非居住者（在台未滿 183 天）：各類所得扣繳率標準第 3 條，依所得類別不同
+    if (isSalary){
+      const low = a <= T.frSalaryMax;
+      rate = low ? T.frLowRate : T.frHighRate; taxKnown = true;
+      taxNote = low ? `外籍在台未滿 183 天薪資：未超過基本工資 1.5 倍（${money(T.frSalaryMax)}），扣 ${pct(rate)}`
+        : `外籍在台未滿 183 天薪資：超過基本工資 1.5 倍（${money(T.frSalaryMax)}），扣 ${pct(rate)}`;
+    } else if (isFlat){
+      rate = T.frOtherRate; taxKnown = true;
+      taxNote = `外籍在台未滿 183 天的${catName}：一律扣 ${pct(rate)}，沒有起扣點`
+        + (s.cat === 'business' ? `（個人稿費、講演鐘點費等每次 ${money(T.frWritingExempt)} 元以下可免扣繳，這裡不自動判斷，請付款方確認）` : '');
+    } else {
+      taxNote = '外籍在台未滿 183 天的其他所得：扣繳率要看所得性質，條文沒有寫，這裡不計算，請付款方確認';
+    }
   } else if (s.cat === 'salary'){
-    rate = a >= TH.salaryStart ? TH.salaryRate : 0;
-    taxNote = rate ? '非固定薪資：達起扣點 90,501，扣 5%' : '非固定薪資：未達起扣點 90,501，不扣稅';
+    rate = a >= T.salaryStart ? T.salaryRate : 0; taxKnown = true;
+    taxNote = rate ? `非固定薪資：達起扣點 ${money(T.salaryStart)}，扣 ${pct(rate)}` : `非固定薪資：未達起扣點 ${money(T.salaryStart)}，不扣稅`;
   } else if (s.cat === 'salaryFixed'){
     taxNote = '固定薪資：要查扣繳稅額表，這裡不計算，請付款方確認';
-  } else if (s.cat === 'business' || s.cat === 'rent' || s.cat === 'prize'){
-    rate = a >= TH.bizStart ? TH.bizRate : 0;
-    const k = { business: '執行業務所得', rent: '租賃所得', prize: '機會中獎獎金' }[s.cat];
-    taxNote = rate ? `${k}：達起扣點 20,010，扣 10%` : `${k}：未達起扣點 20,010，不扣稅`;
+  } else if (isFlat){
+    rate = a >= T.bizStart ? T.bizRate : 0; taxKnown = true;
+    taxNote = rate ? `${catName}：達起扣點 ${money(T.bizStart)}，扣 ${pct(rate)}` : `${catName}：未達起扣點 ${money(T.bizStart)}，不扣稅`;
   } else {
     taxNote = '其他所得：表上沒有扣繳規則，這裡不計算，請付款方確認';
   }
-  // 表上沒有規則或要查表的：稅額是 null（待付款方確認），不能當成 0 元。認不得的類別或身分也一樣
-  const valid = CW_CAT_IDS.includes(s.cat) && CW_STATUS_IDS.includes(s.status);
-  if (!valid) taxNote = '所得類別或身分認不得，這裡不計算，請付款方確認';
-  const taxKnown = valid && (s.status === 'fr' || !(s.cat === 'salaryFixed' || s.cat === 'other'));
   const tax = taxKnown ? Math.floor(a * rate) : null;
   let nhi = 0, nhiNote = '';
   const foreign = s.status === 'fr183' || s.status === 'fr';
-  const nhiRuleCat = s.cat === 'salary' || s.cat === 'salaryFixed' || s.cat === 'business';   // 表上有補充保費規則的類別
+  const nhiRuleCat = isSalary || s.cat === 'business';   // 有補充保費規則的類別
+  const nhiBase = Math.min(a, T.nhiCap);                 // 單次給付逾上限的部分免扣
+  const capNote = a > T.nhiCap ? `；單次給付逾 ${money(T.nhiCap)} 的部分免扣` : '';
   if (!valid){
     nhiNote = '所得類別或身分認不得，補充保費不計算';
   } else if (foreign && s.nhi === false){
     nhiNote = '外籍人士沒有健保資格：不扣補充保費';
   } else if (!nhiRuleCat){
-    nhiNote = '表上沒有這類所得的補充保費規則，這裡不計算，請付款方確認';
+    nhiNote = '這類所得的補充保費這裡不計算，請付款方確認';
   } else if (s.union){
     nhiNote = '有職業工會加保：不扣補充保費（要附加保證明）';
-  } else if (s.cat === 'salary' || s.cat === 'salaryFixed'){
-    if (a >= TH.nhiSalaryStart) nhi = Math.round(a * TH.nhiRate);
-    nhiNote = nhi ? '薪資類：達起扣點 29,500，扣 2.11%' : '薪資類：未達起扣點 29,500，不扣補充保費';
+  } else if (isSalary){
+    if (a >= T.nhiSalaryStart) nhi = Math.round(nhiBase * T.nhiRate);
+    nhiNote = (nhi ? `薪資類：達起扣點 ${money(T.nhiSalaryStart)}，扣 ${pct(T.nhiRate)}${capNote}` : `薪資類：未達起扣點 ${money(T.nhiSalaryStart)}，不扣補充保費`);
   } else if (s.cat === 'business'){
-    if (a >= TH.nhiBizStart) nhi = Math.round(a * TH.nhiRate);
-    nhiNote = nhi ? '執行業務類：達起扣點 20,000，扣 2.11%' : '執行業務類：未達起扣點 20,000，不扣補充保費';
+    if (a >= T.nhiBizStart) nhi = Math.round(nhiBase * T.nhiRate);
+    nhiNote = (nhi ? `執行業務類：達起扣點 ${money(T.nhiBizStart)}，扣 ${pct(T.nhiRate)}${capNote}` : `執行業務類：未達起扣點 ${money(T.nhiBizStart)}，不扣補充保費`);
   }
   const nhiKnown = valid && ((foreign && s.nhi === false) || nhiRuleCat);
   if (!nhiKnown) nhi = null;
   const net = tax == null || nhi == null ? null : a - tax - nhi;
-  return { amount: a, tax, nhi, net, taxNote, nhiNote };
+  return { amount: a, tax, nhi, net, taxNote, nhiNote, year, noRule: false };
 }
 // 檢查這張單子能不能下載；回傳錯誤訊息，沒問題回空字串
 function checkReport(R){
+  const range = dateRangeIssue(R); if (range) return range;   // 年份超出範圍：講清楚是哪一格，不要只說「請選日期」
   if (!roc(R.start)) return '請選工作日期';
   if (R.end && !roc(R.end)) return '結束日期格式不對';
   if (R.end && R.end < R.start) return '結束日期不能早於工作日期';
   if (R.tpl === 'chengwei' && !roc(R.fill)) return '請選填表日期';
-  if (!String(R.project || '').trim()) return '請填專案名稱';
+  if (!asText(R.project).trim()) return '請填專案名稱';
   if (R.amount == null) return '請填金額';
   if (!(R.amount > 0)) return '金額只能填正整數，例如 16000';
   return '';
@@ -457,7 +890,8 @@ ${ck(P.payTo === 'bank')}${U(bankShort, 'bk')}銀行　帳號：${U(acc(P.bank),
 const BL_CATS = [['business', '執行業務所得'], ['rent', '租賃所得']];
 function renderChengwei(P, R){
   const t = (P.tpl && P.tpl.chengwei) || {};
-  const C = R.amount > 0 ? calcBlank(R.amount, t) : null;
+  const yr = ruleYear(R), T = ruleFor(yr);   // 年度規則表：紙上所有帶年度的數字都從這裡來
+  const C = R.amount > 0 ? calcBlank(R.amount, t, yr) : null;
   const s = roc(R.start), e = roc(R.end || R.start), f = roc(R.fill);
   const ymd = (o, padDay) => o ? `${o.y} 年 ${o.m} 月 ${padDay ? pad2(o.d) : o.d} 日` : '　 年　 月　 日';
   const foreign = t.status === 'fr183' || t.status === 'fr';
@@ -467,22 +901,30 @@ function renderChengwei(P, R){
   const line = (on, text) => `<div>${ck(on)}　${text}</div>`;
   const cell = v => v == null ? '待確認' : money(v);   // null＝這裡不計算，交付款方確認
   const nhiOn = !t.union && !(foreign && t.nhi === false);
+  const salaryTh = T ? `(起扣點${T.rocYear}年度${money(T.salaryStart)})` : '';
+  const bizTh = T ? `（起扣點${money(T.bizStart)}）` : '';
+  const isSal = t.cat === 'salary' || t.cat === 'salaryFixed', isFlat = t.cat === 'business' || t.cat === 'rent' || t.cat === 'prize';
+  // 外籍人士（在台未滿183天）那一行：選到這個身分時依所得類別寫成實際適用的規則，沒選到就把兩種規則都列出來
+  const frWage = T ? `薪資：全月給付總額在基本工資1.5倍(${T.rocYear}年度${money(T.frSalaryMax)})以下扣繳${pct(T.frLowRate)}，超過扣繳${pct(T.frHighRate)}` : '薪資：依基本工資1.5倍為界扣繳6%或18%';
+  const frFlat = T ? `執行業務報酬、租賃、獎金：一律扣繳${pct(T.frOtherRate)}，無起扣點` : '執行業務報酬、租賃、獎金：一律扣繳20%，無起扣點';
+  const frText = t.status !== 'fr' ? `${frWage}；${frFlat}。`
+    : isSal ? `${frWage}。` : isFlat ? `${frFlat}。` : '其他所得：條文沒有規定，請付款方確認。';
   const rules = [
+    T ? '' : `<b>${esc(noRuleNote(yr))}</b><br>`,
     '<b>【本國籍應扣繳稅額】</b>',
-    line(t.cat === 'salaryFixed' && t.status !== 'fr', '固定薪資(50)：查表(起扣點115年度90,501)'),
-    line(t.cat === 'salary' && t.status !== 'fr', '非固定薪資(50)：5%查表(起扣點115年90,501)'),
-    line(t.cat === 'business' && t.status !== 'fr', '執行業務報酬/稿費(9A/9B)：10%（起扣點20,010）'),
-    line(t.cat === 'rent' && t.status !== 'fr', '租賃所得(51)：10%（起扣點20,010）'),
-    line(t.cat === 'prize' && t.status !== 'fr', '機會中獎獎金(91)：10%（起扣點20,010）'),
+    line(t.cat === 'salaryFixed' && t.status !== 'fr', `固定薪資(50)：查表${salaryTh}`),
+    line(t.cat === 'salary' && t.status !== 'fr', `非固定薪資(50)：${T ? pct(T.salaryRate) : ''}查表${salaryTh}`),
+    line(t.cat === 'business' && t.status !== 'fr', `執行業務報酬/稿費(9A/9B)：${T ? pct(T.bizRate) : ''}${bizTh}`),
+    line(t.cat === 'rent' && t.status !== 'fr', `租賃所得(51)：${T ? pct(T.bizRate) : ''}${bizTh}`),
+    line(t.cat === 'prize' && t.status !== 'fr', `機會中獎獎金(91)：${T ? pct(T.bizRate) : ''}${bizTh}`),
     line(t.status === 'fr183', '外籍人士(在台滿183天)：依照一般本國人辦理'),
-    line(t.status === 'fr', '外籍人士(在台未滿183天)：給付所得未達44,251，扣繳6%；給付所得達44,251，扣繳18%。'),
+    line(t.status === 'fr', `外籍人士(在台未滿183天)：${frText}`),
     '<br><b>【二代健保】</b>',
-    line(nhiOn && (t.cat === 'salary' || t.cat === 'salaryFixed'), '薪資類：個人提繳2.11% + 機關提繳2.11%（薪資類補充保費起扣點29,500）若有參加工會加保，須提出相關證明，則不用代扣二代健保。'),
-    line(nhiOn && t.cat === 'business', '執行業務類：個人提繳2.11% （起扣點20,000）若有參加工會加保，須提出相關證明，則不用代扣二代健保。'),
-    line(nhiOn && foreign && (t.cat === 'salary' || t.cat === 'salaryFixed' || t.cat === 'business'), '外籍人士：有健保資格，扣繳2.11%(起扣點比照本國人)。'),
+    line(nhiOn && isSal, `薪資類：個人提繳${T ? pct(T.nhiRate) : ''} + 機關提繳${T ? pct(T.nhiRate) : ''}（薪資類補充保費起扣點${T ? money(T.nhiSalaryStart) : '依當年度基本工資'}）若有參加工會加保，須提出相關證明，則不用代扣二代健保。`),
+    line(nhiOn && t.cat === 'business', `執行業務類：個人提繳${T ? pct(T.nhiRate) : ''} （起扣點${T ? money(T.nhiBizStart) : '20,000'}）若有參加工會加保，須提出相關證明，則不用代扣二代健保。`),
+    line(nhiOn && foreign && (isSal || t.cat === 'business'), `外籍人士：有健保資格，扣繳${T ? pct(T.nhiRate) : ''}(起扣點比照本國人)。`),
   ].join('');
-  const isSalary = t.cat === 'salary' || t.cat === 'salaryFixed';
-  const cats = `${ck(isSalary)}薪資　　` + BL_CATS.map(([k, v]) => `${ck(t.cat === k)}${v}`).join('　　')
+  const cats = `${ck(isSal)}薪資　　` + BL_CATS.map(([k, v]) => `${ck(t.cat === k)}${v}`).join('　　')
     + `　　${ck(t.cat === 'other' || t.cat === 'prize')}其他${t.cat === 'prize' ? '<u>機會中獎獎金(91)</u>' : '__________________'}`;
   return `<section class="sheet bl"><table>
 <colgroup><col style="width:46px"><col style="width:56px"><col style="width:81px"><col style="width:44px"><col style="width:114px"><col style="width:44px"><col style="width:51px"><col style="width:65px"><col style="width:46px"><col style="width:135px"></colgroup>
@@ -498,7 +940,7 @@ function renderChengwei(P, R){
 <tr><td colspan="9">期間：自 ${ymd(s, true)}至 ${ymd(e, true)}</td></tr>
 <tr><td rowspan="10" class="lab">領款<br>資訊</td><td colspan="2">領款金額：</td><td colspan="2" class="num">${C ? money(C.amount) : ''}</td><td colspan="5" class="mid">匯款資訊</td></tr>
 <tr><td colspan="2">代扣所得稅：</td><td colspan="2" class="num">${C ? cell(C.tax) : ''}</td><td colspan="5" rowspan="9" class="rules">${rules}</td></tr>
-<tr><td colspan="2">二代健保補充保費(2.11%)：</td><td colspan="2" class="num">${C ? cell(C.nhi) : ''}</td></tr>
+<tr><td colspan="2">二代健保補充保費${T ? `(${pct(T.nhiRate)})` : ''}：</td><td colspan="2" class="num">${C ? cell(C.nhi) : ''}</td></tr>
 <tr><td colspan="2">實領金額：</td><td colspan="2" class="num">${C ? cell(C.net) : ''}</td></tr>
 <tr><td colspan="4" class="blankrow"></td></tr>
 <tr><td colspan="4" class="sm">付款方式：□現金　□支票　■匯款<br>備註/附言：帳戶非台新銀行者,手續費皆費用內扣.</td></tr>
@@ -582,7 +1024,7 @@ function sheetDoc(tplId, P, R){
 // 安全檔名：各段清理後以 _ 相連，去掉檔名不能用的字元，連副檔名不超過 240 位元組
 function pdfSafeName(parts, fallback, ext){
   const trim = t => t.replace(/^[\s.]+|[\s.]+$/g, '');
-  const clean = t => String(t == null ? '' : t).replace(/[​-‏‪-‮⁠-⁩﻿]/g, '')
+  const clean = t => asText(t).replace(/[​-‏‪-‮⁠-⁩﻿]/g, '')
     .replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDFFF]/g, m => m.length === 2 ? m : '').trim();
   let s = parts.map(clean).filter(Boolean).join('_');
   s = trim(s.replace(/[\\/:*?"<>|\u0000-\u001F\u007F-\u009F]/g, '_').replace(/\s+/g, ' '));
@@ -594,6 +1036,441 @@ function pdfSafeName(parts, fallback, ext){
 function reportFileName(P, R){
   return pdfSafeName([TPL[R.tpl].file, P.name, R.project, R.start], '勞報單', '.pdf');
 }
+
+/* ====== 收入與報稅總覽（2026-10-12）：開過的勞報單按年度彙整；全部是純函式，不碰儲存 ====== */
+const HISTORY_MAX = 500;   // 紀錄最多留幾張（原本 60；年度彙整要看完整一年以上，太少會悄悄少算）
+const CW_CAT_NAMES = { salary: '薪資（非固定）', salaryFixed: '薪資（固定）', business: '執行業務所得', rent: '租賃所得', prize: '機會中獎獎金', other: '其他' };
+const CW_STATUS_NAMES = { tw: '本國籍', fr183: '外國籍（在台滿 183 天）', fr: '外國籍（在台未滿 183 天）' };
+// 一張新紀錄（下載 PDF 時存進「開過的勞報單」）：帶計算快照，之後規則表或基本資料改了，這一張的稅額也不會變
+// 成為影像＝當時算出來的稅額／補充保費／實領（待確認的是 null）；山上影像收據不計算代扣款，三項都是 null
+function snapshotFor(R, P){
+  const b = bookingOf(R), year = b ? b.year : null;   // 成為影像＝填表日期的年度（＝ruleYear）；山上影像＝工作期間第一天的年度
+  if (R.tpl === 'chengwei'){
+    const t = (P && P.tpl && P.tpl.chengwei) || {};
+    const cat = CW_CAT_IDS.includes(t.cat) ? t.cat : 'other', status = CW_STATUS_IDS.includes(t.status) ? t.status : 'tw';
+    const C = calcBlank(R.amount, { ...t, cat, status }, year);
+    return { year, cat, status, tax: C.tax, premium: C.nhi, net: C.net, rulesVersion: RULES_VERSION };
+  }
+  const t = (P && P.tpl && P.tpl.sanshang) || {};
+  return { year, cat: SA_CAT_IDS.includes(t.cat) ? t.cat : 'salary50', status: null, tax: null, premium: null, net: null, rulesVersion: RULES_VERSION };
+}
+// id＝這張單的固定編號（第一次存進紀錄時產生，之後更新同一張都沿用）；欄位順序固定：id 在 at 後面、snap 前面（snap 永遠最後）。
+// 山上影像表單上沒有填表日期，所以紀錄裡的 fill 一律空白（不把藏著的值存進去）
+function makeHistoryRecord(R, P, atIso, id){
+  const rec = { tpl: R.tpl, start: R.start, end: R.end, fill: R.tpl === 'chengwei' ? R.fill : '', project: R.project, amount: R.amount, at: atIso };
+  if (id) rec.id = id;
+  rec.snap = snapshotFor(R, P);
+  return rec;
+}
+const SHEET_ID = /^[0-9a-f]{16}$/;
+function newSheetId(){ return randomHex16(); }
+// 存進「開過的勞報單」時，這一張是更新哪一筆還是新增（純函式）。boundId＝畫面現在對應的那一張（按「載入」或剛下載的）；forceNew＝使用者按了「改存成新的一張」。
+//  - 按了「改存成新的一張」→ 一律新增，連六欄一模一樣的也不去重（why: 'forced'）
+//  - 對應的那一張還在、而且是同一筆款項（格式、工作日期、專案、金額都沒變；只改填表日期或結束日期）→ 更新那一張（why: 'bound'）
+//  - 對應的那一張還在、但款項不同 → 新增（why: 'other-payment'）。到此為止：絕不再用欄位去比對別筆，免得改成「剛好和另一筆一樣」時悄悄更新到另一筆
+//  - 沒有對應（沒載入過、重新整理後、對應的那張已刪掉），但紀錄裡有六個欄位完全一樣的一張 → 更新它，不多出一筆（why: 'same'）
+//  - 其他一律新增，絕不替換別筆（why: 'new'）
+function sheetPlan(history, boundId, R, forceNew){
+  const samePay = h => h.tpl === R.tpl && h.start === R.start && h.project === R.project && h.amount === R.amount;
+  const fillOf = x => (x.tpl === 'chengwei' ? (x.fill || '') : '');
+  if (forceNew) return { kind: 'add', index: -1, id: null, why: 'forced' };
+  if (boundId){
+    const i = history.findIndex(h => h.id === boundId);
+    if (i >= 0) return samePay(history[i]) ? { kind: 'update', index: i, id: boundId, why: 'bound' } : { kind: 'add', index: -1, id: null, why: 'other-payment' };
+  }
+  const j = history.findIndex(h => samePay(h) && (h.end || '') === (R.end || '') && fillOf(h) === fillOf(R));
+  if (j >= 0) return { kind: 'update', index: j, id: history[j].id || null, why: 'same' };
+  return { kind: 'add', index: -1, id: null, why: 'new' };
+}
+// 下載後訊息：說的要和實際發生的一樣（更新了哪一張、還是新增了一張）
+const downloadOkText = (name, plan) => (plan.kind === 'update' ? `✓ 已下載「${name}」，已更新這張`
+  : plan.why === 'other-payment' ? `✓ 已下載「${name}」，這是另一筆款項，已另外新增一張（原本載入的那張沒動）`
+  : plan.why === 'forced' ? `✓ 已下載「${name}」，已新增一張（原本載入的那張沒動）` : `✓ 已下載「${name}」，已新增一張`);
+// ====== 下載後存進「開過的勞報單」：待存項目、佇列結果、進行中的下載（D3／D4／D5，2026-10-13 第四輪）======
+// 一張待存項目（pending）＝下載了、但紀錄還沒存進去的一張：{ op, name, plan, target, rec, outcome, failKind }
+//  - op：操作編號（每次下載一個，不重複）。
+//  - target：這張要更新的那一筆的固定編號；null＝新增。**在按下載的那一刻就釘住**（pinSheet），之後存的時候只照做：
+//    釘住的那一筆已經不在（被刪掉了）就不存、絕不轉成新增（D4）。每一筆紀錄都有編號（D3），所以待存項目永遠用編號指向目標，沒有別的辨識方式。
+//  - rec：要存的紀錄（帶計算快照與固定編號，重試時原樣存）。還沒存進去的不放進 DB.history（總覽與 CSV 只算真的存進去的）。
+//  - outcome：結果，只有這五種——''（還在等）｜'saved'（存進去了）｜'cancelled'（刪掉目標時一併取消）｜'gone'（存的時候目標已經不在）｜'failed'（這次沒存成、留著重試，failKind 是原因）。
+//    畫面上的訊息全部依 outcome 組，不從「項目還在不在待存清單裡」推斷（D5）。
+let OP_SEQ = 0;
+const nextOp = () => ++OP_SEQ;
+// 下載開始時就決定好：更新哪一筆（釘住編號）還是新增（先配好新編號）。history 要傳「已存的＋前面還沒存進去的」（applyPendings 的結果）
+function pinSheet(history, boundId, R, forceNew){
+  const plan = sheetPlan(history, boundId, R, forceNew);
+  const target = plan.kind === 'update' ? (plan.id || null) : null;
+  return { op: nextOp(), plan, target, recId: target || newSheetId(), cancelled: false };
+}
+// 下載完成：用釘住的決定組出待存項目（at＝這時候的時間）
+function makePendingFrom(pin, R, P, atIso, name){
+  return { op: pin.op, name, plan: pin.plan, target: pin.target, rec: makeHistoryRecord(R, P, atIso, pin.recId), outcome: '', failKind: '' };
+}
+// 一步組好（測試與簡單情況用）：釘住＋組項目
+function makePending(history, boundId, R, P, atIso, forceNew, name){
+  return makePendingFrom(pinSheet(history, boundId, R, forceNew), R, P, atIso, name);
+}
+// h 是不是 p 要更新的那一筆
+const replacedBy = (h, p) => !!p.target && h.id === p.target;
+// 這一張要更新的那一筆已經不在 history 裡（被刪掉了）：絕不能因為重試就把它變回來
+const pendingGone = (history, p) => !!p.target && !history.some(h => h.id === p.target);
+// 存一張待存的：更新型的，目標還在才取代；目標已經不在（被刪掉）就什麼都不做（history 原樣回傳），不會把已刪的款項復活。新增型的照樣放最前面
+function applyPending(history, p){
+  if (pendingGone(history, p)) return history;
+  return [p.rec, ...history.filter(h => h.id !== p.rec.id)].slice(0, HISTORY_MAX);
+}
+// 依序存一串待存的（後一張可能更新前一張新增的，所以逐張對照「目前累積的」）。回傳 { history, applied（真的存進去的）, gone（目標已被刪掉、沒有存的） }。
+// 「儲存裡還在不在」由寫入時的版本號＋識別碼比對把關：呼叫端在鎖裡組內容，緊接著的寫入會重讀儲存，別的分頁刪過（或改過）就整個拒寫，所以能寫的時候，這裡看到的紀錄和儲存裡的一樣
+function settlePendings(history, list){
+  const applied = [], gone = []; let h = history;
+  list.forEach(p => { if (pendingGone(h, p)) gone.push(p); else { h = applyPending(h, p); applied.push(p); } });
+  return { history: h, applied, gone };
+}
+const applyPendings = (history, list) => settlePendings(history, list).history;
+// 刪掉 rec 這一筆時，要一起取消的待存更新（都是要更新同一筆的）
+const pendingsOf = (list, rec) => list.filter(p => replacedBy(rec, p));
+// 儲存層回的失敗 → 原因：'stale'（資料過期）｜'timeout'（等鎖等太久）｜'lock'（拿不到鎖的其他原因）｜'storage'（瀏覽器不讓存）
+const failKind = r => (r.err === 'stale' ? 'stale' : r.err === 'lock' ? (r.why === 'timeout' ? 'timeout' : 'lock') : 'storage');
+const removeWhere = (arr, f) => { for (let i = arr.length - 1; i >= 0; i--) if (f(arr[i])) arr.splice(i, 1); };   // 就地刪（別處拿著同一個陣列）
+// 存檔協調（每個分頁一個）：待存清單 pendings、進行中的下載 inflight，以及把它們寫進儲存的動作。
+// 所有的寫入都走 store.atomic（同一條佇列，照順序做）；結果記在每個待存項目的 outcome 上。
+// io：{ getDB()（目前的資料）, adopt(c)（寫成功後把候選資料收進目前的資料）, now()（ISO 時間字串）}
+function createSaver(store, io){
+  const sv = { pendings: [], inflight: new Set() };
+  // 下載開始：釘住這張要更新哪一筆（或新增），登記為進行中——產生 PDF 的幾秒內刪掉那一筆，就會把這個登記作廢
+  sv.begin = (R, boundId, forceNew) => {
+    const pin = pinSheet(applyPendings(io.getDB().history, sv.pendings), boundId, R, forceNew);
+    sv.inflight.add(pin);
+    return pin;
+  };
+  sv.abort = pin => { sv.inflight.delete(pin); };   // 下載取消或出錯：什麼都沒有要存
+  // 下載完成：目標還在才放進待存清單。回 { item, outcome }——item＝放進待存清單的項目（還沒寫）；沒有 item 時 outcome 是 'cancelled'（下載期間刪掉了目標）或 'gone'（目標已經不在）
+  sv.finish = (pin, R, P, name) => {
+    sv.inflight.delete(pin);
+    if (pin.cancelled) return { item: null, outcome: 'cancelled' };
+    if (pin.target && !applyPendings(io.getDB().history, sv.pendings).some(h => h.id === pin.target)) return { item: null, outcome: 'gone' };
+    const item = makePendingFrom(pin, R, P, io.now(), name);
+    sv.pendings.push(item);
+    return { item, outcome: '' };
+  };
+  // 把還沒存進去的全部一次存進紀錄（一次寫入）。寫進去的記 saved、目標已不在的記 gone；沒寫成的留在清單裡、記 failed（原因 failKind）等重試。
+  // 回傳 { ok, err, kind, why, items（這次要存的）, applied（其中 saved 的）, gone（其中 gone 的）, cancelled（其中被取消的） }——依各項目的 outcome 組，不是看誰還在清單裡
+  sv.flush = async () => {
+    const items = sv.pendings.slice();
+    const res = (ok, r) => ({ ok, err: ok ? '' : r.err, kind: ok ? '' : failKind(r), why: ok ? '' : (r.why || ''), items,
+      applied: items.filter(p => p.outcome === 'saved'), gone: items.filter(p => p.outcome === 'gone'), cancelled: items.filter(p => p.outcome === 'cancelled') });
+    if (!items.length) return res(true, {});
+    let batch = [], goneNow = [];
+    const r = await store.atomic({
+      // 在輪到它（有鎖模式＝拿到鎖）之後才決定存哪些：更新型的，要更新的那筆還在才存；已經不在（被刪掉了）就不存、不復活。
+      // 緊接著的寫入會重讀儲存、比對版本號與識別碼：別的分頁刪過（或改過）就整個拒寫（過期），所以寫得進去的時候，這裡看到的紀錄就是儲存裡的
+      build: () => { const st = settlePendings(io.getDB().history, sv.pendings); batch = st.applied; goneNow = st.gone; return { ...io.getDB(), history: st.history }; },
+      adopt: c => {
+        io.adopt(c);
+        batch.forEach(p => { p.outcome = 'saved'; p.failKind = ''; });
+        goneNow.forEach(p => { p.outcome = 'gone'; p.failKind = ''; });
+        removeWhere(sv.pendings, p => batch.includes(p) || goneNow.includes(p));
+      },
+    });
+    if (r.ok) return res(true, r);
+    const kind = failKind(r);
+    items.forEach(p => { if (sv.pendings.includes(p)){ p.outcome = 'failed'; p.failKind = kind; } });   // 已經被別的動作處理掉的（存好了、被取消了）不要蓋掉它的結果
+    return res(false, r);
+  };
+  // 刪掉一筆紀錄（也是同一條佇列）。刪成功的同一刻——在輪到它的同步段裡，和其他排隊的存檔不會交錯——取消所有要更新這一筆的：
+  // 待存清單裡的記 cancelled 並拿掉；產生 PDF 中的（進行中的下載）作廢，完成時不會存。回 { ok, err, why?, dropped（被取消的待存項目） }
+  sv.remove = async target => {
+    let dropped = [];
+    const r = await store.atomic({
+      build: () => ({ ...io.getDB(), history: io.getDB().history.filter(h => h !== target && !(target.id && h.id === target.id)) }),
+      adopt: c => {
+        io.adopt(c);
+        dropped = pendingsOf(sv.pendings, target);
+        dropped.forEach(p => { p.outcome = 'cancelled'; p.failKind = ''; });
+        removeWhere(sv.pendings, p => dropped.includes(p));
+        sv.inflight.forEach(pin => { if (pin.target && pin.target === target.id) pin.cancelled = true; });
+      },
+    });
+    return { ...r, dropped };
+  };
+  return sv;
+}
+// 下載完成之後這一張的結論（D5）：只看各項目記下的結果（outcome），絕不從「它還在不在待存清單裡」推斷——
+// 自動補存可能已經先把它存好了，這時它不在清單裡，卻不是被刪掉。fin＝saver.finish 的回傳；earlier＝這一張進來之前就沒存進去的幾張
+//  verdict：'saved'（存進去了，more＝同時存好的先前那幾張的張數，goneEarlier＝先前那幾張裡目標已被刪掉的）｜'deleted'（要更新的那筆被刪了：cancelled／gone，沒有存、也沒有新增）｜'failed'（沒存成，留著重試）
+function downloadVerdict(fin, earlier){
+  const item = fin && fin.item, o = item ? item.outcome : (fin ? fin.outcome : '');
+  if (o === 'saved') return { verdict: 'saved', more: earlier.filter(p => p.outcome === 'saved').length, goneEarlier: earlier.filter(p => p.outcome === 'gone') };
+  if (o === 'gone' || o === 'cancelled') return { verdict: 'deleted', more: 0, goneEarlier: [] };
+  return { verdict: 'failed', more: 0, goneEarlier: [] };
+}
+// ====== 這張表單對應哪一筆（綁定）＋操作編號（D4，Codex b1-r4 #1）======
+// id＝畫面現在對應「開過的勞報單」的哪一筆（按「載入」或剛下載的）；forceNew＝使用者按了「改存成新的一張」，下一次下載一律新增。
+// intent（操作編號）：每次改變這個綁定的動作都 +1——載入一筆、改存成新的一張、表單重建／清空、刪掉正對應的那一筆。
+// 下載開始時用 snap() 記下當時的編號；下載完成要把新紀錄的編號綁回表單時（settle），只有編號沒變才寫回，也才清掉 forceNew。
+// 產生 PDF 的幾秒內使用者可能又載入了另一筆、又按了「改存成新的一張」：那是使用者後來的意圖，晚到的下載完成絕不能把它改回去。
+// 下載要存哪一筆是開始時就釘住的（pinSheet），和這裡無關：該存的照存，只是不再動表單現在的綁定。
+function createBinding(){
+  const s = { id: null, forceNew: false, intent: 0 };
+  return {
+    get id(){ return s.id; }, get forceNew(){ return s.forceNew; }, get intent(){ return s.intent; },
+    load(id){ s.id = id || null; s.forceNew = false; s.intent++; },       // 按「載入」
+    startNew(){ s.id = null; s.forceNew = true; s.intent++; },            // 按「改存成新的一張」
+    reset(){ s.id = null; s.forceNew = false; s.intent++; },              // 表單重建／清空：不再對應任何一筆
+    drop(id){ if (id && s.id === id){ s.id = null; s.intent++; return true; } return false; },   // 刪掉了正對應的那一筆
+    snap(){ return { id: s.id, forced: s.forceNew, intent: s.intent }; },
+    settle(snap, recId){   // 下載存進紀錄了：編號沒變才綁回新紀錄的編號、清掉 forceNew；回傳有沒有寫回
+      if (!snap || snap.intent !== s.intent) return false;
+      if (snap.forced) s.forceNew = false;
+      s.id = recId || null;
+      return true;
+    },
+  };
+}
+// 下載開始：記下綁定的快照（含操作編號），並依當時的綁定釘住要更新哪一筆（或新增）
+function beginDownload(binding, sv, R){
+  const snap = binding.snap();
+  return { snap, pin: sv.begin(R, snap.id, snap.forced) };
+}
+// 下載完成：放進待存清單；有放進去（沒有被刪掉）才把新紀錄的編號綁回表單——前提是這段期間使用者沒有改過綁定（見 createBinding）
+function finishDownload(binding, sv, dl, R, P, name){
+  const fin = sv.finish(dl.pin, R, P, name);
+  if (fin.item) binding.settle(dl.snap, fin.item.rec.id);
+  return fin;
+}
+// 過期的分頁要保住畫面上的內容：把這個分頁「現在的狀態」整理成一份可以存成檔案的 JSON（D2）。
+// 沿用工具既有的備份檔格式（kind／v／profile，「匯入備份檔」讀得到基本資料），另外多放這個分頁看得到的紀錄、還沒存進紀錄的下載、正在填的草稿——
+// 「匯入備份檔」會帶回基本資料與紀錄（只加入還沒有的）；還沒存進紀錄的下載和草稿不會還原，是給手動救資料用的（scope 與 note 欄寫明）。純函式：不碰儲存、不碰保險箱的備份時間。
+function tabExport(db, pendings, atIso){
+  return {
+    kind: 'labor-report-backup', v: 1,
+    scope: 'tab-state',
+    note: '這份檔案是某個分頁畫面上「當下的狀態」，不是正式的備份：除了基本資料，還有這個分頁看得到的紀錄、還沒存進紀錄的下載、正在填的草稿。工具的「匯入備份檔」會帶回基本資料，以及這個分頁看得到的紀錄（只加入還沒有的）；還沒存進紀錄的下載和草稿要自己對照著補。',
+    exportedAt: atIso,
+    profile: db && db.profile ? db.profile : null,
+    history: db && Array.isArray(db.history) ? db.history : [],
+    unsaved: (Array.isArray(pendings) ? pendings : []).map(p => ({ name: p.name, action: p.plan && p.plan.kind === 'update' ? 'update' : 'add', targetId: p.target || null, outcome: p.outcome || 'waiting', record: p.rec })),
+    draft: db && db.last ? db.last : null,
+  };
+}
+// ====== 備份檔 v2：基本資料＋開過的勞報單紀錄（2026-10-13 使用者裁決：備份檔要包含開過的紀錄，匯入要能還原）======
+// 下載備份檔寫的內容：只放「已經存進紀錄」的（DB.history），還沒存進去的下載（pendings）不在裡面。純函式
+function backupExport(db){
+  return { kind: 'labor-report-backup', v: 2, profile: db && db.profile ? db.profile : null, history: db && Array.isArray(db.history) ? db.history : [] };
+}
+// 讀一個匯入的檔案。回 { err }（'notBackup'＝不是勞報單的備份檔｜'noData'＝是備份檔，但基本資料與紀錄都沒有可以帶回來的）或
+// { form（'v1'｜'v2'｜'tab'｜'bare'）, profile（sanitizeProfile 的結果，沒有就 null）, history（要處理的紀錄陣列；null＝這種檔案不帶紀錄）, historyBad（檔案裡的 history 欄位不是陣列）}
+//  - v1：只有基本資料（和以前一樣，檔案裡就算有 history 欄也不理）
+//  - v2：基本資料＋紀錄
+//  - 過期橫幅下載的「這個分頁的資料」（scope 'tab-state'，v 是 1）：用裡面的基本資料和紀錄；unsaved、draft 不理
+//  - 沒有 kind 的（舊版直接給的基本資料物件）：當成基本資料，和以前一樣
+function readBackup(j){
+  if (!j || typeof j !== 'object' || Array.isArray(j)) return { err: 'notBackup' };
+  const isBackup = j.kind === 'labor-report-backup';
+  const form = !isBackup ? 'bare' : j.scope === 'tab-state' ? 'tab' : j.v === 2 ? 'v2' : 'v1';
+  const rawProfile = isBackup ? j.profile : (j.profile ? j.profile : j);
+  let profile = null;
+  if (rawProfile){ profile = sanitizeProfile(rawProfile); if (!profile) return { err: 'notBackup' }; }
+  let history = null, historyBad = false;
+  if (form === 'v2' || form === 'tab'){
+    if (Array.isArray(j.history)) history = j.history;
+    else if (j.history != null) historyBad = true;
+    else history = [];
+  }
+  if (!profile && !(history && history.length)) return { err: isBackup ? 'noData' : 'notBackup' };
+  return { form, profile, history, historyBad };
+}
+// 把檔案裡的紀錄併進本機的（合併，絕不刪本機的）：本機已有的編號＝保留本機那一張，檔案裡的略過；本機沒有的編號＝新增。
+// 新增的插在「依存檔時間 at 由新到舊」的位置（本機原本的順序不動；本機是空的就照檔案的順序）。總數不超過 HISTORY_MAX：
+// 超過的話本機的全留著，新增的只收放得下的（檔案裡排前面＝比較新的先收），其餘算 over。records 要先經過 planImport（驗證過、有編號）
+function mergeHistory(local, records){
+  const have = new Set(local.map(h => h.id));
+  const fresh = records.filter(r => !have.has(r.id));
+  const take = fresh.slice(0, Math.max(0, HISTORY_MAX - local.length));
+  const out = []; let i = 0, j = 0;
+  while (i < local.length || j < take.length){
+    if (j >= take.length) out.push(local[i++]);
+    else if (i >= local.length) out.push(take[j++]);
+    else if ((take[j].at || '') > (local[i].at || '')) out.push(take[j++]);
+    else out.push(local[i++]);
+  }
+  return { history: out, added: take, kept: records.length - fresh.length, over: fresh.length - take.length };
+}
+// 匯入前的整理：每一筆都照既有規則驗證與整理（normalizeDB：格式不對的丟掉、編號不合或重複的補穩定編號、快照年度和單上日期對不上的改成待確認）。
+// 檔案裡編號重複的（同一個編號出現兩次）：第一筆算數，後面的略過，算進 dup。bad＝格式不對被丟掉的筆數。回 { total, records（驗證過的）, bad, dup, merge（對照 local 的合併結果）}
+function planImport(local, raw){
+  const list = Array.isArray(raw) ? raw : [];
+  const seen = new Set(); let dup = 0;
+  const keep = list.filter(r => {
+    const id = r && typeof r === 'object' && typeof r.id === 'string' && SHEET_ID.test(r.id) ? r.id : null;
+    if (!id) return true;
+    if (seen.has(id)){ dup++; return false; }
+    seen.add(id); return true;
+  });
+  let records = [];
+  try { records = normalizeDB({ history: keep }).db.history; } catch (e){ records = []; }
+  return { total: list.length, records, bad: keep.length - records.length, dup, merge: mergeHistory(Array.isArray(local) ? local : [], records) };
+}
+const importCounts = (added, kept) => `新增 ${added} 張、${kept} 張已存在保留目前的`;
+// 匯入確認時對使用者說的話（還沒寫入任何東西）
+function importAsk(pl, hasProfile){
+  const m = pl.merge;
+  return `備份檔裡有 ${pl.total} 筆開過的勞報單紀錄：${importCounts(m.added.length, m.kept)}。`
+    + (m.over ? `總數最多留 ${HISTORY_MAX} 張，有 ${m.over} 張放不下，不會加進來（目前的都不會動）。` : '')
+    + (pl.bad || pl.dup ? `另有 ${[pl.bad ? `${pl.bad} 筆格式不對` : '', pl.dup ? `${pl.dup} 筆編號重複` : ''].filter(Boolean).join('、')}，會略過。` : '')
+    + `基本資料${hasProfile ? '已經帶進下面的表單，要按「確認並鎖定」才會存' : '：備份檔裡沒有，所以不會變'}。按「確認匯入」之前不會寫入任何東西，確認後會先另存一份目前的資料。`;
+}
+// 匯入完成後的結果（依實際寫進去的組）：info＝{ added, kept, over, bad, dup, backupKey }
+function importDone(info, hasProfile){
+  return `✓ 已匯入開過的勞報單紀錄：${importCounts(info.added, info.kept)}。`
+    + (info.over ? `總數最多留 ${HISTORY_MAX} 張，有 ${info.over} 張放不下，沒有加進來。` : '')
+    + (info.bad || info.dup ? `備份檔裡有 ${[info.bad ? `${info.bad} 筆格式不對` : '', info.dup ? `${info.dup} 筆編號重複` : ''].filter(Boolean).join('、')}，已略過。` : '')
+    + (info.backupKey ? `匯入前的資料已另存在瀏覽器的「${info.backupKey}」。` : '')
+    + (hasProfile ? '基本資料已經帶進下面的表單，確認無誤後按「確認並鎖定」。' : '');
+}
+// ====== 載入前的原始內容另存（D6）：key＝<前綴><毫秒>[-<序號>]，序號單調往上、一律用數字比大小（不是字典序）======
+// 只留最新 3 份；輪替絕不刪掉剛寫的那一份；寫完要讀回確認真的在（沒有就丟例外，呼叫端當作「沒能另存」）
+const BACKUP_KEEP = 3;
+// 毫秒與序號都只認「安全整數」（Number.isSafeInteger、不是負的）：太大的數字（9007199254740992、400 位數字…）轉成 Number 之後 +1 不會變、甚至變成 Infinity，
+// 拿來配新 key 會一直撞到同一個 key、蓋掉舊備份。回 [毫秒, 序號, 認得]；不是這個前綴的 key＝null（不是我們的，絕不碰）；
+// 前綴對、但格式或數字不合格的＝[0, 0, false]：配新序號時不理它，輪替時當最舊
+const isNat = n => Number.isSafeInteger(n) && n >= 0;
+function backupKeyParts(prefix, k){
+  if (typeof k !== 'string' || !k.startsWith(prefix)) return null;
+  const m = /^(\d+)(?:-(\d+))?$/.exec(k.slice(prefix.length));
+  const ms = m ? Number(m[1]) : NaN, n = m ? (m[2] ? Number(m[2]) : 0) : NaN;
+  return isNat(ms) && isNat(n) ? [ms, n, true] : [0, 0, false];
+}
+const backupCmp = (a, b) => a[0] - b[0] || a[1] - b[1];
+// 下一個備份 key：比現有每一個都大。時鐘停住（同一毫秒）或倒退時，沿用現有最大的毫秒、序號 +1
+function nextBackupKey(prefix, keys, now){
+  let top = null;
+  keys.forEach(k => { const p = backupKeyParts(prefix, k); if (p && p[2] && (!top || backupCmp(p, top) > 0)) top = p; });   // 只看格式合格的；認不得的不參與配序號
+  const t = isNat(now) ? now : 0;
+  let ms = top && top[0] >= t ? top[0] : t;
+  let n = top && top[0] === ms ? top[1] + 1 : 0;
+  if (!isNat(n)){ ms += 1; n = 0; }   // 序號已經到安全整數的上限：換下一個毫秒、序號歸零，不產生讀不回來的 key
+  return prefix + ms + (n ? '-' + n : '');
+}
+// 輪替要刪掉的：數字排序後最舊的那些（只留 keep 份），protect 那一份永遠不刪
+function backupsToDelete(prefix, keys, keep, protect){
+  const rows = keys.map(k => [k, backupKeyParts(prefix, k)]).filter(r => r[1])
+    .sort((a, b) => backupCmp(a[1], b[1]) || (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
+  return rows.slice(0, Math.max(0, rows.length - keep)).map(r => r[0]).filter(k => k !== protect);
+}
+// st：{ keys(), getItem(k), setItem(k, v), removeItem(k) }
+function writeBackup(st, prefix, raw, now){
+  const keys = st.keys();
+  let key = nextBackupKey(prefix, keys, now);
+  // 寫之前確認這個 key 真的沒人用（keys() 沒列全、或別的怪情況）：已經有東西就往後找到空的為止，絕不蓋掉現有的備份
+  for (let i = 0; i < 1000 && st.getItem(key) !== null; i++) key = nextBackupKey(prefix, keys.concat(key), now);
+  if (st.getItem(key) !== null) throw new Error('找不到空的備份位置');
+  st.setItem(key, raw);
+  if (st.getItem(key) !== raw) throw new Error('備份沒有寫進去');
+  backupsToDelete(prefix, st.keys(), BACKUP_KEEP, key).forEach(k => { try { st.removeItem(k); } catch (e){} });
+  if (st.getItem(key) !== raw) throw new Error('備份被輪替刪掉了');
+  return key;
+}
+// 單張紀錄 → 彙整用的一列。有快照就用快照（basis＝snapshot）；沒有快照的舊紀錄，成為影像用現在的基本資料重算並標「推算」（basis＝estimate）；
+// 山上影像收據本來就不計算（basis＝none）。年度＝填表日期的年度，沒有有效的填表日期＝null（待確認）
+function incomeRow(h, P){
+  const snap = h.snap || null, b = bookingOf(h);
+  // 年度與月份一律從紀錄自己的日期算（bookingOf：成為影像＝填表日期；山上影像＝工作期間第一天，不看紀錄裡可能殘留的舊填表日期）。
+  // 計算快照的年度要和它一致；對不上（snapBad）＝異常，不採用快照裡的金額（待確認、寫明原因），不會再被算進快照上寫的另一個年度
+  const sa = h.tpl === 'sanshang';
+  const year = b ? b.year : null;
+  // 快照異常：標了異常旗標、年度和單上日期對不上、或這一年沒有扣繳規則卻帶著金額（直接餵進來的資料也一樣處理，不靠載入時的整理）
+  const snapMismatch = !!snap && (snap.flag === SNAP_MISMATCH || snap.year !== year);
+  const snapNoRule = !!snap && !snapMismatch && (snap.flag === SNAP_NORULE || (year != null && !ruleFor(year) && (snap.tax != null || snap.premium != null || snap.net != null)));
+  const snapBad = snapMismatch || snapNoRule;
+  const row = { tpl: h.tpl, payer: TPL[h.tpl] ? TPL[h.tpl].name : '', start: h.start, end: h.end || '', fill: sa ? '' : (h.fill || ''), project: h.project, amount: h.amount, at: h.at || '',
+    date: b ? b.iso : '', dateBasis: b ? BOOKING_BASIS[b.basis].label : '',
+    year, month: b ? b.month : null, cat: '', status: null, tax: null, premium: null, net: null, estimated: false, basis: 'none', why: '', dateNote: '' };
+  if (sa && b) row.dateNote = `山上影像收據沒有填表日期欄位，年度月份依工作期間第一天（${b.iso}）`;
+  if (h.tpl === 'chengwei'){
+    if (snap && snapBad){ Object.assign(row, { cat: snap.cat, status: snap.status, basis: snapMismatch ? 'unverified' : 'norule' }); }   // 稅額、補充保費、實領維持 null＝待確認
+    else if (snap){ Object.assign(row, { cat: snap.cat, status: snap.status, tax: snap.tax, premium: snap.premium, net: snap.net, basis: 'snapshot' }); }
+    else {
+      row.basis = 'estimate'; row.estimated = true;
+      const t = P && P.tpl && P.tpl.chengwei;
+      if (t){ const C = calcBlank(h.amount, t, year); Object.assign(row, { cat: t.cat, status: t.status, tax: C.tax, premium: C.nhi, net: C.net }); }
+    }
+  } else {
+    row.cat = snap ? snap.cat : ((P && P.tpl && P.tpl.sanshang && P.tpl.sanshang.cat) || '');
+  }
+  if (year == null){ row.tax = row.premium = row.net = null; }   // 年度不明：一律待確認
+  const miss = [row.tax == null && '扣繳稅額', row.premium == null && '補充保費'].filter(Boolean);
+  if (row.tpl === 'sanshang') row.why = '山上影像收據不計算代扣款';
+  else if (year == null) row.why = '沒有填表日期，年度待確認';
+  else if (snapMismatch) row.why = SNAP_MISMATCH_WHY;
+  else if (snapNoRule) row.why = SNAP_NORULE_WHY;
+  else if (!ruleFor(year)) row.why = `尚未設定 ${year} 年的扣繳規則`;
+  else if (miss.length) row.why = `${miss.join('、')}要付款方確認`;
+  return row;
+}
+function catLabel(r){
+  if (r.tpl === 'sanshang'){ const c = SA_CATS.find(x => x[0] === r.cat); return c ? c[1] : ''; }
+  return CW_CAT_NAMES[r.cat] || '';
+}
+const statusLabel = r => (r.tpl === 'sanshang' ? '' : (CW_STATUS_NAMES[r.status] || ''));
+// 合計：count 張、amount 應付金額；tax/premium/net＝「算得出來的那幾張」的合計；xxxUnk＝待確認張數；xxxEst＝其中用推算的張數
+function newAgg(){ return { count: 0, amount: 0, tax: 0, taxUnk: 0, taxEst: 0, premium: 0, premiumUnk: 0, premiumEst: 0, net: 0, netUnk: 0, netEst: 0 }; }
+function aggAdd(a, r){
+  a.count++; a.amount += r.amount;
+  ['tax', 'premium', 'net'].forEach(k => { if (r[k] == null) a[k + 'Unk']++; else { a[k] += r[k]; if (r.estimated) a[k + 'Est']++; } });
+  return a;
+}
+const cmpAsc = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
+// history → { years: [{ year, rocYear, hasRule, total, months, payers, projects, rows }]（新到舊）, unknown: { agg, rows }（年度待確認，不計入任何年度） }
+function incomeSummary(history, P){
+  const rows = (Array.isArray(history) ? history : []).map(h => incomeRow(h, P));
+  const by = new Map(), unknown = { agg: newAgg(), rows: [] };
+  rows.forEach(r => {
+    if (r.year == null){ aggAdd(unknown.agg, r); unknown.rows.push(r); return; }
+    if (!by.has(r.year)) by.set(r.year, []);
+    by.get(r.year).push(r);
+  });
+  const order = (a, b) => cmpAsc(a.date, b.date) || cmpAsc(a.start, b.start) || cmpAsc(a.at, b.at);
+  unknown.rows.sort(order);
+  const years = [...by.keys()].sort((a, b) => b - a).map(year => {
+    const yr = by.get(year).sort(order), total = newAgg(), mo = new Map(), pay = new Map(), prj = new Map();
+    yr.forEach(r => {
+      aggAdd(total, r);
+      const grp = (m, key) => { if (!m.has(key)) m.set(key, newAgg()); return aggAdd(m.get(key), r); };
+      grp(mo, r.month == null ? 0 : r.month); grp(pay, r.tpl); grp(prj, r.project);
+    });
+    return {
+      year, rocYear: year - 1911, hasRule: !!ruleFor(year), total, rows: yr,
+      months: [...mo.entries()].map(([month, agg]) => ({ month: month || null, agg })).sort((a, b) => (a.month || 99) - (b.month || 99)),
+      payers: TPL_IDS.filter(id => pay.has(id)).map(id => ({ tpl: id, name: TPL[id].name, agg: pay.get(id) })),
+      projects: [...prj.entries()].map(([project, agg]) => ({ project, agg })).sort((a, b) => b.agg.amount - a.agg.amount || cmpAsc(a.project, b.project)),
+    };
+  });
+  return { years, unknown };
+}
+// CSV：UTF-8 含 BOM、CRLF；數字欄一律純數字（沒有千分位、沒有 NT$；待確認＝空白）；一張一列，最後一列合計
+const BASIS_NAMES = { snapshot: '當時計算', estimate: '（推算）', none: '未計算', unverified: '快照不符', norule: '快照異常' };
+const SNAP_MISMATCH_WHY = '計算快照的年度和單上日期對不上，金額待確認';
+const SNAP_NORULE_WHY = '這一年尚未設定扣繳規則，但快照裡帶著稅額、補充保費或實領金額，不採用，金額待確認';
+const CSV_HEAD = ['填表日期', '月份', '付款方', '專案名稱', '工作日期起', '工作日期迄', '所得類別', '身分', '應付金額', '扣繳稅額', '二代健保補充保費', '實領金額', '計算依據', '備註'];
+function csvCell(v){
+  if (v == null) return '';
+  if (typeof v === 'number') return Number.isFinite(v) ? String(v) : '';
+  let t = String(v).replace(/\r\n|\r/g, '\n');
+  if (/^[=+\-@\t]/.test(t)) t = "'" + t;   // 試算表會把開頭是這些字元的文字當公式：前面補一個 ' 擋掉
+  return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
+}
+function incomeCsvName(year){ return `勞報收入-${year}.csv`; }
+function incomeCsv(Y){
+  const A = Y.total, sum = k => (A[k + 'Unk'] >= A.count ? null : A[k]);
+  const notes = ['實際以付款方開立的扣繳憑單為準'];
+  [['tax', '扣繳稅額'], ['premium', '二代健保補充保費'], ['net', '實領金額']].forEach(([k, n]) => { if (A[k + 'Unk']) notes.push(`${n}有 ${A[k + 'Unk']} 張待確認，沒有算進合計`); });
+  const est = Y.rows.filter(r => r.estimated).length; if (est) notes.push(`其中 ${est} 張是用現在的基本資料推算`);
+  const lines = [CSV_HEAD,
+    ...Y.rows.map(r => [r.fill, r.month, r.payer, r.project, r.start, r.end, catLabel(r), statusLabel(r), r.amount, r.tax, r.premium, r.net, BASIS_NAMES[r.basis], [r.why, r.dateNote].filter(Boolean).join('；')]),
+    ['合計', null, null, `共 ${A.count} 張`, null, null, null, null, A.amount, sum('tax'), sum('premium'), sum('net'), null, notes.join('；')]];
+  return '\uFEFF' + lines.map(l => l.map(csvCell).join(',')).join('\r\n') + '\r\n';
+}
 </script>
 
 <script>
@@ -601,22 +1478,114 @@ function reportFileName(P, R){
 const $ = id => document.getElementById(id);
 const KEY = 'laborReport.v1';
 let writesBlocked = false;   // 讀不懂的舊資料沒能另存時，絕不覆寫它
-const store = {
-  write(d){ if (writesBlocked) return false; try { localStorage.setItem(KEY, JSON.stringify(d)); return true; } catch (e){ return false; } },
+let stale = false;           // 這個分頁的資料已過期（別的分頁更新過）：過期後所有寫入一律拒絕，只能重新整理
+let previewTimer = 0;
+
+/* ---- 資料保險箱的備份紀錄（共用約定：key toolbox.backup.v1，只放狀態，不放任何內容；永遠不丟例外、不擋自己的存檔） ---- */
+const TB_ID = 'labor-report', TB_KEY = 'toolbox.backup.v1';
+const tbTime = v => (typeof v === 'string' && !isNaN(Date.parse(v)) ? v : null);
+// 寫自己這一筆。這筆不是物件（被改壞、字串、陣列）或欄位型別不對，就先整理成合法的三欄再套用，不會留下一筆保險箱讀不懂的紀錄
+function markToolbox(patch){ try{ let o; try{o=JSON.parse(localStorage.getItem(TB_KEY)||'')}catch(e){} if(!o||o.v!==1||typeof o.tools!=='object'||!o.tools||Array.isArray(o.tools)) o={v:1,tools:{}};
+  const r=o.tools[TB_ID], ok=!!r&&typeof r==='object'&&!Array.isArray(r);
+  const cur={hasData:ok&&r.hasData===true,updatedAt:ok?tbTime(r.updatedAt):null,lastBackupAt:ok?tbTime(r.lastBackupAt):null};
+  Object.assign(cur,patch); if(cur.hasData&&!cur.updatedAt) cur.updatedAt=new Date().toISOString();
+  o.tools[TB_ID]=cur; localStorage.setItem(TB_KEY,JSON.stringify(o)); }catch(e){} }
+function toolboxRecord(){ try { const o = JSON.parse(localStorage.getItem(TB_KEY) || ''); const r = o && o.v === 1 && o.tools && !Array.isArray(o.tools) ? o.tools[TB_ID] : null; return r && typeof r === 'object' && !Array.isArray(r) ? r : null; } catch (e){ return null; } }
+let lastMarkAt = 0;   // 存檔成功後記一筆「有資料、更新時間」；同一頁面 60 秒內最多一次（載入後第一次一定記）
+function markSaved(){ const t = Date.now(); if (lastMarkAt && t - lastMarkAt < 60000) return; lastMarkAt = t; markToolbox({ hasData: true, updatedAt: new Date().toISOString() }); }
+
+// 儲存層（邏輯在 lr-core 的 createStore，測試直接跑它）：寫入前重讀版本號與寫入識別碼。
+// 有鎖或無鎖由「環境」決定、整個頁面階段不變（pickLocks）：有 navigator.locks 且網址不是 file: 就一律用跨分頁鎖，拿鎖的任何失敗都是「沒有寫入、資料留在這個分頁、可以再試」
+const store = createStore({
+  key: KEY,
+  storage: { getItem: k => localStorage.getItem(k), setItem: (k, v) => localStorage.setItem(k, v) },
+  locks: (() => { try { return pickLocks(location.protocol, navigator); } catch (e){ return null; } })(),
+  timers: { set: (f, ms) => setTimeout(f, ms), clear: id => clearTimeout(id) },
+  getDB: () => DB,
+  isStale: () => stale,
+  isBlocked: () => writesBlocked,
+  onStale: why => markStale(why),
+  onWrote: d => { if (d.profile || d.history.length) markSaved(); },   // 真的有使用者資料才記（草稿不算）
+});
+// 存檔協調：下載後的紀錄存檔、刪除、進行中的下載都在這裡（lr-core 的 createSaver）。pendings＝下載了、但紀錄還沒存進去的幾張（同一個陣列，saver 只就地增減），
+// 所以收入與報稅總覽、CSV 只會算到真的存進去的紀錄
+const saver = createSaver(store, {
+  getDB: () => DB,
+  adopt: c => { DB.history = c.history; DB.rev = c.rev; if (c.tok) DB.tok = c.tok; },
+  now: () => new Date().toISOString(),
+});
+const pendings = saver.pendings;
+// 沒有跨分頁保護時頂端的提醒（舊瀏覽器沒有 navigator.locks，或直接開本機檔案 file:）。這個模式整個頁面階段固定，所以一開頁就說，不用等錯誤
+const NOLOCK_NOTE = '提醒：這個頁面沒有跨分頁保護功能（舊瀏覽器，或直接開本機檔案）。請不要同時開兩個分頁編輯同一份資料，不然可能互相蓋掉，只能事後發現。';
+// 過期橫幅（2026-10-13 重寫）：第一句直接說發生了什麼事（不再叫人「重新整理後再編輯」，那和下面的警告矛盾），底下一小段白話說兩條路：
+// 「下載這個分頁的資料」（存成檔案，不動瀏覽器裡存的任何東西）、「重新整理」（改用另一個分頁的資料；這個分頁還沒存的內容會不見，所以要留先下載）。
+// 三種原因：別的分頁寫了比較新的、同時寫入而被蓋掉、資料被清掉。第一句只有「資料被清掉」不一樣（沒有別的分頁存了新資料）
+const STALE_TEXT = {
+  newer: '另一個分頁存了比較新的資料，這個分頁已經不能再存。',
+  overwritten: '另一個分頁存了比較新的資料，這個分頁已經不能再存。',
+  cleared: '這個工具存在瀏覽器裡的資料被清掉了，這個分頁已經不能再存。',
 };
+const STALE_SUB = {
+  newer: '想留住這個分頁的內容，請先按「下載這個分頁的資料」。按「重新整理」會改用另一個分頁的資料，這個分頁還沒存的內容就會不見。',
+  overwritten: '兩個分頁同時存檔，這個分頁剛存的被蓋掉了。想留住這個分頁的內容，請先按「下載這個分頁的資料」。按「重新整理」會改用另一個分頁的資料，這個分頁的內容就會不見。',
+  cleared: '想留住這個分頁的內容，請先按「下載這個分頁的資料」。按「重新整理」會以瀏覽器現在存的為準（可能是空的），這個分頁還沒存的內容就會不見。',
+};
+let staleWhy = '';
+// 別的分頁更新過：橫幅常駐、整個工作區不能操作；資料全部留在這個分頁的記憶體裡，使用者選一條路（下載這個分頁的資料，或重新整理）
+function markStale(why){
+  if (stale) return;
+  stale = true; staleWhy = why || 'newer';
+  clearTimeout(previewTimer);
+  $('stale-text').textContent = STALE_TEXT[staleWhy] || STALE_TEXT.newer;
+  $('stale-sub').textContent = STALE_SUB[staleWhy] || STALE_SUB.newer;
+  $('stale-status').hidden = true; $('stale-status').textContent = '';
+  $('stale-banner').hidden = false;
+  document.body.classList.add('is-stale');
+  ['setup', 'work', 'income', 'nav'].forEach(id => { const el = $(id); if (el){ el.setAttribute('inert', ''); } });
+  if (pendings.length){ pendingErr = 'stale'; showPendingWarning(); }   // 已下載但沒存進去的，訊息要同步改成「先看橫幅」
+}
+// 動作開始前先確認這個分頁的資料還是最新的（鎖定、修改、下載、刪除紀錄都先過這關）
+function ensureFresh(){
+  if (stale) return false;
+  try { const why = checkIdentity(localStorage.getItem(KEY), DB); if (why){ markStale(why); return false; } } catch (e){}
+  return true;
+}
+// 別的分頁寫了儲存：不看事件帶的內容（可能已經過時），直接重讀現在儲存裡的，和這個分頁最後讀到或寫入的版本號＋識別碼比；
+// 不一樣（含「版本號一樣、識別碼不同」＝同時寫入被蓋掉）就切成過期
+window.addEventListener('storage', e => {
+  if (e.storageArea && e.storageArea !== localStorage) return;
+  if (e.key !== null && e.key !== KEY) return;   // null＝整個儲存空間被清掉
+  if (stale) return;
+  // 一律重讀現在儲存裡的，不信事件帶的內容（可能已經過時）；「被清掉」的事件也一樣：通知可能延遲，這個分頁說不定早就復原了，
+  // 這時儲存裡有資料、識別碼也對，就不能再說「被清掉了」。真的讀到空的、而且這個分頁有使用者資料，才算被清掉
+  let raw = e.newValue;
+  try { raw = localStorage.getItem(KEY); } catch (err){}
+  const why = checkIdentity(raw, DB) || (raw == null && (DB.profile || DB.history.length) ? 'cleared' : '');
+  if (why) markStale(why);
+});
 let startupWarning = '';
+let editing = false;   // 正在修改基本資料：舊資料仍存在瀏覽器裡，要按「確認並鎖定」才會被取代
+let view = 'work';     // 工作區現在顯示哪一頁：'work'（開勞報單）｜'income'（收入與報稅總覽）
+let loadedRaw = null;  // 載入時儲存裡的原始內容（null＝這個工具的資料 key 不存在）
+let loadReadOk = false; // 載入時真的讀得到儲存（getItem 沒有丟例外）：讀不到的時候 loadedRaw 也是 null，但那不是「資料 key 不存在」
+// 把原始內容另存一份（key＝laborReport.v1.backup.<毫秒>[-<序號>]，序號單調往上、數字比大小，只留最新 3 份；輪替不會刪掉剛寫的；寫完讀回確認，見 lr-core 的 writeBackup）。
+// 回傳備份的 key；存不進去、或讀回來對不上就丟例外（呼叫端當作沒能另存，不會往下寫）
+function backupRaw(raw){
+  return writeBackup({
+    keys: () => Object.keys(localStorage),
+    getItem: k => localStorage.getItem(k),
+    setItem: (k, v) => localStorage.setItem(k, v),
+    removeItem: k => localStorage.removeItem(k),
+  }, `${KEY}.backup.`, raw, Date.now());
+}
 function loadDB(){
   let raw = null;
-  try { raw = localStorage.getItem(KEY); } catch (e){ startupWarning = '注意：這台瀏覽器不讓網頁存資料（可能是私密瀏覽），關掉頁面後資料不會留下'; }
+  try { raw = localStorage.getItem(KEY); loadedRaw = raw; loadReadOk = true; } catch (e){ startupWarning = '注意：這台瀏覽器不讓網頁存資料（可能是私密瀏覽），關掉頁面後資料不會留下'; }
   const plan = planLoad(raw);
   if (plan.backup){
-    const backupKey = `${KEY}.backup.${Date.now()}`;
     const what = plan.warn === 'bad' ? '上次存的資料讀不懂' : '上次存的資料有部分格式不對，已略過或修正那些項目';
     try {
-      localStorage.setItem(backupKey, raw);
-      // 備份最多留 3 份，避免塞滿瀏覽器儲存空間（刪最舊的）
-      const keys = Object.keys(localStorage).filter(k => k.startsWith(`${KEY}.backup.`)).sort();
-      keys.slice(0, Math.max(0, keys.length - 3)).forEach(k => { try { localStorage.removeItem(k); } catch (e){} });
+      const backupKey = backupRaw(raw);
       if (plan.warn) startupWarning = `${what}；原始內容已另存在瀏覽器的「${backupKey}」`;
     } catch (e){
       writesBlocked = true;
@@ -627,7 +1596,6 @@ function loadDB(){
 }
 let DB = loadDB();
 let storageOk = (() => { if (writesBlocked) return false; try { localStorage.setItem(KEY + '.probe', '1'); localStorage.removeItem(KEY + '.probe'); return true; } catch (e){ return false; } })();
-const save = () => { storageOk = store.write(DB); if (!storageOk) note('bad', '這台瀏覽器不讓網頁存資料（可能是私密瀏覽），關掉頁面後資料不會留下'); return storageOk; };
 const note = (cls, text, id = 'w-msg') => { const m = $(id); if (!m) return; m.className = 'msg' + (cls ? ' ' + cls : ''); m.textContent = text; };
 const todayIso = () => { const d = new Date(); return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`; };
 
@@ -687,6 +1655,7 @@ function loadImage(file){
     fr.readAsDataURL(file);
   });
 }
+let discardImport = () => {};   // bindSetup 裡接上：丟掉等待確認的匯入、清掉匯入訊息
 function bindSetup(){
   [['s-front', 'arcFront', 's-front-img'], ['s-back', 'arcBack', 's-back-img']].forEach(([inp, key, thumb]) => {
     $(inp).addEventListener('change', async e => {
@@ -695,84 +1664,224 @@ function bindSetup(){
       catch (err){ note('bad', err.message, 's-msg'); }
     });
   });
+  // ---- 從備份檔匯入（v1 只有基本資料；v2 與過期橫幅下載的「這個分頁的資料」另有開過的勞報單紀錄）----
+  // 基本資料：和以前一樣，帶進下面的表單，要按「確認並鎖定」才存。紀錄：合併進目前存的（只加入還沒有的，已經有的編號保留目前的，絕不刪、不蓋），
+  // 有東西要新增時先在頁面上問使用者，確認後走同一條存檔佇列與跨分頁鎖寫入，寫入前先另存一份目前的原始內容，結果照實說
+  let impPlan = null, impOp = 0, impBusy = false;
+  const impEnable = on => { $('s-imp-ok').disabled = !on; $('s-imp-ok').textContent = on ? '確認匯入' : '匯入中…'; };
+  const hideImp = () => { impPlan = null; impOp++; impBusy = false; $('s-imp').hidden = true; impEnable(true); };
+  discardImport = () => { hideImp(); note('', '', 's-imp-msg'); };   // 設定畫面重新打開（render）時把上一次匯入的殘留收乾淨
   $('s-import').addEventListener('change', e => {
     const f = e.target.files && e.target.files[0]; if (!f) return;
     const fr = new FileReader();
     fr.onload = () => {
-      try {
-        const j = JSON.parse(fr.result);
-        const r = sanitizeProfile(j && j.profile ? j.profile : j);
-        if (!r) throw new Error();
-        fillSetup(r.p);
-        note('ok', r.dropped ? '已從備份檔帶入；檔案裡的證件影像格式不對，已略過，請重新上傳' : '已從備份檔帶入，確認無誤後按「確認並鎖定」', 's-msg');
-      } catch (err){ note('bad', '這個檔案不是勞報單的備份檔', 's-msg'); }
+      hideImp();
+      let rb;
+      try { rb = readBackup(JSON.parse(fr.result)); } catch (err){ rb = { err: 'notBackup' }; }
+      if (rb.err === 'noData'){ note('bad', '這個備份檔裡沒有基本資料，也沒有開過的勞報單紀錄，沒有東西可以帶回來', 's-imp-msg'); return; }   // 分頁狀態檔（過期橫幅下載的）若那時什麼都還沒有就會這樣
+      if (rb.err){ note('bad', '這個檔案不是勞報單的備份檔', 's-imp-msg'); return; }
+      if (rb.profile) fillSetup(rb.profile.p);
+      const pNote = rb.profile ? (rb.profile.dropped ? '已從備份檔帶入；檔案裡的證件影像格式不對，已略過，請重新上傳' : '已從備份檔帶入，確認無誤後按「確認並鎖定」') : '';
+      if (rb.history == null){   // v1／舊版：只有基本資料，和以前一樣；v2 的紀錄欄位壞了也一樣先把基本資料帶進來
+        note(rb.historyBad ? 'bad' : 'ok', pNote + (rb.historyBad ? '。備份檔裡開過的勞報單紀錄格式不對，沒有匯入紀錄' : ''), 's-imp-msg');
+        return;
+      }
+      let pl;
+      try { pl = planImport(DB.history, rb.history); } catch (err){ pl = null; }
+      if (!pl){ note('bad', pNote + '。備份檔裡開過的勞報單紀錄讀不懂，沒有匯入紀錄', 's-imp-msg'); return; }
+      if (!pl.merge.added.length){   // 沒有東西要新增：不用問、也不用寫入
+        const none = !pl.total ? '備份檔裡沒有開過的勞報單紀錄'
+          : pl.merge.over ? `開過的勞報單紀錄放不下（總數最多留 ${HISTORY_MAX} 張），沒有加進來，目前的都沒動`
+          : `開過的勞報單紀錄沒有新的要加入（${importCounts(0, pl.merge.kept)}${pl.bad || pl.dup ? `；另有 ${pl.bad + pl.dup} 筆格式不對或編號重複，已略過` : ''}）`;
+        note('ok', `${pNote ? pNote + '。' : ''}${none}`, 's-imp-msg');
+        return;
+      }
+      impPlan = { pl, hasProfile: !!rb.profile };
+      $('s-imp-t').textContent = importAsk(pl, !!rb.profile);
+      $('s-imp').hidden = false;
+      note('', pNote, 's-imp-msg');
+      $('s-imp-t').focus();
     };
     fr.readAsText(f);
   });
-  $('s-lock').addEventListener('click', () => {
+  $('s-imp-no').addEventListener('click', () => {
+    hideImp(); note('ok', '好，沒有匯入開過的勞報單紀錄，目前存的資料沒動。', 's-imp-msg'); $('s-import').focus();
+  });
+  $('s-imp-ok').addEventListener('click', async () => {
+    const plan = impPlan; if (!plan || impBusy) return;
+    if (!ensureFresh()) return;
+    const op = ++impOp; impBusy = true; impEnable(false);
+    note('', store.canLock() ? '匯入中…如果另一個分頁正在存檔，要等它存完。等的時候可以按「不匯入紀錄」放棄，目前存的資料不會被動到。' : '匯入中…', 's-imp-msg');
+    const info = { added: 0, kept: 0, over: 0, bad: plan.pl.bad, dup: plan.pl.dup, backupKey: '', backupFailed: false, wrote: false };
+    let r;
+    try {
+      r = await store.atomic({
+        valid: () => op === impOp && impPlan === plan,
+        // 在鎖裡才組內容：對照「這一刻」的紀錄重新合併（輪到它之前可能有別的存檔），有新增才另存原始內容、才寫；另存不成就不寫（丟例外＝這次沒有寫入）
+        build: () => {
+          if (writesBlocked) throw new Error('blocked');
+          const m = mergeHistory(DB.history, plan.pl.records);
+          Object.assign(info, { added: m.added.length, kept: m.kept, over: m.over, backupKey: '' });
+          if (m.added.length){
+            let raw = null;
+            try { raw = localStorage.getItem(KEY); } catch (e){ info.backupFailed = true; throw e; }
+            if (raw !== null) { try { info.backupKey = backupRaw(raw); } catch (e){ info.backupFailed = true; throw e; } }
+          }
+          return { ...DB, history: m.history };
+        },
+        adopt: c => { DB.history = c.history; DB.rev = c.rev; if (c.tok) DB.tok = c.tok; info.wrote = true; },
+      });
+    } finally { if (op === impOp) { impBusy = false; } }
+    // 等的時候按了「不匯入紀錄」或換了檔案：沒有寫，畫面已經是新的樣子，不要再動它；但如果在按下的那一刻已經寫進去了，就照實報告，不能說「沒有匯入」
+    if (op !== impOp && !info.wrote) return;
+    if (!r.ok){
+      impEnable(true);
+      note('bad', r.err === 'stale' ? '這個分頁的資料已過期，所以沒有匯入紀錄，目前存的資料沒動。請看上方的橫幅，選一個處理方式後再匯入。'
+        : r.err === 'lock' ? `沒有匯入紀錄，目前存的資料沒動。${r.why === 'timeout' ? '另一個分頁可能正在存檔。' : '暫時無法存檔。'}備份檔的內容還在這一頁，請再按一次「確認匯入」。`
+        : info.backupFailed ? '沒能先另存一份目前的資料，所以沒有匯入紀錄，目前存的資料沒動。備份檔的內容還在這一頁，可以再按一次「確認匯入」。'
+        : '存不進這台瀏覽器（可能是私密瀏覽或儲存空間不足），所以沒有匯入紀錄，目前存的資料沒動。', 's-imp-msg');
+      $('s-imp-ok').focus();
+      return;
+    }
+    hideImp();
+    storageOk = true;
+    if (info.added){   // 真的寫進去了：保險箱的紀錄馬上更新（不等 60 秒節流）
+      lastMarkAt = Date.now(); markToolbox({ hasData: true, updatedAt: new Date().toISOString() });
+    }
+    renderHistory();
+    note('ok', importDone(info, plan.hasProfile), 's-imp-msg');
+  });
+  // 每一次按「確認並鎖定」都帶一個操作編號（setupOp）：存檔要等跨分頁鎖，等的時候按「取消，維持原資料」就把編號作廢，
+  // 鎖核准時存檔會先檢查自己還有效，作廢了就什麼都不做（不會偷偷換掉基本資料）
+  const LOCK_LABEL = '確認並鎖定';
+  let setupOp = 0, setupBusy = 0;
+  const endSaving = () => { setupBusy = 0; $('s-lock').disabled = false; $('s-lock').textContent = LOCK_LABEL; };
+  $('s-lock').addEventListener('click', async () => {
+    if (setupBusy && setupBusy === setupOp) return;   // 正在存、而且沒被取消：再按一次不會重複存
+    if (impPlan){ note('bad', '備份檔裡開過的勞報單紀錄還在等你決定：請先按「確認匯入」，或按「不匯入紀錄」，再按「確認並鎖定」。', 's-msg'); $('s-imp-t').focus(); return; }
+    if (!ensureFresh()) return;   // 資料過期（別的分頁更新過）就不能鎖定，免得用舊資料蓋掉新的
     const p = readSetup(), err = checkProfile(p);
     if (err){ note('bad', err, 's-msg'); return; }
     const clean = sanitizeProfile(p);   // 跟載入時同一套整理，存進去的就是標準形式
     if (!clean){ note('bad', '請填姓名', 's-msg'); return; }
     const prof = clean.p;
     prof.lockedAt = todayIso();
-    const prev = DB.profile;
-    DB.profile = prof;
-    if (!store.write(DB)){
-      DB.profile = prev;
-      note('bad', '存不進這台瀏覽器（可能是私密瀏覽或儲存空間不足），所以還沒鎖定。請改用一般視窗開這個檔案，再按一次。', 's-msg');
+    const op = ++setupOp; setupBusy = op;
+    $('s-lock').disabled = true; $('s-lock').textContent = '儲存中…';
+    note('', store.canLock() ? '儲存中…如果另一個分頁正在存檔，要等它存完。等的時候可以按「取消，維持原資料」放棄這次修改，原本的資料不會被換掉。' : '儲存中…', 's-msg');
+    let r;
+    try {
+      // 候選資料在鎖裡才組、寫成功才收進目前的資料：沒存成功時，目前的基本資料原封不動
+      r = await store.atomic({ valid: () => op === setupOp, build: () => ({ ...DB, profile: prof }), adopt: c => { DB.profile = prof; DB.rev = c.rev; if (c.tok) DB.tok = c.tok; } });
+    } finally { if (op === setupOp) endSaving(); }
+    if (op !== setupOp) return;   // 等的時候取消了：存檔沒有做，畫面已經回到取消後的樣子，不要再動它
+    if (!r.ok){
+      note('bad', r.err === 'stale' ? '這個分頁的資料已過期，所以沒有鎖定，原本的資料沒動。請看上方的橫幅，選一個處理方式後再填。'
+        : r.err === 'lock' ? `還沒鎖定，原本的資料沒動。${lockText(r.why)}`
+        : '存不進這台瀏覽器（可能是私密瀏覽或儲存空間不足），所以還沒鎖定。請改用一般視窗開這個檔案，再按一次。', 's-msg');
+      $('s-lock').focus();   // 按鈕等鎖時停用過，焦點會掉到頁面最上面：放回按鈕，方便再按一次
       return;
     }
     storageOk = true;
+    editing = false;   // 新資料已存好，才離開修改模式
+    view = 'work';
     render();
+    $('w-title').focus();   // 表單收起來了：鍵盤焦點移到工作區標題，不要掉到頁面最上面
+  });
+  $('s-cancel').addEventListener('click', () => {   // 取消：舊資料原封不動；還在排隊等鎖的存檔一併作廢（鎖核准了也不會寫）
+    setupOp++; endSaving(); hideImp(); note('', '', 's-msg');
+    editing = false; render();
+    $('p-sum').focus();     // 回到當初打開表單的「資料有誤，需要重設（修改）」
   });
 }
 
 /* ---- 日常使用 ---- */
-let previewTimer = 0;
 function currentReport(){
   const tpl = (document.querySelector('input[name="w-tpl"]:checked') || {}).value || 'sanshang';
   return { tpl, start: $('w-start').value, end: $('w-end').value, fill: $('w-fill').value, project: $('w-project').value.trim(), amount: parseAmount($('w-amount').value) };
 }
+// 草稿裡日期是空的，畫面先用今天補上（只在記憶體裡）：這種欄位存草稿時仍記空白，使用者動過它才記日期。
+// 不然每開一個分頁都會把「今天」寫進草稿，讓另一個分頁變成過期
+const dateDefaults = {};
 function setReport(R){
   const el = document.querySelector(`input[name="w-tpl"][value="${R.tpl === 'chengwei' ? 'chengwei' : 'sanshang'}"]`);
   if (el) el.checked = true;
-  $('w-start').value = R.start || todayIso(); $('w-end').value = R.end || ''; $('w-fill').value = R.fill || todayIso();
+  const putDate = (id, v) => { const e = $(id); if (v){ e.value = v; delete dateDefaults[id]; } else { e.value = todayIso(); dateDefaults[id] = e.value; } };
+  putDate('w-start', R.start); $('w-end').value = R.end || ''; putDate('w-fill', R.fill);
   $('w-project').value = R.project || ''; $('w-amount').value = typeof R.amountText === 'string' && R.amountText ? R.amountText : (R.amount > 0 ? money(R.amount) : '');
 }
 function renderCalc(R){
   const box = $('w-calc'), P = DB.profile;
   $('w-fill-l').hidden = R.tpl !== 'chengwei';
   if (R.tpl !== 'chengwei'){
-    box.innerHTML = `<dt>應領金額</dt><dd>${R.amount > 0 ? money(R.amount) : '—'}</dd><p class="note">代扣款與實領金額照你給的範本留白，由山上影像填寫。</p>`;
+    const b = bookingOf(R);   // 山上影像沒有填表日期欄位：總覽看工作期間的第一天
+    box.innerHTML = `<dt>應領金額</dt><dd>${R.amount > 0 ? money(R.amount) : '—'}</dd><p class="note">代扣款與實領金額照你給的範本留白，由山上影像填寫。</p>`
+      + `<p class="note">收入與報稅總覽怎麼記這張：山上影像收據沒有填表日期欄位，年度與月份看「工作期間」的第一天${b ? `（${b.year} 年 ${b.month} 月）` : ''}${b && roc(R.end) && R.end > R.start && R.end.slice(0, 7) !== R.start.slice(0, 7) ? '。這張工作期間跨月，記在開始的那個月' : ''}。</p>`;
     return;
   }
-  if (!(R.amount > 0)){ box.innerHTML = '<p class="note">填好金額後，這裡會算出代扣所得稅、補充保費和實領金額。</p>'; return; }
-  const C = calcBlank(R.amount, P.tpl.chengwei);
+  const year = ruleYear(R), T = ruleFor(year);
+  // 這一年沒有查證過的規則：先講清楚，稅額與補充保費都是待確認（不印 0）
+  const warn = T ? '' : `<p class="note warn">${esc(noRuleNote(year))}</p>`;
+  if (!(R.amount > 0)){ box.innerHTML = warn || `<p class="note">填好金額後，這裡會算出代扣所得稅、補充保費和實領金額。規則依填表日期的年度（${year} 年）套用。</p>`; return; }
+  const C = calcBlank(R.amount, P.tpl.chengwei, year);
   const v = n => n == null ? '待付款方確認' : money(n);
-  box.innerHTML = `<dt>領款金額</dt><dd>${money(C.amount)}</dd><dt>代扣所得稅</dt><dd>${v(C.tax)}</dd>`
+  box.innerHTML = warn
+    + `<dt>領款金額</dt><dd>${money(C.amount)}</dd><dt>代扣所得稅</dt><dd>${v(C.tax)}</dd>`
     + `<dt>補充保費</dt><dd>${v(C.nhi)}</dd><div class="net" style="display:contents"><dt>實領金額</dt><dd>${v(C.net)}</dd></div>`
-    + `<p class="note">${esc(C.taxNote)}；${esc(C.nhiNote)}。規則照表上印的 115 年度說明。</p>`;
+    + (T ? `<p class="note">${esc(C.taxNote)}；${esc(C.nhiNote)}。規則照 ${T.rocYear} 年度（${year} 年）公告，依填表日期的年度套用。</p>` : '');
 }
+let rangeText = '';   // 目前顯示在訊息區的「年份超出範圍」提示（改好就自動收掉，不會蓋掉別的訊息）
 function refresh(immediate){
   const R = currentReport();
   renderCalc(R);
-  DB.last = { tpl: R.tpl, start: R.start, end: R.end, fill: R.fill, project: R.project, amount: R.amount > 0 ? R.amount : null, amountText: $('w-amount').value.slice(0, 30) };
+  const bad = dateRangeIssue(R);   // 年份不在支援範圍（例如打到一半的 0026、或 1900）：輸入當下就講清楚，下載也會擋
+  if (bad){ note('bad', bad); rangeText = bad; }
+  else if (rangeText){ if ($('w-msg').textContent === rangeText) note('', ''); rangeText = ''; }
+  renderSheetBar(R);
+  const draftDate = id => (dateDefaults[id] && $(id).value === dateDefaults[id] ? '' : $(id).value);   // 還是預設的「今天」就不存
+  const okDate = v => (roc(v) ? v : '');   // 草稿只存有效日期：輸入到一半或打錯年份的值存成空白，不然下次載入會被當成壞資料
+  DB.last = { tpl: R.tpl, start: okDate(draftDate('w-start')), end: okDate(R.end), fill: okDate(draftDate('w-fill')), project: R.project, amount: R.amount > 0 ? R.amount : null, amountText: $('w-amount').value.slice(0, 30) };
   clearTimeout(previewTimer);
-  previewTimer = setTimeout(() => { store.write(DB); $('pv').srcdoc = sheetDoc(R.tpl, DB.profile, R); }, immediate ? 0 : 220);
+  previewTimer = setTimeout(async () => {
+    $('pv').srcdoc = sheetDoc(R.tpl, DB.profile, R);
+    const r = await store.atomic();   // 草稿存檔（要等跨分頁鎖）
+    if (r.ok && pendings.length){ const f = await flushPendings(); if (f.ok && (f.applied.length || f.gone.length)) settleUnsaved(f); }   // 儲存恢復正常了：順便把之前沒存進去的也存好
+  }, immediate ? 0 : 220);
+}
+// 這張單現在對應「開過的勞報單」的哪一筆（按「載入」或剛下載的）：下載會更新它，還是另外新增，畫面上先講清楚
+// binding.id＝對應哪一筆；binding.forceNew＝使用者按了「改存成新的一張」：下一次下載一律新增（下載存進紀錄後才清掉）。
+// 每次改動綁定都會讓操作編號 +1，下載完成只在編號沒變時才寫回綁定（見 createBinding）
+const binding = createBinding();
+function renderSheetBar(R){
+  const box = $('w-sheet'), h = binding.id ? DB.history.find(x => x.id === binding.id) : null;
+  if (!h){ box.hidden = true; return; }
+  const p = sheetPlan(DB.history, binding.id, R);
+  box.hidden = false;
+  if (p.why === 'bound'){
+    $('w-sheet-t').textContent = `這張對應「開過的勞報單」裡的「${h.project}」。只改填表日期或結束日期再下載，會更新那一張，不會多出一筆；工作日期、專案或金額一改，就視為另一筆款項，另外新增一張。`;
+    $('w-sheet-new').hidden = false;
+  } else {
+    $('w-sheet-t').textContent = `工作日期、專案或金額和「開過的勞報單」裡的「${h.project}」不一樣，視為另一筆款項：下載會另外新增一張，那一張不動。`;
+    $('w-sheet-new').hidden = true;
+  }
 }
 function fitPreview(){
   const wrap = $('pv-wrap'), w = wrap.clientWidth || 794, k = Math.min(1, w / 794);
   $('pv').style.transform = `scale(${k})`;
   wrap.style.height = Math.ceil(1123 * k) + 'px';
 }
+const HIST_SHOW = 20;   // 清單一次最多顯示幾張（紀錄可以留到 500 張；總覽看的是全部）
+let histAll = false;
 function renderHistory(){
-  const ul = $('w-hist');
-  if (!DB.history.length){ ul.innerHTML = '<li class="empty" style="border:0;padding:0;display:block">還沒有紀錄。下載第一張 PDF 後會出現在這裡。</li>'; return; }
-  ul.innerHTML = DB.history.map((h, i) => {
+  const ul = $('w-hist'), more = $('w-hist-more');
+  if (!DB.history.length){ ul.innerHTML = '<li class="empty" style="border:0;padding:0;display:block">還沒有紀錄。下載第一張 PDF 後會出現在這裡。</li>'; more.hidden = true; return; }
+  const shown = histAll ? DB.history.length : Math.min(HIST_SHOW, DB.history.length);
+  more.hidden = DB.history.length <= HIST_SHOW;
+  more.textContent = histAll ? '只顯示最近 20 張' : `顯示全部 ${DB.history.length} 張`;
+  ul.innerHTML = DB.history.slice(0, shown).map((h, i) => {
     const r = roc(h.start), when = r ? `${r.y}/${r.m}/${r.d}` : '';
-    return `<li><div><b>${esc(h.project)}</b><span>${esc(TPL[h.tpl] ? TPL[h.tpl].name : '')}・${when}・NT$ ${money(h.amount)}</span></div>`
-      + `<button data-load="${i}">載入</button><button data-del="${i}" aria-label="刪除這筆紀錄">刪除</button></li>`;
+    return `<li><div><b>${esc(h.project)}</b><span class="meta">${esc(TPL[h.tpl] ? TPL[h.tpl].name : '')}・<span class="nw">${when}</span>・<span class="nw">NT$ ${money(h.amount)}</span></span></div>`
+      + `<button data-load="${i}"${h.id ? ` data-id="${esc(h.id)}"` : ''}>載入</button><button data-del="${i}"${h.id ? ` data-id="${esc(h.id)}"` : ''} aria-label="刪除這筆紀錄">刪除</button></li>`;
   }).join('');
 }
 function renderProfile(){
@@ -788,34 +1897,224 @@ function renderProfile(){
   $('p-facts').innerHTML = rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join('');
   $('p-seal').textContent = `已鎖定 ${p.lockedAt || ''}`.trim();
 }
+function renderBackupStatus(){
+  const r = toolboxRecord();
+  $('p-backup').textContent = backupLabel(r && r.lastBackupAt, new Date());
+}
 function bindWork(){
-  ['w-start', 'w-end', 'w-fill', 'w-project', 'w-amount'].forEach(id => $(id).addEventListener('input', () => refresh()));
+  ['w-start', 'w-end', 'w-fill', 'w-project', 'w-amount'].forEach(id => $(id).addEventListener('input', () => { delete dateDefaults[id]; refresh(); }));   // 動過的日期欄位就是使用者的選擇，之後照實存
   document.querySelectorAll('input[name="w-tpl"]').forEach(r => r.addEventListener('change', () => refresh(true)));
   $('w-amount').addEventListener('blur', () => { const n = parseAmount($('w-amount').value); if (n > 0) $('w-amount').value = money(n); });
   $('w-pdf').addEventListener('click', exportPdf);
-  $('w-hist').addEventListener('click', e => {
+  $('w-hist').addEventListener('click', async e => {
     const b = e.target.closest('button'); if (!b) return;
-    if (b.dataset.load != null){ setReport(DB.history[+b.dataset.load]); refresh(true); note('', '已載入，改好日期或金額就可以下載'); }
-    if (b.dataset.del != null){ DB.history.splice(+b.dataset.del, 1); save(); renderHistory(); }
+    // 按鈕對應哪一筆：用固定編號找（清單重畫、存檔排隊的空檔裡位置可能已經變了；那一筆已經不在就什麼都不做）
+    const rowOf = () => (b.dataset.id ? DB.history.findIndex(h => h.id === b.dataset.id) : -1);
+    if (b.dataset.load != null){
+      const i = rowOf(); const h = DB.history[i]; if (!h) return;   // 每一筆紀錄都有固定編號（載入資料時就補好了）
+      binding.load(h.id);
+      setReport(h); refresh(true); note('', '已載入，改好日期或金額就可以下載');
+    }
+    if (b.dataset.del != null){
+      if (!ensureFresh()) return;
+      const target = DB.history[rowOf()]; if (!target) return;
+      b.disabled = true;
+      // 先在候選資料裡刪、寫成功才收進目前的資料：存不進去時，這筆紀錄還在、清單和儲存的內容一致（走同一條存檔佇列，見 lr-core 的 createSaver.remove）。
+      // 刪成功的同一刻（和其他排隊的存檔不會交錯）把「要更新這一筆、還沒存進去」的待存項目一起取消（結果記 cancelled），
+      // 連「PDF 還在產生、之後才要存」的下載也一併作廢，不然重試、自動補存或下載完成時會把已刪的款項變回來
+      const r = await saver.remove(target), dropped = r.dropped || [];
+      if (!r.ok){
+        b.disabled = false; b.focus();
+        note('bad', r.err === 'stale' ? '這個分頁的資料已過期，所以沒有刪掉這筆紀錄。請看上方的橫幅，選一個處理方式。'
+          : r.err === 'lock' ? `沒有刪掉這筆紀錄（紀錄還在）。${lockText(r.why)}`
+          : '這台瀏覽器不讓網頁存資料（可能是私密瀏覽或儲存空間不足），所以沒有刪掉這筆紀錄。');
+        return;
+      }
+      storageOk = true;
+      binding.drop(target.id);
+      renderHistory(); renderSheetBar(currentReport());
+      if (dropped.length){   // 話要說清楚：這筆刪了，它還沒存進去的下載更新也取消了
+        if (!pendings.length) pendingErr = '';
+        note('ok', `已刪除這筆紀錄。${dropped.map(p => `「${p.name}」`).join('、')}這次下載原本要更新它、還沒存進紀錄，現在一起取消，不會再存回來（下載的檔案還在你的下載資料夾）。`);
+        if (pendings.length) showPendingWarning(); else { $('w-retry').hidden = true; renderPendingNote(); }
+      }
+    }
   });
+  $('w-sheet-new').addEventListener('click', () => {   // 這張不要更新那一筆，下載時另外新增（明確旗標：連六欄一模一樣的也不去重）
+    binding.startNew(); renderSheetBar(currentReport()); note('', '好，下載後會新增一張，原本那張不動');
+    $('w-pdf').focus();   // 按鈕收起來了：焦點移到下載按鈕
+  });
+  $('w-retry').addEventListener('click', async () => {
+    const btn = $('w-retry');
+    if (!pendings.length){ btn.hidden = true; return; }
+    btn.disabled = true;   // 存的時候（要等跨分頁鎖）不能再按，免得重複存
+    let f;
+    try { f = await flushPendings(); } finally { btn.disabled = false; }
+    if (f.ok && !pendings.length){ storageOk = true; settleUnsaved(f); }
+    else if (pendings.length) showPendingWarning(true);
+    if (btn.hidden) $('w-pdf').focus();
+  });
+  $('w-hist-more').addEventListener('click', () => { histAll = !histAll; renderHistory(); });
   $('p-confirm').addEventListener('input', () => { $('p-reset').disabled = $('p-confirm').value.trim() !== '重設'; });
   $('p-reset').addEventListener('click', () => {
-    const old = DB.profile; DB.profile = null; save(); $('p-confirm').value = ''; $('p-reset').disabled = true;
-    render(old);
+    // 不再清掉舊資料：打開基本資料表單（帶入現有資料與證件影本），舊資料留在瀏覽器裡，按「確認並鎖定」才換掉
+    if (!ensureFresh() || !DB.profile) return;
+    $('p-confirm').value = ''; $('p-reset').disabled = true; $('p-reset').closest('details').open = false;
+    editing = true;
+    render();
+    $('s-name').focus();   // 按下去的按鈕收起來了：鍵盤焦點移到表單第一個欄位
   });
-  $('p-export').addEventListener('click', () => {
-    const blob = new Blob([JSON.stringify({ kind: 'labor-report-backup', v: 1, profile: DB.profile }, null, 1)], { type: 'application/json' });
-    saveBlob(blob, pdfSafeName(['勞報單基本資料備份', DB.profile.name], '勞報單基本資料備份', '.json'), 'p-msg');
+  $('p-export').addEventListener('click', async () => {
+    if (!ensureFresh() || !DB.profile) return;
+    // v2：基本資料＋開過的勞報單紀錄（只放已經存進紀錄的 DB.history，還沒存進去的下載不在裡面）
+    const blob = new Blob([JSON.stringify(backupExport(DB), null, 1)], { type: 'application/json' });
+    const ok = await saveBlob(blob, pdfSafeName(['勞報單備份', DB.profile.name], '勞報單備份', '.json'), 'p-msg');
+    if (ok !== false){ markToolbox({ hasData: true, lastBackupAt: new Date().toISOString() }); renderBackupStatus(); }   // 能備份就是有資料（有 profile）
   });
+  // 收入與報稅總覽
+  $('nav-work').addEventListener('click', () => showView('work', true));
+  $('nav-income').addEventListener('click', () => showView('income', true));
+  $('w-open-income').addEventListener('click', () => showView('income', true));
+  $('i-year').addEventListener('change', () => { incomeYear = $('i-year').value; renderIncome(); });
+  $('i-csv').addEventListener('click', exportIncomeCsv);
   new ResizeObserver(fitPreview).observe($('pv-wrap'));
 }
-function render(prefill){
-  const locked = !!DB.profile;
-  $('setup').hidden = locked; $('work').hidden = !locked;
-  if (!locked){ const seed = window.LR_SEED ? sanitizeProfile(window.LR_SEED) : null; fillSetup(prefill || (seed && seed.p) || null); if (window.LR_SEED && !prefill) note('', '已先帶入你的資料，請檢查一遍（聯絡電話可補上），再按「確認並鎖定」', 's-msg'); return; }
-  renderProfile(); renderHistory();
+// 切換「開勞報單」／「收入與報稅總覽」。進總覽前先確認這個分頁的資料是最新的（別的分頁可能剛下載過新的單）
+function showView(v, moveFocus){
+  if (!DB.profile || editing) return;
+  if (v === 'income' && !ensureFresh()) return;
+  view = v;
+  $('work').hidden = v !== 'work'; $('income').hidden = v !== 'income';
+  [['nav-work', 'work'], ['nav-income', 'income']].forEach(([id, name]) => { if (v === name) $(id).setAttribute('aria-current', 'page'); else $(id).removeAttribute('aria-current'); });
+  if (v === 'income'){ note('', '', 'i-msg'); renderIncome(); }
+  else fitPreview();
+  if (moveFocus) $(v === 'income' ? 'i-title' : 'w-title').focus();
+}
+function render(){
+  const showSetup = !DB.profile || editing;
+  $('setup').hidden = !showSetup; $('nav').hidden = showSetup;
+  $('work').hidden = showSetup || view !== 'work'; $('income').hidden = showSetup || view !== 'income';
+  if (!showSetup){ [['nav-work', 'work'], ['nav-income', 'income']].forEach(([id, name]) => { if (view === name) $(id).setAttribute('aria-current', 'page'); else $(id).removeAttribute('aria-current'); }); }
+  $('s-cancel').hidden = !(editing && DB.profile);
+  $('s-title').textContent = editing ? '修改基本資料' : '第一次使用：確認基本資料';
+  $('s-lede').textContent = editing ? '已帶入現有的資料（含證件影本），改你要改的欄位就好。舊資料還在，要等你按「確認並鎖定」才會換成新的；按「取消，維持原資料」或直接關掉頁面，舊資料都不會變。'
+    : '這些資料按下「確認並鎖定」後就固定下來，之後每張勞報單只需要改日期、專案名稱、金額。';
+  if (showSetup){
+    discardImport();
+    if (editing){ fillSetup(DB.profile); note('', '', 's-msg'); return; }
+    const seed = window.LR_SEED ? sanitizeProfile(window.LR_SEED) : null;
+    fillSetup((seed && seed.p) || null);
+    if (window.LR_SEED) note('', '已先帶入你的資料，請檢查一遍（聯絡電話可補上），再按「確認並鎖定」', 's-msg');
+    return;
+  }
+  renderProfile(); renderHistory(); renderBackupStatus();
+  binding.reset();   // 表單從草稿重建了：不再對應任何一筆紀錄
   setReport(DB.last || { tpl: 'sanshang' });
   fitPreview(); refresh(true);
+  if (view === 'income') renderIncome();
+}
+
+/* ---- 收入與報稅總覽（唯讀：只讀 DB.history 與基本資料，沒有任何寫入）---- */
+let incomeYear = '';   // 年度下拉選單目前選的值：'2026'…｜'unknown'（年度待確認）
+// 儲存格內容：數字，備註（推算／待確認幾張）另起一行小字，數字不會被備註擠到換行
+const calcCell = (a, k) => {
+  if (!a.count) return '—';
+  if (a[k + 'Unk'] >= a.count) return '待確認';
+  const notes = [];
+  if (a[k + 'Est']) notes.push(a.count === 1 ? '（推算）' : `（含 ${a[k + 'Est']} 張推算）`);
+  if (a[k + 'Unk']) notes.push(`（另 ${a[k + 'Unk']} 張待確認）`);
+  return `<span class="cv">${money(a[k])}${notes.map(n => `<small>${n}</small>`).join('')}</span>`;
+};
+const tbdClass = (a, k) => (a.count && a[k + 'Unk'] >= a.count ? ' class="tbd"' : '');
+const aggCells = a => `<td data-label="張數">${a.count}</td><td data-label="應付金額">${money(a.amount)}</td>`
+  + `<td data-label="扣繳稅額"${tbdClass(a, 'tax')}>${calcCell(a, 'tax')}</td><td data-label="補充保費"${tbdClass(a, 'premium')}>${calcCell(a, 'premium')}</td><td data-label="實領"${tbdClass(a, 'net')}>${calcCell(a, 'net')}</td>`;
+const tableHtml = (caption, first, rows) => `<table class="tbl" role="table"><caption>${esc(caption)}</caption><thead role="rowgroup"><tr role="row">`
+  + [first, '張數', '應付金額', '扣繳稅額', '補充保費', '實領'].map(h => `<th scope="col" role="columnheader">${h}</th>`).join('')
+  + `</tr></thead><tbody role="rowgroup">${rows}</tbody></table>`;
+const tileHtml = (k, v, sub, tbd) => `<div class="tile"><div class="k">${k}</div><div class="v${tbd ? ' tbd' : ''}">${v}</div><div class="s">${sub || ''}</div></div>`;
+function calcTile(label, a, k){
+  const unk = a[k + 'Unk'], est = a[k + 'Est'];
+  const sub = [unk && unk < a.count ? `另 ${unk} 張待確認，沒有算進來` : '', est ? `含 ${est} 張（推算）` : ''].filter(Boolean).join('；');
+  return a[k + 'Unk'] >= a.count ? tileHtml(label, '待確認', sub, true) : tileHtml(label, money(a[k]), sub);
+}
+function rocDate(r){ const o = roc(r.date); return o ? `${o.y}/${pad2(o.m)}/${pad2(o.d)}` : '未填'; }
+function detailRows(rows){
+  return rows.map(r => {
+    const a = aggAdd(newAgg(), r), kind = [r.payer, catLabel(r), statusLabel(r)].filter(Boolean).join('・');
+    return `<tr role="row"><td data-label="計入日期" role="cell">${rocDate(r)}${r.tpl === 'sanshang' && r.dateBasis ? `<small>${esc(r.dateBasis)}</small>` : ''}</td>`
+      + `<td data-label="專案" role="cell" class="l">${esc(r.project)}<small>${esc(kind)}</small></td>`
+      + `<td data-label="應付金額" role="cell">${money(r.amount)}</td>`
+      + `<td data-label="扣繳稅額" role="cell"${tbdClass(a, 'tax')}>${calcCell(a, 'tax')}</td><td data-label="補充保費" role="cell"${tbdClass(a, 'premium')}>${calcCell(a, 'premium')}</td><td data-label="實領" role="cell"${tbdClass(a, 'net')}>${calcCell(a, 'net')}</td>`
+      + `<td data-label="計算依據" role="cell" class="l tbd">${esc(BASIS_NAMES[r.basis])}${r.why ? `<small>${esc(r.why)}</small>` : ''}</td></tr>`;
+  }).join('');
+}
+const detailTable = (caption, rows) => `<table class="tbl" role="table"><caption>${esc(caption)}</caption><thead role="rowgroup"><tr role="row">`
+  + ['計入日期', '專案', '應付金額', '扣繳稅額', '補充保費', '實領', '計算依據'].map(h => `<th scope="col" role="columnheader"${h === '專案' || h === '計算依據' ? ' class="l"' : ''}>${h}</th>`).join('')
+  + `</tr></thead><tbody role="rowgroup">${detailRows(rows)}</tbody></table>`;
+// 總覽上方的提醒：有已下載、但還沒存進紀錄的（pendings）——它們不在紀錄裡，所以沒有算進總覽和 CSV；存進去（再試一次成功）之後這行就消失
+function renderPendingNote(){
+  const el = $('i-pending'); if (!el) return;
+  const n = pendings.length;
+  el.hidden = !n;
+  el.textContent = !n ? '' : (stale || pendingErr === 'stale')
+    ? `有 ${n} 張已下載但還沒存進紀錄，沒有算在這裡。這個分頁的資料已過期，請先看上方的橫幅。`
+    : `有 ${n} 張已下載但還沒存進紀錄，沒有算在這裡。回到「開勞報單」按「再試一次存進紀錄」。`;
+}
+function renderIncome(){
+  $('i-basis').textContent = bookingRuleText();   // 每種格式用哪個日期當年度與月份：說明文字和程式用同一份規則表
+  renderPendingNote();
+  const S = incomeSummary(DB.history, DB.profile), body = $('i-body'), sel = $('i-year');
+  const opts = S.years.map(y => [String(y.year), `${y.year} 年（民國 ${y.rocYear} 年）・${y.total.count} 張`]);
+  if (S.unknown.rows.length) opts.push(['unknown', `年度待確認・${S.unknown.rows.length} 張`]);
+  sel.innerHTML = opts.map(([v, t]) => `<option value="${v}">${esc(t)}</option>`).join('');
+  if (!opts.some(o => o[0] === incomeYear)){   // 預設看今年；今年沒有單就看最新的一年
+    const cur = String(new Date().getFullYear());
+    incomeYear = opts.some(o => o[0] === cur) ? cur : (opts.length ? opts[0][0] : '');
+  }
+  sel.value = incomeYear; sel.disabled = !opts.length;
+  const Y = S.years.find(y => String(y.year) === incomeYear) || null;
+  $('i-csv').disabled = !Y;
+  if (!opts.length){
+    body.innerHTML = '<div class="card"><p class="empty">還沒有紀錄。每下載一張勞報單 PDF，就會記進來，這裡按年度彙整。</p></div>';
+    return;
+  }
+  const unkLine = S.unknown.rows.length && Y ? `<p class="i-hint warn">另有 ${S.unknown.rows.length} 張沒有填表日期，年度待確認，沒有算進任何一年的合計（年度選單選「年度待確認」可以看）。</p>` : '';
+  if (!Y){   // 年度待確認：列出來，金額待確認，不計入任何年度
+    const rows = S.unknown.rows;
+    body.innerHTML = `<div class="card"><h3 style="margin-top:0">年度待確認的 ${rows.length} 張</h3>`
+      + `<p class="i-hint warn">這些單據沒有有效的填表日期，不知道屬於哪一年，稅額、補充保費、實領都是待確認，也沒有算進任何一年的合計。</p>`
+      + `<p class="i-hint">要補救：到「開勞報單」的「開過的勞報單」按「載入」，補上填表日期後重新下載，就會取代這一筆。這一組不能下載 CSV。</p></div>`
+      + `<div class="card">${detailTable('年度待確認的單據', rows)}</div>`;
+    return;
+  }
+  const A = Y.total, est = Y.rows.filter(r => r.estimated).length, sa = Y.rows.filter(r => r.tpl === 'sanshang').length;
+  const badSnap = Y.rows.filter(r => r.basis === 'unverified').length, noRuleSnap = Y.rows.filter(r => r.basis === 'norule').length;
+  const maxAmt = Math.max(...Y.months.map(m => m.agg.amount));
+  const hints = [
+    Y.hasRule ? '' : `<p class="i-hint warn">${esc(noRuleNote(Y.year))}。這一年的稅額、補充保費、實領目前都是待確認。</p>`,
+    badSnap ? `<p class="i-hint warn">有 ${badSnap} 張的計算快照年度和單上日期對不上，這幾張的稅額、補充保費、實領是待確認，沒有算進合計。要補救：到「開勞報單」的「開過的勞報單」按「載入」，確認日期後重新下載，就會用現在的規則重算並取代那一筆。</p>` : '',
+    noRuleSnap ? `<p class="i-hint warn">有 ${noRuleSnap} 張的計算快照異常：這一年尚未設定扣繳規則，紀錄裡卻帶著稅額、補充保費或實領金額（正常操作不會這樣），所以這幾張的金額一律不採用、是待確認，沒有算進合計。</p>` : '',
+    est ? `<p class="i-hint">有 ${est} 張是這個功能上線前下載的舊紀錄，沒有當時的計算結果，稅額用現在的基本資料重新推算，標示「（推算）」。</p>` : '',
+    sa ? `<p class="i-hint">山上影像收據不計算代扣款，那 ${sa} 張的稅額、補充保費、實領是待確認，要等山上影像開立的扣繳憑單。</p>` : '',
+    unkLine,
+  ].join('');
+  const monthRows = Y.months.map(m => `<tr role="row"><td data-label="月份" role="cell">${m.month ? m.month + ' 月' : '月份待確認'}${m.month ? `<span class="bar" aria-hidden="true"><i style="width:${maxAmt ? Math.max(2, Math.round(m.agg.amount / maxAmt * 100)) : 0}%"></i></span>` : ''}</td>${aggCells(m.agg).replace(/<td /g, '<td role="cell" ')}</tr>`).join('');
+  const payerRows = Y.payers.map(p => `<tr role="row"><td data-label="付款方" role="cell">${esc(p.name)}</td>${aggCells(p.agg).replace(/<td /g, '<td role="cell" ')}</tr>`).join('');
+  const projRows = Y.projects.map(p => `<tr role="row"><td data-label="專案" role="cell">${esc(p.project)}</td>${aggCells(p.agg).replace(/<td /g, '<td role="cell" ')}</tr>`).join('');
+  body.innerHTML = `<div class="card"><h3 style="margin-top:0">${Y.year} 年（民國 ${Y.rocYear} 年）合計</h3>`
+    + `<div class="tiles">${tileHtml('張數', `${A.count} 張`)}${tileHtml('應付金額（元）', money(A.amount))}`
+    + `${calcTile('扣繳稅額（元）', A, 'tax')}${calcTile('二代健保補充保費（元）', A, 'premium')}${calcTile('實領（元）', A, 'net')}</div>${hints}</div>`
+    + `<div class="cols"><div class="card">${tableHtml(`${Y.year} 年按月份`, '月份', monthRows)}</div><div class="card">${tableHtml(`${Y.year} 年按付款方（格式）`, '付款方', payerRows)}</div></div>`
+    + `<div class="card">${tableHtml(`${Y.year} 年按專案`, '專案', projRows)}</div>`
+    + `<div class="card">${detailTable(`${Y.year} 年每一張（${A.count} 張）`, Y.rows)}</div>`;
+}
+async function exportIncomeCsv(){
+  if (!ensureFresh()) return;
+  const Y = incomeSummary(DB.history, DB.profile).years.find(y => String(y.year) === incomeYear);
+  if (!Y){ note('bad', '這一組沒有可以匯出的年度', 'i-msg'); return; }
+  const name = incomeCsvName(Y.year);
+  const ok = await saveBlob(new Blob([incomeCsv(Y)], { type: 'text/csv;charset=utf-8' }), name, 'i-msg');
+  if (ok !== false) note('ok', `✓ 已下載「${name}」（${Y.total.count} 張，數字欄是純數字，可直接用試算表加總）`, 'i-msg');
 }
 
 /* ====== 下載 PDF：沿用報價計算機的做法（畫面外 iframe 原尺寸排版 → html2canvas-pro 畫成 JPEG → 自己組 A4 PDF） ====== */
@@ -921,12 +2220,84 @@ async function saveBlob(blob, name, msgId){
   setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 60000);
   return true;
 }
+// 下載了、但紀錄還沒存進去的幾張（pending）放在 pendings（＝saver.pendings，見上面的 createSaver），不放進 DB.history，
+// 所以收入與報稅總覽、CSV 只會算到真的存進去的紀錄。存進去（一次寫入，走存檔佇列）後各項目的 outcome 記成 saved，並從這裡拿掉
+let pendingErr = '';     // 最近一次沒存成的原因：'stale'（資料過期）｜'storage'（瀏覽器不讓存）｜'timeout'（等鎖等太久）｜'lock'（拿不到鎖的其他原因）
+const PENDING_MARK = '沒有存進紀錄';
+const PENDING_WHY = {
+  storage: '這台瀏覽器不讓網頁存資料，可能是私密瀏覽或儲存空間不足',
+  timeout: '另一個分頁可能正在存檔，這次沒有存進去',
+  lock: '暫時無法存檔，這次沒有存進去',
+};
+// 釘住要更新的那一筆，在下載期間（或存之前）已經被刪掉了：不把它當新的加進去（D4）
+const DELETED_TEXT = 'PDF 已下載；原本那筆紀錄已經被刪掉，所以沒有存進紀錄。';
+function pendingText(){
+  const n = pendings.length, names = pendings.map(p => `「${p.name}」`);
+  const gone = pendingErr === 'stale' || stale;
+  return `${n === 1 ? `已下載${names[0]}` : `已下載 ${n} 張（${names.join('、')}）`}，但${PENDING_MARK}（${gone ? '這個分頁的資料已過期，另一個分頁更新過' : (PENDING_WHY[pendingErr] || PENDING_WHY.storage)}），收入與報稅總覽不會算到${n === 1 ? '這張' : '這幾張'}。`
+    + (gone ? '請看上方的橫幅：先按「下載這個分頁的資料」，可以把這幾張的內容一起存成檔案；再按「重新整理」之後，這幾張不會再存進紀錄（下載的 PDF 檔還在你的下載資料夾）。'
+      : '資料還在這個分頁，可以按「再試一次存進紀錄」。');
+}
+// 有還沒存進去的紀錄時：在訊息區把警告和「再試一次」鈕放回來。replace＝直接換掉訊息；否則保留這次的訊息（取消下載、出錯…）再接上警告
+function showPendingWarning(replace){
+  renderPendingNote();
+  if (!pendings.length){ $('w-retry').hidden = true; return; }
+  const cur = $('w-msg').textContent, t = pendingText();
+  note('bad', replace || !cur || cur.includes(PENDING_MARK) ? t : `${cur}　${t}`);
+  $('w-retry').hidden = pendingErr === 'stale' || stale;   // 過期的分頁要先選處理方式，重試沒有用
+}
+function downloadedNotSaved(kind){
+  pendingErr = kind || 'storage';
+  showPendingWarning(true);
+}
+// 要更新的那筆紀錄在存之前已經被刪掉：這幾張不會存（不把已刪的款項變回來），直接講清楚
+const goneText = list => `${list.map(p => `「${p.name}」`).join('、')}原本要更新的那筆紀錄已經被刪掉了，所以這${list.length > 1 ? '幾' : ''}次下載沒有存進紀錄，也不會再存（下載的檔案還在你的下載資料夾）。`;
+// 一次存檔（flush）有結果之後的訊息：依各項目記下的結果（applied＝saved、gone＝目標已不在）組，沒有任何一張真的存進去也沒有被刪掉的，就不改訊息
+function settleUnsaved(f){
+  if (!pendings.length) pendingErr = '';
+  renderPendingNote();
+  $('w-retry').hidden = !pendings.length || pendingErr === 'stale' || stale; renderHistory(); renderSheetBar(currentReport());
+  const ap = f && f.applied ? f.applied : [], gone = f && f.gone ? f.gone : [];
+  const n = ap.map(p => `「${p.name}」`).join('、');
+  if (ap.length) note('ok', `✓ 已存進紀錄（${n}）${gone.length ? '。' + goneText(gone) : ''}`);
+  else if (gone.length) note('bad', goneText(gone));
+}
+// 把還沒存進去的全部一次存進紀錄（一次寫入，走存檔佇列、一個接一個做，同一張不會存兩次）。失敗的原因記在 pendingErr
+async function flushPendings(){
+  const f = await saver.flush();
+  if (!f.ok) pendingErr = f.kind;
+  return f;
+}
+// 下載完成之後：存進紀錄，並依這一張的結果（outcome）說話——存好了、要更新的那筆被刪了（cancelled／gone）、或沒存成留著重試（failed）。
+// 不看「它還在不在待存清單裡」：自動補存可能已經先把它存好了
+async function afterDownload(dl, R, P, name){
+  const pin = dl.pin, earlier = pendings.slice();   // 這一張進來之前就沒存進去的
+  const fin = finishDownload(binding, saver, dl, R, P, name), item = fin.item;   // 沒有 item＝釘住的那筆在下載期間被刪了（cancelled）或已經不在（gone）：不新增。有 item 時，表單的綁定只在使用者這段期間沒改過才更新（R4-1）
+  let kind = '';
+  if (item) kind = (await flushPendings()).kind;
+  const v = downloadVerdict(fin, earlier);
+  renderHistory(); renderSheetBar(currentReport()); renderPendingNote();
+  if (v.verdict === 'saved'){
+    if (!pendings.length) pendingErr = '';
+    storageOk = true;
+    note('ok', downloadOkText(name, item.plan) + (v.more ? `；先前下載但沒存進去的 ${v.more} 張也一起存進紀錄了` : '') + (v.goneEarlier.length ? '。' + goneText(v.goneEarlier) : ''));
+  } else if (v.verdict === 'deleted'){   // 釘住的那筆在下載期間（或存之前）被刪掉了：不新增，也不當成新的一筆
+    binding.drop(item ? item.rec.id : pin.target);
+    if (item){ storageOk = true; if (!pendings.length) pendingErr = ''; }
+    renderSheetBar(currentReport());
+    note('bad', DELETED_TEXT);
+  } else downloadedNotSaved(item.failKind || kind);   // 檔案已經下載了，但紀錄沒存成：絕不只說「已下載」
+}
 async function exportPdf(){
-  if (pdfBusy || !DB.profile) return;   // 沒有鎖定的基本資料（例如剛按重設）就不產生
+  if (pdfBusy || !DB.profile || !ensureFresh()) return;   // 沒有鎖定的基本資料，或這個分頁的資料已過期（可能是舊的銀行帳號），就不產生
   const R = currentReport(), err = checkReport(R);
-  if (err){ note('bad', err); return; }
+  if (err){ note('bad', err); if (pendings.length) showPendingWarning(); return; }
   const btn = $('w-pdf'), P = DB.profile, name = reportFileName(P, R);   // 先算好檔名，再上鎖：任何例外都不會讓按鈕卡住
+  // D4：按下載的這一刻就釘住「這張要更新哪一筆、還是新增」（開始下載時畫面對應的那一張、是否按了「改存成新的一張」；產生 PDF 的幾秒內使用者可能又按了別的）。
+  // 產生 PDF 的期間刪掉那一筆，這個釘住的決定就作廢（saver.remove），完成時不會存、更不會當成新的一筆加進去
+  const dl = beginDownload(binding, saver, R);   // 同時記下操作編號：完成時使用者若已改過綁定（載入別筆、改存成新的一張），就不動它（R4-1）
   pdfBusy = true;
+  $('w-retry').hidden = true;
   btn.disabled = true; btn.textContent = '產生中…';
   try {
     note('', '載入 PDF 元件…');
@@ -936,22 +2307,56 @@ async function exportPdf(){
     const blob = new Blob([pdfBuild(pages, name.replace(/\.pdf$/, ''))], { type: 'application/pdf' });
     pdfLast = { name, bytes: blob.size, w: pages[0].w, h: pages[0].h };
     const ok = await saveBlob(blob, name, 'w-msg');
-    if (ok !== false){
-      const rec = { tpl: R.tpl, start: R.start, end: R.end, fill: R.fill, project: R.project, amount: R.amount, at: new Date().toISOString() };
-      DB.history = [rec, ...DB.history.filter(h => !(h.tpl === rec.tpl && h.start === rec.start && h.project === rec.project && h.amount === rec.amount))].slice(0, 60);
-      save(); renderHistory();
-      note('ok', `✓ 已下載「${name}」`);
-    }
+    if (ok !== false) await afterDownload(dl, R, P, name);   // 更新哪一筆、還是新增：照釘住的決定（見 pinSheet／sheetPlan）。只有「同一筆款項」才更新，絕不因為只有填表日期不同就悄悄換掉別筆
   } catch (e){
     note('bad', (e && e.message) || String(e));
   } finally {
+    saver.abort(dl.pin);
     pdfBusy = false; btn.disabled = false; btn.textContent = '下載 PDF';
+    if (pendings.length) showPendingWarning();   // 這次下載取消或出錯，也要把先前沒存進去的警告與重試鈕放回來
   }
 }
 
+$('stale-reload').addEventListener('click', () => location.reload());
+// 「下載這個分頁的資料」（D2）：把這個分頁現在的狀態（基本資料、看得到的紀錄、還沒存進紀錄的下載、正在填的草稿）存成一個 JSON 檔。
+// 只下載檔案：完全不碰瀏覽器裡存的資料，也不動「上次備份」的時間（這不是正式的備份）
+let staleDlBusy = false;
+$('stale-download').addEventListener('click', async () => {
+  if (staleDlBusy || !stale) return;
+  staleDlBusy = true; const btn = $('stale-download'); btn.disabled = true;
+  try {
+    const payload = tabExport(DB, pendings, new Date().toISOString());
+    const name = pdfSafeName(['勞報單這個分頁的資料', todayIso()], '勞報單這個分頁的資料', '.json');
+    const ok = await saveBlob(new Blob([JSON.stringify(payload, null, 1)], { type: 'application/json' }), name, 'stale-status');
+    if (ok !== false){
+      const n = payload.unsaved.length;
+      note('ok', `✓ 已下載「${name}」。裡面有基本資料、這個分頁看得到的紀錄、${n ? `還沒存進紀錄的 ${n} 張下載、` : ''}正在填的草稿。瀏覽器裡存的資料沒有被動到。`, 'stale-status');
+    }
+    $('stale-status').hidden = false;
+  } finally { staleDlBusy = false; btn.disabled = false; }
+});
 bindSetup(); bindWork(); render();
-if (startupWarning) $('top-note').textContent = startupWarning;
-else if (!storageOk) $('top-note').textContent = '注意：這台瀏覽器不讓網頁存資料，關掉頁面後資料不會留下';
+// 共用約定（載入時）：已經有使用者資料、但紀錄寫 hasData:false 或沒有紀錄（或紀錄不是物件）→ 補成 hasData:true，原本的 updatedAt 保留，沒有才用現在。
+// 反過來也不亂說：紀錄說有資料，但這個工具的資料 key 真的不存在（被清掉了；壞資料不算——壞資料時 key 還在）、沒有使用者資料、儲存也正常 → 整筆重寫成 {hasData:false, updatedAt:現在, lastBackupAt:null}（2026-10-13）。紀錄永遠不能宣稱工具沒有的資料。
+(function syncToolboxOnLoad(){
+  const r = toolboxRecord();
+  if (DB.profile || DB.history.length){
+    if (r && r.hasData === true) return;
+    markToolbox({ hasData: true, updatedAt: r && tbTime(r.updatedAt) ? r.updatedAt : new Date().toISOString() });
+  } else if (r && r.hasData === true && loadReadOk && loadedRaw === null && storageOk && !writesBlocked){
+    // 紀錄說有資料，但這個工具的資料 key 真的不存在（被清掉了；不是讀不懂的壞資料，壞資料時 key 還在）、也沒有任何使用者資料，而且儲存本身是正常的：
+    // 依共用約定（hub README）整筆重寫成「沒有資料、更新時間＝現在、沒有備份過」——舊的備份時間不能再留著，因為那份備份對應的資料已經不在了
+    markToolbox({ hasData: false, updatedAt: new Date().toISOString(), lastBackupAt: null });
+  }
+})();
+// 頂端提醒：啟動時的警告（另存了哪一份、不能寫入…）或「不讓網頁存資料」；無鎖模式（沒有 navigator.locks 或 file:）再加上「不要同時開兩個分頁」——這個模式整個頁面階段固定，所以一開頁就說
+{
+  const top = [];
+  if (startupWarning) top.push(startupWarning);
+  else if (!storageOk) top.push('注意：這台瀏覽器不讓網頁存資料，關掉頁面後資料不會留下');
+  if (!store.canLock()) top.push(NOLOCK_NOTE);
+  if (top.length) $('top-note').textContent = top.join('　');
+}
 </script>
 </body>
 </html>

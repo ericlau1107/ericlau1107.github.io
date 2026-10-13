@@ -6,6 +6,7 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
 <title>Eric 的工具箱</title>
+<link rel="icon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@700&family=Noto+Sans+TC:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
@@ -41,16 +42,17 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--sans);-webkit-font-smoothing:antialiased;overflow:hidden}
 .app{display:grid;grid-template-columns:248px minmax(0,1fr);height:100%}
 /* 左側選單 */
-aside{background:var(--side);border-right:1px solid var(--rule);display:flex;flex-direction:column;gap:22px;min-width:0;
-  padding-inline:18px;padding-block:calc(22px + env(safe-area-inset-top, 0px)) calc(18px + env(safe-area-inset-bottom, 0px));overflow-y:auto}
+aside{background:var(--side);display:flex;flex-direction:column;gap:16px;min-width:0;
+  padding-inline:18px;padding-block:calc(18px + env(safe-area-inset-top, 0px)) calc(16px + env(safe-area-inset-bottom, 0px));overflow-y:auto}
 .brand{font:700 20px/1.3 var(--sans);margin:0;letter-spacing:.01em}
 .group{display:flex;flex-direction:column;gap:10px}
 .tape{align-self:flex-start;background:var(--tape);color:var(--tape-ink);font:700 16px/1 var(--hand);letter-spacing:.06em;
   padding:8px 18px 7px;transform:rotate(-1.4deg);
   clip-path:polygon(0 8%,3% 0,97% 4%,100% 0,98% 52%,100% 100%,96% 94%,4% 100%,0 92%,2% 48%)}
-nav ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:4px}
-.item{display:flex;flex-direction:column;gap:1px;width:100%;text-align:left;border:0;background:transparent;color:var(--ink);
-  font:inherit;padding:9px 11px;border-radius:8px;cursor:pointer;transition:background-color .15s ease}
+nav{display:flex;flex-direction:column;gap:6px}   /* 工具變多：分類之間留一點距離 */
+nav ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.item{display:flex;flex-direction:column;gap:0;width:100%;text-align:left;border:0;background:transparent;color:var(--ink);
+  font:inherit;line-height:1.45;padding:5px 11px;min-height:44px;justify-content:center;border-radius:8px;cursor:pointer;transition:background-color .15s ease}   /* 觸控目標至少 44px（任何視窗高度都一樣） */
 .item b{font-weight:700;font-size:15px}
 .item small{font-size:12px;color:var(--ink-3)}
 .item:hover{background:var(--accent-soft)}
@@ -59,31 +61,57 @@ nav ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap
 .item:focus-visible,.newtab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .foot{margin-top:auto;font-size:12px;color:var(--ink-3);line-height:1.55}
 /* 右側工具區 */
-main{display:flex;flex-direction:column;min-width:0;min-height:0}
+main{display:flex;flex-direction:column;min-width:0;min-height:0;border-left:1px solid var(--rule)}   /* 分隔線畫在右側區塊上，選單邊緣的淡出遮罩才不會把它吃掉 */
 .bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px;border-bottom:1px solid var(--rule);
   padding-top:calc(10px + env(safe-area-inset-top, 0px));min-width:0}
 .bar h2{margin:0;font:700 15px/1.3 var(--sans);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bar .host{font:500 12px/1.3 var(--mono);color:var(--ink-3);margin-left:10px}
-.newtab{flex:none;font-size:13px;font-weight:500;color:var(--accent);text-decoration:none;border:1px solid var(--rule);border-radius:7px;padding:6px 10px;background:var(--side)}
+.newtab{flex:none;display:inline-flex;align-items:center;font-size:13px;font-weight:500;color:var(--accent);text-decoration:none;border:1px solid var(--rule);border-radius:7px;padding:6px 10px;background:var(--side)}
 .newtab:hover{border-color:var(--accent)}
 .stage{position:relative;flex:1;min-height:0}
 .stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--bg)}
 .launch{height:100%;overflow:auto;display:grid;place-items:center;padding:32px 20px}.launch-card{width:min(100%,560px);padding:32px;border:1px solid var(--rule);border-radius:12px;background:var(--side)}.launch-card .label{font:500 12px/1.4 var(--mono);color:var(--ink-3);letter-spacing:.08em;margin:0 0 14px}.launch-card h3{font:700 24px/1.5 var(--sans);margin:0 0 12px}.launch-card p{font-size:16px;color:var(--ink-2);margin:0 0 22px}.launch-card .launch-button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:10px 18px;background:var(--accent);color:var(--bg);border-radius:7px;text-decoration:none;font-weight:700}.launch-button:focus-visible{outline:3px solid var(--accent);outline-offset:4px}.launch-card .launch-note{font-size:14px;margin:18px 0 0;color:var(--ink-3)}
 .empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--ink-3);font-size:14px}
+/* 備份提醒條：大力膠帶底、白色奇異筆字，跟選單的分類標籤同一種語言 */
+.vbanner{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:9px 16px;background:var(--tape);color:var(--tape-ink)}
+.vbanner p{margin:0;flex:1 1 220px;min-width:0;font:700 15px/1.5 var(--hand);letter-spacing:.04em}
+.vbanner button{font:inherit;cursor:pointer;min-height:44px}
+.vb-open{background:var(--tape-ink);color:var(--tape);border:0;border-radius:6px;padding:8px 16px;font:700 14px/1.3 var(--sans)}
+.vb-open:hover{filter:brightness(.9)}
+.vb-skip{background:transparent;color:var(--tape-ink);border:0;padding:8px 6px;font:500 13px/1.3 var(--sans);text-decoration:underline;text-underline-offset:3px;opacity:.85}
+.vb-skip:hover{opacity:1}
+.vb-open:focus-visible,.vb-skip:focus-visible{outline:2px solid var(--tape-ink);outline-offset:2px}
+/* 桌機：選單比視窗高時，在還有東西的那一側淡出，提示「可以往下／往上捲」；捲到底就不淡出，頁尾那行才看得完整。fade-t／fade-b 由底下的 updateFade() 開關 */
+@media (min-width:761px){
+  aside.fade-b{-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 44px),transparent 100%);mask-image:linear-gradient(to bottom,#000 calc(100% - 44px),transparent 100%)}
+  aside.fade-t{-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 44px);mask-image:linear-gradient(to bottom,transparent 0,#000 44px)}
+  aside.fade-t.fade-b{-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 44px,#000 calc(100% - 44px),transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 44px,#000 calc(100% - 44px),transparent 100%)}
+}
+/* 視窗不高（筆電）：先收掉每個工具底下那行說明，讓選單盡量放得進一屏；項目本身永遠不低於 44px（上面的 min-height），
+   再矮就讓選單捲動，底部淡出提示「還有」，不再把項目壓扁 */
+@media (min-width:761px) and (max-height:880px){
+  .item small{display:none}
+  .item{padding-block:6px}
+}
 /* 手機：選單改到頂端橫排 */
 @media (max-width:760px){
   .app{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr)}
-  aside{flex-direction:row;align-items:center;gap:12px;border-right:0;border-bottom:1px solid var(--rule);overflow-x:auto;overflow-y:hidden;
-    padding-block:calc(10px + env(safe-area-inset-top, 0px)) 10px}
+  aside{flex-direction:row;align-items:center;gap:12px;overflow-x:auto;overflow-y:hidden;
+    padding-inline:18px 44px;padding-block:calc(10px + env(safe-area-inset-top, 0px)) 10px;
+    /* 11 個項目排不下一屏：左右兩端用淡出提示「還能滑」。右邊多留 44px 空白（淡出 36px＋焦點框 4px 以上），滑到底最後一項連焦點框都不會被淡出蓋住 */
+    -webkit-mask-image:linear-gradient(to right,transparent 0,#000 18px,#000 calc(100% - 36px),transparent 100%);
+    mask-image:linear-gradient(to right,transparent 0,#000 18px,#000 calc(100% - 36px),transparent 100%)}
+  main{border-left:0;border-top:1px solid var(--rule)}   /* 手機的分隔線畫在上緣 */
   .brand{font-size:16px;white-space:nowrap}
   .group{flex-direction:row;align-items:center;gap:8px;flex:none}
   .tape{flex:none;white-space:nowrap}   /* 分類變多時橫排會擠，膠帶標籤不能被壓成直排 */
-  nav{display:flex;align-items:center;gap:16px;flex:none}   /* 各組分類排在同一列，整列左右滑 */
+  nav{flex-direction:row;align-items:center;gap:16px;flex:none}   /* 各組分類排在同一列，整列左右滑 */
   .tape{font-size:13px;padding:6px 12px 5px}
   nav ul{flex-direction:row}
-  .item{padding:6px 10px;white-space:nowrap}
+  .item{padding:6px 10px;white-space:nowrap;min-height:44px;justify-content:center}   /* 觸控目標至少 44px */
   .item small,.foot{display:none}
   .bar{padding-top:10px}
+  .newtab{min-height:44px;padding-inline:14px}   /* 觸控目標至少 44px */
   .bar .host{display:none}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -97,23 +125,60 @@ main{display:flex;flex-direction:column;min-width:0;min-height:0}
     <p class="foot">這是公開工具入口。私人工作台需登入使用，案件資料留在工作台內。</p>
   </aside>
   <main>
+    <div class="vbanner" id="vaultBanner" role="status" aria-label="備份提醒" hidden>
+      <p id="vaultBannerText"></p>
+      <button class="vb-open" id="vaultOpen" type="button">打開資料保險箱</button>
+      <button class="vb-skip" id="vaultSkip" type="button">今天不再提醒</button>
+    </div>
     <div class="bar"><h2 id="cur">選一個工具</h2><a class="newtab" id="newtab" href="#" target="_blank" rel="noopener noreferrer" hidden>在新分頁開啟 ↗</a></div>
     <div class="stage" id="stage"><p class="empty">從左邊選一個工具</p></div>
   </main>
 </div>
+<script src="vault/status.js"></script>
 <script>
 // 工具清單：加網站就在這裡加一筆（同網址底下的工具放子資料夾，資料才不會被瀏覽器分開存）
 const TOOLS = [
+  // 接案工具
   { id: 'labor-report', group: '接案工具', name: '勞報單產生器', hint: '山上影像・成為影像', src: 'labor-report/' },
   { id: 'project-desk', group: '接案工具', name: '案務專案工作台', hint: '進度・處理紀錄・工作流', src: 'https://studio-project-desk.expertrook16.chatgpt.site/', mode: 'external' },
+  { id: 'gear', group: '接案工具', name: '出班器材檢查表', hint: '班型清單・出發與歸還', src: 'gear/' },
+  { id: 'callsheet', group: '接案工具', name: '拍攝日通告', hint: '集合時間・日出日落・聯絡人', src: 'callsheet/' },
   // 作品集是另一個倉庫（ericlau1107/portfolio）的 GitHub Pages，但跟工具箱同一個網址，所以可以直接嵌在右側
   { id: 'portfolio', group: '作品', name: '作品集網站', hint: '公開・活動攝影／剪輯／燈光', src: '/portfolio/' },
-  // 個人帳本：收支、帳戶資產與每月分析；帳目只保存在使用者的瀏覽器
+  // 生活工具：資料都只存在這個瀏覽器；個人帳本是收支、帳戶資產與每月分析
   { id: 'money-report', group: '生活', name: '個人記帳', hint: '收支・帳戶資產・每月分析', src: 'money-report/' },
   { id: 'health-fitness', group: '生活', name: '健康與健身', hint: '月計畫・飲食睡眠・健康紀錄', src: 'health-fitness/' },
+  { id: 'expiry', group: '生活', name: '到期日管家', hint: '證件・保險・訂閱提醒', src: 'expiry/' },
+  { id: 'study', group: '生活', name: '語言每日複習', hint: '日・韓・英單字卡', src: 'study/' },
+  { id: 'weekly', group: '生活', name: '每週回顧', hint: '花費・運動・到期事項', src: 'weekly/' },
+  // 資料保險箱：看瀏覽器會不會清掉資料、各工具多久沒備份（只讀各工具留下的備份時間紀錄，不讀工具內容）
+  { id: 'vault', group: '資料', name: '資料保險箱', hint: '保存狀態・備份提醒', src: 'vault/' },
 ];
 const $ = id => document.getElementById(id);
 const frames = {};
+// 選單的「淡出區」：手機是橫排，左 18px、右 36px 會淡掉；桌機選單比視窗高時，上下各 44px 會淡掉。
+// 被選中（或鍵盤焦點停到）的項目不能停在淡出區裡，連焦點框（外擴約 4px）也要看得清楚：靠近淡出區或在畫面外，就捲到不淡出的地方；本來就看得清楚就不動（第一次開不會把標題捲掉）。
+// 手機捲到正中間（頭尾的項目捲不到中間，頭尾本來就留了空白）；桌機只捲到離上下邊緣 48px 以內不要有它，捲到頭尾時淡出本來就會關掉。
+const phoneStrip = window.matchMedia('(max-width:760px)');
+const side = document.querySelector('aside');
+function updateFade(){
+  const tall = !phoneStrip.matches && side.scrollHeight > side.clientHeight + 1;
+  side.classList.toggle('fade-b', tall && side.scrollTop + side.clientHeight < side.scrollHeight - 1);
+  side.classList.toggle('fade-t', tall && side.scrollTop > 1);
+}
+function keepClear(on){
+  if (!on) return;
+  const ar = side.getBoundingClientRect(), r = on.getBoundingClientRect();
+  if (phoneStrip.matches) {
+    if (r.left - ar.left < 24 || ar.right - r.right < 40) side.scrollLeft += (r.left - ar.left) - (side.clientWidth - r.width) / 2;
+  } else if (r.bottom > ar.bottom - 48) {
+    side.scrollTop += r.bottom - (ar.bottom - 48);
+  } else if (r.top < ar.top + 48) {
+    side.scrollTop -= (ar.top + 48) - r.top;
+  }
+  updateFade();
+}
+const centerCurrent = () => keepClear(document.querySelector('.item[aria-current]'));
 function renderNav(){
   const groups = [...new Set(TOOLS.map(t => t.group))];
   $('nav').innerHTML = groups.map(g => `<div class="group"><span class="tape">${g}</span><ul>${
@@ -124,8 +189,8 @@ function select(id){
   const t = TOOLS.find(x => x.id === id) || TOOLS[0];
   if (!t) return;
   document.querySelectorAll('.item').forEach(b => { if (b.dataset.id === t.id) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
-  const on = document.querySelector('.item[aria-current]');   // 手機版選單是橫向一列：選中的項目捲進看得到的範圍
-  if (on) on.scrollIntoView({block: 'nearest', inline: 'nearest'});
+  centerCurrent();
+  current = t.id;
   $('cur').textContent = t.name;
   const nt = $('newtab'); nt.href = t.src; nt.hidden = false;
   const stage = $('stage'), empty = stage.querySelector('.empty'); if (empty) empty.remove();
@@ -148,8 +213,50 @@ function select(id){
   Object.entries(frames).forEach(([k, f]) => { f.hidden = k !== t.id; });
   if (location.hash.slice(1) !== t.id) history.replaceState(null, '', '#' + t.id);
   document.title = `${t.name}・Eric 的工具箱`;
+  refreshBanner();
 }
+// 備份提醒條：只算「備份紀錄明確寫著有資料」的工具，而且從沒備份、超過 14 天沒備份或備份時間比現在還晚（時間異常），才在右側最上方提醒（今天按過「不再提醒」就不出現，隔天恢復）。
+// 沒有紀錄的工具不提醒、也不猜。判斷規則在 vault/status.js（只讀各工具留下的備份時間紀錄；不開任何資料庫、不讀工具內容）。
+const SKIP_KEY = 'toolbox.vault.skipDay';
+let current = '', bannerSeq = 0;
+function today(){ const d = new Date(), p = n => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`; }
+function skippedToday(){ try { return localStorage.getItem(SKIP_KEY) === today(); } catch (e) { return false; } }
+function refreshBanner(){
+  const box = $('vaultBanner'), V = window.ToolboxVault, seq = ++bannerSeq;
+  if (!box) return;
+  if (!V || current === 'vault' || skippedToday()) { box.hidden = true; return; }
+  V.load().then(rows => {
+    if (seq !== bannerSeq) return;   // 有更新的一次檢查在跑，這次作廢
+    const n = rows.filter(r => r.needsBackup).length, odd = rows.filter(r => r.clockAnomaly).length;
+    if (n) $('vaultBannerText').textContent = `有 ${n} 個工具該備份了（從沒備份，或超過 ${V.STALE_DAYS} 天沒備份）` + (odd ? `，其中 ${odd} 個時間異常` : '');
+    box.hidden = !n;
+  }, () => { if (seq === bannerSeq) box.hidden = true; });
+}
+const focusCurrent = () => { const on = document.querySelector('.item[aria-current]'); if (on) on.focus(); };   // 提醒條消失後，鍵盤焦點回到選單，不要掉到頁面最前面
+$('vaultOpen').addEventListener('click', () => { select('vault'); focusCurrent(); });
+$('vaultSkip').addEventListener('click', () => {
+  try { localStorage.setItem(SKIP_KEY, today()); } catch (e) {}
+  $('vaultBanner').hidden = true;
+  focusCurrent();
+});
+window.addEventListener('storage', e => { if (!e.key || (window.ToolboxVault && e.key === window.ToolboxVault.KEY)) refreshBanner(); });
+document.addEventListener('visibilitychange', () => { if (!document.hidden) refreshBanner(); });
 renderNav();
+side.addEventListener('scroll', updateFade, {passive: true});
+window.addEventListener('resize', updateFade);   // 只更新淡出提示；不重新置中，免得使用者自己滑到一半又被拉回
+window.addEventListener('load', () => { centerCurrent(); updateFade(); });   // 字體載入、版面定案之後再對一次
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { centerCurrent(); updateFade(); });
+// 鍵盤（Tab／Shift+Tab）把焦點移到選單項目：瀏覽器只在項目「完全」看不到時才捲，項目常會卡在淡出區裡。
+// 滑鼠／觸控點到的不處理：mousedown 時就捲動，項目會從手指底下跑掉、這一下點擊就落空（點完選單項目本來就會置中）。
+let pointerAt = 0;
+document.addEventListener('pointerdown', () => { pointerAt = performance.now(); }, true);
+document.addEventListener('keydown', () => { pointerAt = 0; }, true);
+$('nav').addEventListener('focusin', e => {
+  const it = e.target.closest && e.target.closest('.item');
+  if (!it || performance.now() - pointerAt < 500) return;
+  keepClear(it);
+  requestAnimationFrame(() => keepClear(it));   // 瀏覽器自己的「把焦點捲進畫面」若在這之後才動，再補一次
+});
 $('nav').addEventListener('click', e => { const b = e.target.closest('.item'); if (b) select(b.dataset.id); });
 window.addEventListener('hashchange', () => select(location.hash.slice(1)));
 select(location.hash.slice(1));

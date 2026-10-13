@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
 <meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-wLQ7QwkjKplrkfKYG0YGf6dZI7AVUl1DTofkEZkWIFs='; style-src 'unsafe-inline'; img-src data:; connect-src https://open.er-api.com/v6/latest/TWD; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-wUUd0xwGq2/ffjCgdm4BlwX/+3DKGxcfX4OksfmXALM='; style-src 'unsafe-inline'; img-src data:; connect-src https://open.er-api.com/v6/latest/TWD; base-uri 'none'; form-action 'none'">
+<link rel="icon" href="data:,">
 <title>收支日常 · Eric 的記帳本</title>
 <style>
 :root{--bg:oklch(97.3% .007 85);--paper:#fff;--ink:oklch(25% .028 230);--muted:oklch(49% .018 230);--line:oklch(90% .01 85);--green:oklch(43% .07 175);--soft:oklch(95% .026 165);--red:oklch(46% .13 27);--amber:oklch(45% .085 65);--radius:16px;color-scheme:light;font-family:"PingFang TC","Microsoft JhengHei",sans-serif}
@@ -50,6 +51,7 @@
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important}}
 
 #tx-rate-fields .note,#tx-target-field .note,#account-fx-preview,.form-grid .field small{font-size:12px;line-height:1.8}#tx-rate-fields .text-button,#tx-target-field .text-button{min-height:44px}#tx-rate-fields .note a,dialog .note a{text-decoration:underline;text-underline-offset:3px}.stat .value,.account-balance{white-space:normal;overflow-wrap:anywhere}.account-actions{flex-wrap:wrap}
+.rescue{max-width:640px}.rescue h2{margin-bottom:12px}.rescue p+p{margin-top:12px}.rescue .rescue-cause{font-weight:550;line-height:1.8;overflow-wrap:anywhere}.rescue .note{margin-top:12px;font-size:13px;line-height:1.75;overflow-wrap:anywhere}.rescue .rescue-help{font-size:13px;line-height:1.8;color:var(--muted)}.rescue .button-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}.rescue .button-row .button{min-height:44px;white-space:normal;overflow-wrap:anywhere}.rescue .note:last-child{margin-top:16px}.local-badge.warn{color:var(--amber);background:#fff6eb;font-size:12px;font-weight:600;box-shadow:inset 0 0 0 1px #d8bd8f}.app-footer.rescue-footer .text-button{display:inline-flex;align-items:center;min-height:44px;padding:0 2px;font-size:13px}@media(min-width:681px){.app-footer.rescue-footer{align-items:center}}
 
 </style>
 </head>
@@ -271,6 +273,61 @@
   }
   function emptyState() {
     return { schema: SCHEMA, revision: 0, accounts: [], transactions: [], budgets: {}, settings: { defaultAccountId: '', lastBackupAt: '' } };
+  }
+  // 救援畫面用的唯讀診斷：不驗證、不修改輸入，只數「日期晚於今天」的帳戶／交易。
+  // 與 validateState 同一個「今天」（台北日期）；日期格式不正確的不算（那是別種錯誤）。
+  function findFutureDates(input, now = today()) {
+    const result = { count: 0, latest: '' };
+    const later = value => typeof value === 'string' && validDate(value) && value > now ? value : '';
+    const note = (...dates) => {
+      const hits = dates.map(later).filter(Boolean);
+      if (!hits.length) return;
+      result.count += 1;
+      for (const hit of hits) if (hit > result.latest) result.latest = hit;
+    };
+    try {
+      if (!input || typeof input !== 'object') return result;
+      if (Array.isArray(input.accounts)) for (const a of input.accounts) if (a && typeof a === 'object') note(a.openingDate);
+      if (Array.isArray(input.transactions)) for (const t of input.transactions) if (t && typeof t === 'object') note(t.date, t.rateSnapshot && t.rateSnapshot.rateDate);
+    } catch (error) {
+      // 診斷失敗就當作沒有發現；不影響救援畫面其他功能。
+    }
+    return result;
+  }
+  // 救援畫面用的唯讀診斷（findFutureDates 的姊妹函式）：數「日期欄位本身不是合法日期」的帳戶／交易，
+  // 例如 2020-13-45、空白、不是文字。只看驗證器會用「日期不正確」訊息擋下的欄位：帳戶期初日期、交易日期、
+  // 外幣收支交易的入帳匯率日期（台幣交易的 rateSnapshot 會被別的訊息擋下，不算在這裡）。
+  // 驗證器的訊息分不出「格式錯」和「晚於今天」；救援畫面靠這個函式與 findFutureDates 把兩者分開講。
+  // sample 只放第一個壞掉的「文字」值（最多 20 字），方便維護者找。不驗證、不修改輸入。
+  function findMalformedDates(input) {
+    const result = { count: 0, sample: '' };
+    const note = (...dates) => {
+      const bad = dates.filter(value => !validDate(value));
+      if (!bad.length) return;
+      result.count += 1;
+      if (!result.sample) {
+        const text = bad.find(value => typeof value === 'string');
+        if (text !== undefined) result.sample = text.slice(0, 20);
+      }
+    };
+    try {
+      if (!input || typeof input !== 'object') return result;
+      const legacy = input.schema === 'eric-ledger/1';
+      const currencyOf = new Map();
+      if (Array.isArray(input.accounts)) for (const a of input.accounts) if (a && typeof a === 'object') { currencyOf.set(a.id, a.currency); note(a.openingDate); }
+      if (Array.isArray(input.transactions)) {
+        for (const t of input.transactions) {
+          if (!t || typeof t !== 'object') continue;
+          const currency = currencyOf.get(t.accountId);
+          const foreign = !legacy && ['expense', 'income', 'refund'].includes(t.kind) && typeof currency === 'string' && currency !== 'TWD';
+          if (foreign && t.rateSnapshot && typeof t.rateSnapshot === 'object') note(t.date, t.rateSnapshot.rateDate);
+          else note(t.date);
+        }
+      }
+    } catch (error) {
+      // 診斷失敗就當作沒有發現；不影響救援畫面其他功能。
+    }
+    return result;
   }
   function cleanTransaction(transaction, accounts, now, legacy = false) {
     const t = object(transaction, '交易');
@@ -504,7 +561,7 @@
     });
   }
 
-  const api = Object.freeze({ categories, accountTypes, currencies, currencyInfo, emptyState, parseAmount, formatMoney, convertToTwd, rateSnapshot, makeActualRateSnapshot, today, validDate, validateState, validateTransaction, balances, totals, monthReport, trend });
+  const api = Object.freeze({ categories, accountTypes, currencies, currencyInfo, emptyState, findFutureDates, findMalformedDates, parseAmount, formatMoney, convertToTwd, rateSnapshot, makeActualRateSnapshot, today, validDate, validateState, validateTransaction, balances, totals, monthReport, trend });
   root.MoneyCore = api;
   if (typeof module === 'object' && module.exports) module.exports = api;
 })(typeof globalThis === 'object' ? globalThis : this);
@@ -768,6 +825,23 @@ const icon = name => `<svg viewBox="0 0 24 24" aria-hidden="true">${paths[name]|
 let state, db, ready=false, busy=false, view='overview', month=currentMonth, asOf=today, page=1, toastTimer, dialogSubmit=null;
 let filter={query:'',kind:'',account:'',category:'',all:false};
 let channel;
+// 工具箱「資料保險箱」狀態紀錄：契約 toolbox.backup.v1，只存狀態（有無資料、時間），絕不放帳目內容。
+// 任何錯誤都吞掉：不得中斷、也不得拖慢本工具自己的儲存。
+function markToolbox(patch){try{const K='toolbox.backup.v1',ID='money-report';let o;try{o=JSON.parse(localStorage.getItem(K)||'')}catch(err){}if(!o||o.v!==1||!o.tools||typeof o.tools!=='object'||Array.isArray(o.tools))o={v:1,tools:{}};const prev=o.tools[ID]&&typeof o.tools[ID]==='object'?o.tools[ID]:{};const cur={hasData:prev.hasData===true,updatedAt:typeof prev.updatedAt==='string'?prev.updatedAt:null,lastBackupAt:typeof prev.lastBackupAt==='string'?prev.lastBackupAt:null};const next=typeof patch==='function'?patch(cur):patch;if(!next||!Object.keys(next).length)return;o.tools[ID]=Object.assign(cur,next);localStorage.setItem(K,JSON.stringify(o));}catch(err){}}
+// 儲存成功後記一筆：同一狀態 60 秒內只寫一次；載入後第一次一定寫，有無資料改變時也立刻寫。
+let marked={hasData:null,at:0};
+// 這份帳本（或救援模式下讀到的原始紀錄）有沒有使用者資料：有帳戶、交易或預算。對壞掉的輸入也不丟錯。
+function ledgerHasData(s){try{return !!s&&typeof s==='object'&&((Array.isArray(s.accounts)&&s.accounts.length>0)||(Array.isArray(s.transactions)&&s.transactions.length>0)||(!!s.budgets&&typeof s.budgets==='object'&&!Array.isArray(s.budgets)&&Object.keys(s.budgets).length>0));}catch(err){return false;}}
+// 載入／備份／救援下載時對帳：本工具手上有資料、紀錄卻說沒有（或根本沒有紀錄）→ 補成 hasData:true，updatedAt 有就保留、沒有才用現在，
+// 所以只做備份或只用救援畫面的人也不會被記成「沒有資料」。反過來，帳本是空的、紀錄卻說有 → 改成 false（紀錄不得宣稱本工具沒有的資料）。
+// 兩邊都沒有時完全不寫。救援模式看不準原始紀錄，只補不降（downgrade:false）。
+function reconcileToolbox(has,{downgrade=true}={}){markToolbox(cur=>{const now=new Date().toISOString();if(has&&cur.hasData!==true)return {hasData:true,updatedAt:cur.updatedAt||now};if(!has&&downgrade&&cur.hasData===true)return {hasData:false,updatedAt:now};return null;});}
+// 共用規則（擁有者裁定）：工具自己的重設／全部刪除之後，紀錄是 {hasData:false, updatedAt:現在, lastBackupAt:null}——舊備份檔蓋不到之後才輸入的資料。
+// 本工具沒有「全部清除」鈕，唯一的對應情況是使用者逐筆刪光帳戶與交易（預算也沒有）、帳本因此變空：這一次儲存就照上面寫。
+function noteSaved(s){const hasData=ledgerHasData(s),now=Date.now();if(marked.at&&marked.hasData===hasData&&now-marked.at<60000)return;marked={hasData,at:now};const updatedAt=new Date(now).toISOString();markToolbox(hasData?{hasData,updatedAt}:{hasData,updatedAt,lastBackupAt:null});}
+// 共用規則：成功從備份檔還原後，立刻（不必重新整理、不受 60 秒節流限制）更新共用紀錄，
+// 讓資料保險箱與首頁提醒跟本工具自己顯示的「最近備份」（還原後的 settings.lastBackupAt，沒有就是「尚未備份」＝null）一致。
+function syncToolboxAfterRestore(s){const now=Date.now(),hasData=ledgerHasData(s);marked={hasData,at:now};markToolbox({hasData,updatedAt:new Date(now).toISOString(),lastBackupAt:s&&s.settings&&s.settings.lastBackupAt||null});}
 let fx = F.load(), fxBusy=false, fxError='', txDraft=null, fxPromise=null, lastAutoFx=0;
 const dialog=$('dialog'), form=$('dialog-form');
 function notify(message){$('toast').textContent=message;$('toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').hidden=true,4500);}
@@ -847,10 +921,10 @@ async function openDB(){return new Promise((resolve,reject)=>{const request=inde
 async function readDB(){return new Promise((resolve,reject)=>{const tx=db.transaction('ledger','readonly');const q=tx.objectStore('ledger').get('main');q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error);});}
 function syncClock(){const next=M.today();if(next===today)return false;const old=today,oldMonth=currentMonth;today=next;currentMonth=next.slice(0,7);if(asOf===old)asOf=next;if(month===oldMonth)month=currentMonth;document.querySelectorAll('input[type=date][max]').forEach(input=>input.max=today);return true;}
 async function reload(){if(syncClock()&&ready)render();if(!db||!ready||busy||dialog.open)return;const expectedRevision=state.revision;try{const saved=await readDB();if(!ready||busy||dialog.open||state.revision!==expectedRevision)return;if(saved&&saved.revision!==expectedRevision){state=M.validateState(saved);render();notify('已載入另一個分頁的更新');}}catch(err){error('無法重新讀取帳本：'+err.message);}}
-async function update(change){
+async function update(change,{silent=false}={}){
  if(!ready||busy)throw new Error('帳本尚未就緒，請稍後再試。');
  const expectedRevision=state.revision;if(expectedRevision>=Number.MAX_SAFE_INTEGER)throw new Error('帳本版本已達上限，請先下載備份再聯絡維護者。');const draft=structuredClone(state);change(draft);draft.revision=expectedRevision+1;const clean=M.validateState(draft);busy=true;$('storage-status').textContent='儲存中…';
- try{await new Promise((resolve,reject)=>{const tx=db.transaction('ledger','readwrite');const store=tx.objectStore('ledger');let reason;const q=store.get('main');q.onsuccess=()=>{if((q.result?.revision||0)!==expectedRevision){reason=new Error('帳本已在另一個分頁更新。請取消並重開這份表單後再試，避免覆蓋資料。');tx.abort();return;}store.put(clean,'main');};tx.oncomplete=resolve;tx.onerror=()=>reject(reason||tx.error||new Error('資料無法儲存'));tx.onabort=()=>reject(reason||tx.error||new Error('儲存已中止'));});state=clean;channel?.postMessage({revision:state.revision});$('global-error').hidden=true;render();}finally{busy=false;$('storage-status').textContent='儲存在此裝置';}
+ try{await new Promise((resolve,reject)=>{const tx=db.transaction('ledger','readwrite');const store=tx.objectStore('ledger');let reason;const q=store.get('main');q.onsuccess=()=>{if((q.result?.revision||0)!==expectedRevision){reason=new Error('帳本已在另一個分頁更新。請取消並重開這份表單後再試，避免覆蓋資料。');tx.abort();return;}store.put(clean,'main');};tx.oncomplete=resolve;tx.onerror=()=>reject(reason||tx.error||new Error('資料無法儲存'));tx.onabort=()=>reject(reason||tx.error||new Error('儲存已中止'));});state=clean;channel?.postMessage({revision:state.revision});if(!silent)try{noteSaved(clean);}catch(err){}$('global-error').hidden=true;render();}finally{busy=false;$('storage-status').textContent='儲存在此裝置';}
 }
 function setView(v){view=views.some(x=>x.id===v)||v==='settings'?v:'overview';history.replaceState(null,'','#'+view);render();window.scrollTo({top:0,behavior:'instant'});}
 function stat(label,value,caption='',accent=false){return `<section class="stat${accent?' accent':''}"><p class="label">${e(label)}</p><div class="value">${e(value)}</div><p class="caption">${e(caption)}</p></section>`;}
@@ -891,18 +965,78 @@ function openAccount(id){const a=state.accounts.find(x=>x.id===id),used=a&&state
 function adjustAccount(id){const a=account(id),balance=M.balances(state,today).find(x=>x.id===id)?.balance||0,debt=isLiability(a.type);showDialog('校正目前餘額',`<p class="form-hint">${e(a.name)} · 目前${debt?'欠款':'餘額'} ${e(nativeMoney(debt?-balance:balance,a.currency))}。填入今天對帳後的實際原幣金額，差額會留下一筆校正紀錄。</p><div class="form-grid">${field(`${debt?'實際欠款':'實際餘額'} · ${a.currency}`,`<input class="amount-input" name="balance" inputmode="decimal" maxlength="20" value="${e(rawAmount(debt?-balance:balance,a.currency))}" required>`,true)}${field('校正原因',`<input name="note" maxlength="300" placeholder="例如：核對銀行餘額、投資估值更新" required>`,true)}</div><p class="note">只改變原幣餘額，不算收入或支出。${debt?'信用卡溢繳可輸入負數。':''}</p>`,async fd=>{const desired=M.parseAmount(fd.get('balance'),{signed:true,currency:a.currency})*(debt?-1:1),delta=desired-balance;if(!delta)throw new Error('餘額沒有變動，不需要校正。');await update(s=>s.transactions.push({id:uid(),date:today,kind:'adjustment',amount:null,nativeAmount:delta,toNativeAmount:null,rateSnapshot:null,actualRateSnapshot:null,accountId:id,toAccountId:'',categoryId:'',note:fd.get('note').trim(),createdAt:new Date().toISOString()}));notify('已儲存餘額校正');});}
 function budgetDialog(){const budgetMonth=month;const b=state.budgets[budgetMonth]||{total:0,categories:{}};showDialog(monthName(budgetMonth)+'預算',`<p class="form-hint">總預算與分類上限各自追蹤，不會相加。留白或 0 表示不設上限。</p>${field('本月總預算 · NT$',`<input class="amount-input" name="total" inputmode="decimal" maxlength="20" value="${b.total?e(rawAmount(b.total)):''}" placeholder="0">`)}<h3 class="subheading">分類預算（選填）</h3><div class="category-budgets">${M.categories.expense.map(c=>field(e(c.name),`<input name="budget:${e(c.id)}" inputmode="decimal" maxlength="20" placeholder="不設上限" value="${b.categories[c.id]?e(rawAmount(b.categories[c.id])):''}">`)).join('')}</div>`,async fd=>{const next={total:fd.get('total').trim()?M.parseAmount(fd.get('total')):0,categories:{}};for(const c of M.categories.expense){const text=fd.get('budget:'+c.id).trim();if(text)next.categories[c.id]=M.parseAmount(text);}await update(s=>s.budgets[budgetMonth]=next);notify('本月預算已儲存');});}
 function download(name,text,type){const blob=new Blob([text],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
-async function backup(){if(!ready)return;const stamp=new Date().toISOString();download(`收支日常-完整備份-${today}-${Date.now()}.json`,JSON.stringify(state),'application/json');try{await update(s=>s.settings.lastBackupAt=stamp);notify('備份已下載，請妥善保存');}catch(err){notify('備份已下載；備份時間未能儲存：'+err.message);}}
-function csv(rows){const cell=x=>{let v=String(x??'');if(/^[\s]*[=+\-@]/.test(v))v="'"+v;return '"'+v.replaceAll('"','""')+'"';};const out=[['日期','類型','原幣','原幣金額','入帳金額（TWD）','帳戶','轉入帳戶','轉入幣別','實際轉入金額','入帳匯率（TWD/原幣）','匯率日期','匯率來源','分類','備註'],...rows.map(t=>{const a=account(t.accountId),b=account(t.toAccountId);return [t.date,typeNames[t.kind],a.currency,rawAmount(t.nativeAmount,a.currency),rawAmount(t.amount),a.name,b?.name||'',b?.currency||'',b?rawAmount(t.toNativeAmount,b.currency):'',t.rateSnapshot?.rate??'',t.rateSnapshot?.rateDate||'',t.rateSnapshot?.source||'',category(t.categoryId)?.name||'',t.note];})];download(`收支日常-明細-${today}.csv`,'\uFEFF'+out.map(r=>r.map(cell).join(',')).join('\r\n'),'text/csv;charset=utf-8');notify('CSV 已下載');}
-async function restore(file){if(!file)return;if(file.size>45*1024*1024)throw new Error('備份檔超過 45 MB。');let parsed;try{parsed=JSON.parse(await file.text());}catch{throw new Error('這不是有效的 JSON 備份檔。');}const imported=M.validateState(parsed);showDialog('還原完整帳本',`<p class="form-hint">此操作會用備份取代目前的新帳本；原本的月報檢視器資料不受影響。</p><div class="restore-summary"><strong>備份：${imported.accounts.length} 個帳戶 / ${imported.transactions.length.toLocaleString()} 筆交易</strong><span>目前：${state.accounts.length} 個帳戶 / ${state.transactions.length.toLocaleString()} 筆交易</span><button type="button" class="text-button" data-action="backup">先下載目前帳本的備份 ↗</button></div><label class="checkbox-line"><input type="checkbox" name="confirmed" required>我已確認備份內容，並同意取代目前帳本。</label>`,async fd=>{if(fd.get('confirmed')!=='on')throw new Error('請先確認還原內容。');await update(s=>{s.accounts=imported.accounts;s.transactions=imported.transactions;s.budgets=imported.budgets;s.settings=imported.settings;});filter={query:'',kind:'',account:'',category:'',all:false};maybeRefreshFx();notify('帳本已還原');},'確認還原');}
+// 備份檔要記入「自己這一次」的備份時間：先在副本上寫好 settings.lastBackupAt 再序列化，所以還原後的「最近備份」就是這份檔案被做出來的時間（第一次備份也是）。
+// 記憶體裡的帳本不動，下面的 silent 儲存才把同一個時間存進本機；那一步失敗時，檔案內的時間仍是對的（檔案已經下載）。
+async function backup(){if(!ready){if(rescue)await rawDownload();return;}const stamp=new Date().toISOString();const snapshot=structuredClone(state);snapshot.settings.lastBackupAt=stamp;download(`收支日常-完整備份-${today}-${Date.now()}.json`,JSON.stringify(snapshot),'application/json');reconcileToolbox(ledgerHasData(state),{downgrade:false});markToolbox({lastBackupAt:stamp});try{await update(s=>s.settings.lastBackupAt=stamp,{silent:true});notify('備份已下載，請妥善保存');}catch(err){notify('備份已下載；備份時間未能儲存：'+err.message);}}
+// 數值欄（原幣金額、入帳金額、實際轉入金額、入帳匯率）輸出為純數字，負數也是數字；
+// 公式注入防護（開頭補 '）只用在文字欄，否則試算表會把 '-50.00 當文字、加總漏掉。
+const csvNumericColumns=new Set([3,4,8,9]);
+function csvText(rows){
+ const text=x=>{let v=String(x??'');if(/^[\s]*[=+\-@]/.test(v))v="'"+v;return '"'+v.replaceAll('"','""')+'"';};
+ const num=x=>{const v=String(x??'');return v===''||/^-?\d+(?:\.\d+)?(?:e[+-]?\d+)?$/i.test(v)?v:text(v);};
+ const line=(r,numeric)=>r.map((x,i)=>numeric&&csvNumericColumns.has(i)?num(x):text(x)).join(',');
+ const head=['日期','類型','原幣','原幣金額','入帳金額（TWD）','帳戶','轉入帳戶','轉入幣別','實際轉入金額','入帳匯率（TWD/原幣）','匯率日期','匯率來源','分類','備註'];
+ const body=rows.map(t=>{const a=account(t.accountId),b=account(t.toAccountId);return [t.date,typeNames[t.kind],a.currency,rawAmount(t.nativeAmount,a.currency),rawAmount(t.amount),a.name,b?.name||'',b?.currency||'',b?rawAmount(t.toNativeAmount,b.currency):'',t.rateSnapshot?.rate??'',t.rateSnapshot?.rateDate||'',t.rateSnapshot?.source||'',category(t.categoryId)?.name||'',t.note];});
+ return '\uFEFF'+[line(head,false),...body.map(r=>line(r,true))].join('\r\n');
+}
+function csv(rows){download(`收支日常-明細-${today}.csv`,csvText(rows),'text/csv;charset=utf-8');notify('CSV 已下載');}
+async function restore(file){if(!file)return;if(file.size>45*1024*1024)throw new Error('備份檔超過 45 MB。');let parsed;try{parsed=JSON.parse(await file.text());}catch{throw new Error('這不是有效的 JSON 備份檔。');}const imported=M.validateState(parsed);showDialog('還原完整帳本',`<p class="form-hint">此操作會用備份取代目前的新帳本；原本的月報檢視器資料不受影響。</p><div class="restore-summary"><strong>備份：${imported.accounts.length} 個帳戶 / ${imported.transactions.length.toLocaleString()} 筆交易</strong><span>目前：${state.accounts.length} 個帳戶 / ${state.transactions.length.toLocaleString()} 筆交易</span><button type="button" class="text-button" data-action="backup">先下載目前帳本的備份 ↗</button></div><label class="checkbox-line"><input type="checkbox" name="confirmed" required>我已確認備份內容，並同意取代目前帳本。</label>`,async fd=>{if(fd.get('confirmed')!=='on')throw new Error('請先確認還原內容。');await update(s=>{s.accounts=imported.accounts;s.transactions=imported.transactions;s.budgets=imported.budgets;s.settings=imported.settings;});syncToolboxAfterRestore(state);filter={query:'',kind:'',account:'',category:'',all:false};maybeRefreshFx();notify('帳本已還原');},'確認還原');}
 form.addEventListener('submit',async event=>{event.preventDefault();if(busy||!dialogSubmit)return;$('dialog-error').hidden=true;$('save-button').disabled=true;try{await dialogSubmit(new FormData(form));dialog.close();}catch(err){$('dialog-error').textContent=err.message||'儲存失敗，請再試一次。';$('dialog-error').hidden=false;}finally{$('save-button').disabled=false;}});
 dialog.addEventListener('cancel',event=>{if(busy)event.preventDefault();else setTimeout(reload,0);});
-document.addEventListener('click',async event=>{const button=event.target.closest('[data-action],[data-view]');if(!button||button.disabled)return;if(button.dataset.view){setView(button.dataset.view);return;}const id=button.dataset.id;try{switch(button.dataset.action){case 'refresh-fx':await refreshFx(true);break;case 'use-latest-rate':{const draft=txDraft,context=txContext();await refreshFx();if(!dialog.open||!$('tx-account')||draft!==txDraft||context!==txContext())break;if(!latestQuote(selectedTxAccount().currency))throw new Error('暫無可用參考價，請手動輸入銀行實際匯率。');selectLatestRate();updateTransactionPreview();break;}case 'estimate-transfer':{const draft=txDraft,context=txContext();await refreshFx();if(!dialog.open||!$('tx-account')||draft!==txDraft||context!==txContext())break;const a=selectedTxAccount(),b=account($('tx-to').value);if(!b||!latestQuote(a.currency)||!latestQuote(b.currency))throw new Error('暫無換算所需匯率，請直接填寫實際轉入金額。');txDraft.targetTouched=false;suggestTransferAmount();updateTransactionPreview();break;}case 'add-transaction':openTransaction();break;case 'edit-transaction':openTransaction(id);break;case 'add-account':openAccount();break;case 'edit-account':openAccount(id);break;case 'adjust-account':adjustAccount(id);break;case 'budget':budgetDialog();break;case 'close-dialog':if(!busy){dialog.close();await reload();}break;case 'previous-month':if(month>'1900-01'){month=shiftMonth(month,-1);page=1;render();}break;case 'next-month':if(month<currentMonth){month=shiftMonth(month,1);page=1;render();}break;case 'filter-category':filter.category=id;filter.kind='';filter.all=false;page=1;setView('records');break;case 'account-records':filter.account=id;filter.all=true;page=1;setView('records');break;case 'page-prev':page=Math.max(1,page-1);$('records-region').innerHTML=recordsContent();break;case 'page-next':page++;$('records-region').innerHTML=recordsContent();break;case 'backup':await backup();break;case 'restore':$('restore-file').click();break;case 'export-filtered':csv(filtered());break;case 'export-all':csv([...state.transactions].sort((a,b)=>a.date.localeCompare(b.date)));break;case 'delete-transaction':confirmAction('刪除這筆紀錄？','帳戶餘額、預算與月分析都會一併重算。',async()=>{await update(s=>s.transactions=s.transactions.filter(t=>t.id!==id));notify('已刪除紀錄');},'刪除紀錄');break;case 'archive-account':{const a=account(id);confirmAction(a.archived?'重新啟用帳戶？':'封存帳戶？','餘額與所有歷史交易會保留。封存後不再出現在新增交易的帳戶選單。',async()=>{await update(s=>{s.accounts.find(a=>a.id===id).archived=!a.archived;if(s.settings.defaultAccountId===id)s.settings.defaultAccountId='';});notify('已更新帳戶狀態');});break;}case 'delete-account':confirmAction('刪除未使用的帳戶？','只有沒有任何交易的帳戶可以刪除，期初餘額也會移除。',async()=>{await update(s=>{if(s.transactions.some(t=>t.accountId===id||t.toAccountId===id))throw new Error('帳戶已有交易，請改用封存。');s.accounts=s.accounts.filter(a=>a.id!==id);if(s.settings.defaultAccountId===id)s.settings.defaultAccountId='';});notify('已刪除帳戶');},'刪除帳戶');break;case 'persist':{const granted=await navigator.storage?.persist?.();const message=granted?'瀏覽器已允許持久保存。仍建議定期下載備份。':'這個瀏覽器尚未允許持久保存，請定期下載備份。';if($('persist-status'))$('persist-status').textContent=message;notify(message);break;}}}catch(err){if(dialog.open){$('dialog-error').textContent=err.message;$('dialog-error').hidden=false;}else error(err.message);}});
+document.addEventListener('click',async event=>{const button=event.target.closest('[data-action],[data-view]');if(!button||button.disabled)return;if(button.dataset.view){setView(button.dataset.view);return;}const id=button.dataset.id;try{switch(button.dataset.action){case 'refresh-fx':await refreshFx(true);break;case 'use-latest-rate':{const draft=txDraft,context=txContext();await refreshFx();if(!dialog.open||!$('tx-account')||draft!==txDraft||context!==txContext())break;if(!latestQuote(selectedTxAccount().currency))throw new Error('暫無可用參考價，請手動輸入銀行實際匯率。');selectLatestRate();updateTransactionPreview();break;}case 'estimate-transfer':{const draft=txDraft,context=txContext();await refreshFx();if(!dialog.open||!$('tx-account')||draft!==txDraft||context!==txContext())break;const a=selectedTxAccount(),b=account($('tx-to').value);if(!b||!latestQuote(a.currency)||!latestQuote(b.currency))throw new Error('暫無換算所需匯率，請直接填寫實際轉入金額。');txDraft.targetTouched=false;suggestTransferAmount();updateTransactionPreview();break;}case 'add-transaction':openTransaction();break;case 'edit-transaction':openTransaction(id);break;case 'add-account':openAccount();break;case 'edit-account':openAccount(id);break;case 'adjust-account':adjustAccount(id);break;case 'budget':budgetDialog();break;case 'close-dialog':if(!busy){dialog.close();await reload();}break;case 'previous-month':if(month>'1900-01'){month=shiftMonth(month,-1);page=1;render();}break;case 'next-month':if(month<currentMonth){month=shiftMonth(month,1);page=1;render();}break;case 'filter-category':filter.category=id;filter.kind='';filter.all=false;page=1;setView('records');break;case 'account-records':filter.account=id;filter.all=true;page=1;setView('records');break;case 'page-prev':page=Math.max(1,page-1);$('records-region').innerHTML=recordsContent();break;case 'page-next':page++;$('records-region').innerHTML=recordsContent();break;case 'backup':await backup();break;case 'raw-download':await rawDownload();break;case 'reload-page':location.reload();break;case 'restore':$('restore-file').click();break;case 'export-filtered':csv(filtered());break;case 'export-all':csv([...state.transactions].sort((a,b)=>a.date.localeCompare(b.date)));break;case 'delete-transaction':confirmAction('刪除這筆紀錄？','帳戶餘額、預算與月分析都會一併重算。',async()=>{await update(s=>s.transactions=s.transactions.filter(t=>t.id!==id));notify('已刪除紀錄');},'刪除紀錄');break;case 'archive-account':{const a=account(id);confirmAction(a.archived?'重新啟用帳戶？':'封存帳戶？','餘額與所有歷史交易會保留。封存後不再出現在新增交易的帳戶選單。',async()=>{await update(s=>{s.accounts.find(a=>a.id===id).archived=!a.archived;if(s.settings.defaultAccountId===id)s.settings.defaultAccountId='';});notify('已更新帳戶狀態');});break;}case 'delete-account':confirmAction('刪除未使用的帳戶？','只有沒有任何交易的帳戶可以刪除，期初餘額也會移除。',async()=>{await update(s=>{if(s.transactions.some(t=>t.accountId===id||t.toAccountId===id))throw new Error('帳戶已有交易，請改用封存。');s.accounts=s.accounts.filter(a=>a.id!==id);if(s.settings.defaultAccountId===id)s.settings.defaultAccountId='';});notify('已刪除帳戶');},'刪除帳戶');break;case 'persist':{const granted=await navigator.storage?.persist?.();const message=granted?'瀏覽器已允許持久保存。仍建議定期下載備份。':'這個瀏覽器尚未允許持久保存，請定期下載備份。';if($('persist-status'))$('persist-status').textContent=message;notify(message);break;}}}catch(err){if(dialog.open){$('dialog-error').textContent=err.message;$('dialog-error').hidden=false;}else error(err.message);}});
 document.addEventListener('change',event=>{const t=event.target;if(t.id==='month'){if(M.validDate(t.value+'-01')&&t.value<=currentMonth){month=t.value;page=1;render();}else t.value=month;}if(t.id==='as-of'){if(M.validDate(t.value)&&t.value<=today){asOf=t.value;render();}else t.value=asOf;}if(t.id==='tx-kind'){updateTransactionFields(t.value);if(!txDraft.targetTouched)suggestTransferAmount();}if(t.id==='tx-account'){const currency=selectedTxAccount().currency;if(currency!==txDraft.sourceCurrency){selectLatestRate();txDraft.sourceCurrency=currency;txDraft.targetTouched=false;suggestTransferAmount();}updateTransactionPreview();if(currency!=='TWD')void refreshFx();}if(t.id==='tx-to'){const currency=account(t.value)?.currency||'';if(currency!==txDraft.targetCurrency){txDraft.targetCurrency=currency;txDraft.targetTouched=false;suggestTransferAmount();}updateTransactionPreview();if(currency&&currency!=='TWD')void refreshFx();}if(t.id==='tx-rate-date'){txDraft.rateTouched=true;txDraft.quote=null;updateTransactionPreview();}if(t.id==='account-type'&&t.value==='forex'&&$('account-currency').value==='TWD'){$('account-currency').value='USD';updateAccountPreview();void refreshFx();}if(t.id==='account-currency'){updateAccountPreview();if(t.value!=='TWD')void refreshFx();}if(['filter-kind','filter-account','filter-category','filter-all'].includes(t.id)){const key=t.id.slice(7);filter[key]=key==='all'?t.checked:t.value;page=1;$('records-region').innerHTML=recordsContent();}});
 document.addEventListener('input',event=>{const t=event.target;if(t.id==='tx-amount'){if(!txDraft.targetTouched)suggestTransferAmount();updateTransactionPreview();}if(t.id==='tx-target-amount'){txDraft.targetTouched=true;updateTransactionPreview();}if(t.id==='tx-rate'){txDraft.rateTouched=true;txDraft.quote=null;updateTransactionPreview();}if(t.id==='account-opening')updateAccountPreview();if(event.target.id==='filter-query'){filter.query=event.target.value;page=1;$('records-region').innerHTML=recordsContent();}});
 $('restore-file').addEventListener('change',async event=>{try{await restore(event.target.files[0]);}catch(err){error('無法還原：'+err.message);}finally{event.target.value='';}});
 window.addEventListener('focus',()=>{void reload();if(ready)maybeRefreshFx();});
 setInterval(()=>{if(syncClock()&&ready)render();if(ready&&document.visibilityState==='visible'&&Date.now()-lastAutoFx>=3600000)maybeRefreshFx();},60000);
-(async()=>{try{db=await openDB();db.onversionchange=()=>{db.close();ready=false;error('帳本儲存格式已更新，請重新整理網頁。');};const raw=await readDB();state=raw?M.validateState(raw):M.emptyState();ready=true;$('storage-status').textContent='儲存在此裝置';try{channel=new BroadcastChannel('eric-money-ledger-updates');channel.onmessage=()=>{if(dialog.open)error('另一個分頁已更新帳本。請先取消目前表單再重開，避免覆蓋資料。');else reload();};}catch{}setView(location.hash.slice(1));maybeRefreshFx();if(state.transactions.length&&(!state.settings.lastBackupAt||Date.now()-Date.parse(state.settings.lastBackupAt)>7*86400000))notify('記得下載一份備份，把帳本留在自己手上');}catch(err){error('無法開啟本機帳本：'+err.message+'。原始資料不會被覆寫。');$('main').innerHTML=empty('帳本暫時無法開啟','請確認瀏覽器允許網站儲存資料，或使用原本的瀏覽器重新開啟。');$('storage-status').textContent='儲存不可用';}})();
+// 救援模式：帳本讀得到、但沒通過驗證（例如交易日期晚於今天）。只讀，不改、不刪任何資料，也不放寬驗證。
+let rescue=false;
+function footerBackup(){return document.querySelector('.app-footer [data-action="backup"]');}
+function storageFailure(err){
+ error('無法開啟本機帳本：'+(err&&err.message||err)+'。原始資料不會被覆寫。');$('main').innerHTML=empty('帳本暫時無法開啟','請確認瀏覽器允許網站儲存資料，或使用原本的瀏覽器重新開啟。');$('storage-status').textContent='儲存不可用';
+ const button=footerBackup();if(button)button.hidden=true; // 沒有可備份的東西，不留一顆按了沒反應的鈕
+}
+function enterRescue(raw,err){
+ rescue=true;ready=false;
+ const future=M.findFutureDates(raw),malformed=M.findMalformedDates(raw),now=M.today();
+ // 原因看驗證器實際丟出的訊息，不只看有幾筆未來日期：只有「日期不正確或晚於今天」類的錯誤才可能是日期問題。
+ // 這類訊息分不出「格式錯」和「晚於今天」，所以另外數日期欄位本身不合法的資料：只要有，就先講日期格式
+ // （裝置時鐘校正不了它），同時有未來日期時只當附帶提醒；沒有格式問題、確有未來日期，才說可能是裝置日期設錯。
+ // 別種錯誤（例如識別碼重複、帳戶不存在）即使同時有未來日期，也只當附帶提醒，不把帳算在時鐘頭上。
+ const message=String(err&&err.message||''),dateError=/日期不正確|晚於今天/.test(message),futureText=`日期晚於今天的資料共 ${future.count} 筆，最晚 ${future.latest}，目前裝置日期是 ${now}`;
+ const keepHelp='請先下載原始資料保存。資料還在瀏覽器裡、沒有被修改，之後可以請維護者協助檢查。';
+ let cause,help,side='';
+ if(dateError&&malformed.count){cause=`帳本裡有日期格式不正確的資料（共 ${malformed.count} 筆${malformed.sample?`，例如 ${malformed.sample}`:''}），所以先不開啟。`;help=keepHelp;if(future.count)side=`另外：${futureText}。如果裝置日期設錯了，請一併校正；但日期格式不正確的資料不會因此變好，仍需要處理。`;}
+ else if(dateError&&future.count){cause=`帳本裡有日期晚於今天的資料（共 ${future.count} 筆，最晚 ${future.latest}），可能是裝置日期設錯了。目前裝置日期是 ${now}。`;help='請先校正這台裝置的日期與時區（程式以台北時間計算「今天」），再按「重新整理」。日期對了、資料也沒問題，帳本就會正常開啟。';}
+ else if(dateError){cause='帳本裡有日期格式不正確的資料，所以先不開啟。';help=keepHelp;}
+ else{cause='帳本資料沒有通過檢查，所以先不開啟。';help=keepHelp;if(future.count)side=`另外：${futureText}。這不是上面檢查訊息指出的問題；如果裝置日期設錯了，也請一併校正。`;}
+ reconcileToolbox(ledgerHasData(raw),{downgrade:false});
+ error('帳本沒有通過資料檢查，已暫停開啟。你的資料沒有被修改。');
+ $('storage-status').textContent='資料未通過檢查';$('storage-status').classList.add('warn');$('quick-add').hidden=true;$('page-eyebrow').textContent='需要處理';$('page-title').textContent='帳本暫時沒有開啟';$('page-subtitle').textContent='你的資料還在，這個畫面不會修改它。';$('month-picker').hidden=true;
+ $('main').innerHTML=`<section class="panel rescue" aria-labelledby="rescue-title"><h2 id="rescue-title">帳本資料沒有通過檢查</h2><p class="rescue-cause">${e(cause)}</p><p class="note">檢查訊息：${e(err&&err.message||'未知錯誤')}</p>${side?`<p class="note rescue-side">${e(side)}</p>`:''}<p class="rescue-help">${e(help)}</p><div class="button-row"><button class="button primary" data-action="raw-download">下載原始資料（未驗證）</button><button class="button" data-action="reload-page">重新整理</button></div><p class="note">原始資料是瀏覽器裡原封不動的內容，沒有經過檢查。這個畫面不會修改或刪除任何資料，檢查規則也沒有放寬。</p></section>`;
+ const button=footerBackup();if(button)button.textContent='下載原始資料 ↗';
+ document.querySelector('.app-footer')?.classList.add('rescue-footer'); // 救援狀態的頁尾按鈕要有 44px 的觸控高度（只在這個狀態）
+}
+async function rawDownload(){
+ if(!db){error('無法讀取原始資料：儲存空間沒有開啟。');return;}
+ try{
+  const raw=await readDB(); // 直接讀 IndexedDB 的原始紀錄，不經驗證、不寫回
+  if(raw===undefined||raw===null)throw new Error('找不到帳本資料');
+  download(`money-ledger-raw-${M.today().replaceAll('-','')}.json`,JSON.stringify(raw),'application/json');
+  reconcileToolbox(ledgerHasData(raw),{downgrade:false});
+  markToolbox({lastBackupAt:new Date().toISOString()});
+  notify('已下載原始資料（未經檢查），請妥善保存');
+ }catch(err){error('無法下載原始資料：'+(err&&err.message||err));}
+}
+(async()=>{
+ let raw;
+ try{db=await openDB();db.onversionchange=()=>{db.close();ready=false;error('帳本儲存格式已更新，請重新整理網頁。');};raw=await readDB();}
+ catch(err){storageFailure(err);return;}
+ let clean;
+ try{clean=raw?M.validateState(raw):M.emptyState();}
+ catch(err){enterRescue(raw,err);return;}
+ try{state=clean;ready=true;reconcileToolbox(ledgerHasData(clean));$('storage-status').textContent='儲存在此裝置';try{channel=new BroadcastChannel('eric-money-ledger-updates');channel.onmessage=()=>{if(dialog.open)error('另一個分頁已更新帳本。請先取消目前表單再重開，避免覆蓋資料。');else reload();};}catch{}setView(location.hash.slice(1));maybeRefreshFx();if(state.transactions.length&&(!state.settings.lastBackupAt||Date.now()-Date.parse(state.settings.lastBackupAt)>7*86400000))notify('記得下載一份備份，把帳本留在自己手上');}catch(err){storageFailure(err);}
+})();
 })();
 
 </script>

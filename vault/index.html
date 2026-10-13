@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+<title>資料保險箱</title>
+<link rel="icon" href="data:,">
+<style>
+/* 沿用工具箱首頁的色票與膠帶標籤。CSP 不放行外部字體，所以用系統字（首頁用的手寫字體在這裡退回楷體） */
+:root{
+  --bg: oklch(96.2% 0.004 250);
+  --side: oklch(99.2% 0.002 250);
+  --ink: oklch(22% 0.012 255);
+  --ink-2: oklch(42% 0.012 255);
+  --ink-3: oklch(52% 0.01 255);
+  --rule: oklch(86% 0.008 250);
+  --tape: oklch(21% 0.006 255);
+  --tape-ink: oklch(97% 0.004 90);
+  --accent: oklch(47% 0.13 250);
+  --accent-ink: oklch(99% 0 0);
+  --accent-soft: oklch(94% 0.03 250);
+  --hand: "LXGW WenKai TC", "Kaiti TC", "STKaiti", "DFKai-SB", serif;
+  --sans: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg: oklch(18.5% 0.008 255); --side: oklch(22.5% 0.01 255); --ink: oklch(93% 0.005 250); --ink-2: oklch(78% 0.008 250);
+  --ink-3: oklch(68% 0.008 250); --rule: oklch(34% 0.01 255); --tape: oklch(12% 0.004 255); --tape-ink: oklch(95% 0.004 90);
+  --accent: oklch(74% 0.11 250); --accent-ink: oklch(18% 0.02 250); --accent-soft: oklch(30% 0.045 250); color-scheme: dark } }
+:root[data-theme="dark"]{
+  --bg: oklch(18.5% 0.008 255); --side: oklch(22.5% 0.01 255); --ink: oklch(93% 0.005 250); --ink-2: oklch(78% 0.008 250);
+  --ink-3: oklch(68% 0.008 250); --rule: oklch(34% 0.01 255); --tape: oklch(12% 0.004 255); --tape-ink: oklch(95% 0.004 90);
+  --accent: oklch(74% 0.11 250); --accent-ink: oklch(18% 0.02 250); --accent-soft: oklch(30% 0.045 250); color-scheme: dark }
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.7 var(--sans);-webkit-font-smoothing:antialiased}
+h1,h2,h3,p,ul,dl,dd{margin:0}
+ul{list-style:none;padding:0}
+.wrap{max-width:720px;margin:0 auto;padding:28px 24px calc(48px + env(safe-area-inset-bottom, 0px))}
+h1{font:700 24px/1.4 var(--sans);letter-spacing:.01em}
+.lede{margin-top:6px;color:var(--ink-2)}
+section{margin-top:34px}
+/* 膠帶分類標題：跟首頁左側選單同一個樣子 */
+.tape{display:inline-block;background:var(--tape);color:var(--tape-ink);font:700 16px/1 var(--hand);letter-spacing:.06em;
+  padding:8px 18px 7px;transform:rotate(-1.4deg);margin-bottom:14px;
+  clip-path:polygon(0 8%,3% 0,97% 4%,100% 0,98% 52%,100% 100%,96% 94%,4% 100%,0 92%,2% 48%)}
+.card{background:var(--side);border:1px solid var(--rule);border-radius:12px;padding:18px 20px}
+.facts{display:grid;gap:10px}
+.facts>div{display:grid;grid-template-columns:7em minmax(0,1fr);gap:4px 14px;align-items:baseline}
+.facts dt{color:var(--ink-3);font-size:13px}
+.facts dd{font-weight:500;overflow-wrap:anywhere}
+.ask{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin-top:16px}
+.ask .msg{flex:1 1 220px;min-width:0;font-size:14px;color:var(--ink-2)}
+.note{margin-top:14px;font-size:14px;color:var(--ink-2)}
+.btn,.go{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 18px;border-radius:8px;
+  font:700 14px/1.3 var(--sans);text-decoration:none;cursor:pointer;border:1px solid var(--rule);background:var(--side);color:var(--accent)}
+.btn{border-color:var(--accent)}
+.btn:hover,.go:hover{background:var(--accent-soft)}
+.btn:disabled{cursor:default;opacity:.55;border-color:var(--rule);color:var(--ink-3);background:var(--bg)}
+.btn:disabled:hover{background:var(--bg)}
+.btn:focus-visible,.go:focus-visible,.textbtn:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.textbtn{border:0;background:none;padding:8px 2px;min-height:44px;font:500 14px/1.3 var(--sans);color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+/* 各工具一列 */
+.tools{display:grid;gap:12px}
+.tool{background:var(--side);border:1px solid var(--rule);border-radius:12px;padding:16px 18px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px;align-items:center}
+.tool.attn{border:2px solid var(--ink);padding:15px 17px}
+.tool-main{min-width:0}
+.tool h3{font:700 16px/1.5 var(--sans);display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px}
+.chip{font:500 12px/1 var(--sans);color:var(--ink-2);border:1px solid var(--rule);border-radius:99px;padding:4px 9px}
+.flag{background:var(--tape);color:var(--tape-ink);font:700 13px/1 var(--hand);letter-spacing:.06em;padding:5px 10px 4px;border-radius:3px}
+.tool p{font-size:14px;color:var(--ink-2)}
+.tool .last{color:var(--ink);font-weight:500}
+.tool .meta{font-size:13px;color:var(--ink-3)}
+.tool .go{grid-column:2;grid-row:1}
+.tool.attn .go{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.tool.attn .go:hover{filter:brightness(1.08)}
+.tool.none{background:transparent}
+.foot{margin-top:30px;font-size:13px;color:var(--ink-3)}
+@media (max-width:560px){
+  .wrap{padding:22px 16px calc(40px + env(safe-area-inset-bottom, 0px))}
+  .card{padding:16px}
+  .facts>div{grid-template-columns:minmax(0,1fr)}
+  .tool{grid-template-columns:minmax(0,1fr)}
+  .tool .go{grid-column:1;grid-row:auto;margin-top:8px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main class="wrap" id="main">
+  <header>
+    <h1>資料保險箱</h1>
+    <p class="lede">這幾個工具的資料只存在這個瀏覽器裡，沒有雲端副本。這一頁幫你看資料保不保得住，也提醒你該備份了。</p>
+  </header>
+
+  <section aria-labelledby="h-persist">
+    <h2 class="tape" id="h-persist">保存狀態</h2>
+    <div class="card">
+      <dl class="facts">
+        <div><dt>持久保存</dt><dd id="persistState">檢查中…</dd></div>
+        <div><dt>本網站已用空間</dt><dd id="usage">檢查中…</dd></div>
+      </dl>
+      <div class="ask">
+        <button class="btn" id="persistBtn" type="button" disabled>申請持久保存</button>
+        <p class="msg" id="persistMsg" role="status" aria-live="polite"></p>
+      </div>
+      <p class="note">瀏覽器有可能清掉這個網站的資料：Safari 累積 7 天的使用都沒開過這個網站就會清，任何瀏覽器在空間不足或你清除網站資料時也會清。申請持久保存可以降低被自動清掉的機會，但不是保證，真正的保險是定期下載備份檔。</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-tools">
+    <h2 class="tape" id="h-tools">各工具的備份狀態</h2>
+    <ul class="tools" id="toolList" aria-label="各工具的備份狀態">
+      <li class="tool none"><p>檢查中…</p></li>
+    </ul>
+    <p class="note">只有「紀錄寫著有資料」而且從沒備份、超過 14 天沒備份、或上次備份的日期比現在還晚（標示「時間異常」，通常是裝置日期被調快）的工具會被框起來。還沒有資料、或還沒有紀錄的工具不會提醒。備份檔請到各工具裡下載。</p>
+    <button class="textbtn" id="recheck" type="button">重新檢查</button>
+  </section>
+
+  <p class="foot">這一頁只讀取各工具留下的「有沒有資料、最後備份時間」，不會讀取任何帳目、健康或個人資料的內容，也不會去開任何工具的資料庫。</p>
+</main>
+<script src="status.js"></script>
+<script src="vault.js"></script>
+</body>
+</html>

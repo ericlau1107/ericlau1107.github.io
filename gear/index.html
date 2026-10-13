@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; media-src 'none'; base-uri 'none'; form-action 'none'">
+<title>出班器材檢查表</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+<script src="data.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body>
+<main class="wrap" id="main">
+  <div class="banners" id="banners">
+    <div class="banner" id="bnStale" role="alert" hidden>
+      <p>這個分頁的資料已過期（另一個分頁有更新），請重新整理</p>
+      <button class="btn inv" id="reloadBtn" type="button">重新整理</button>
+    </div>
+    <div class="banner" id="bnNoStore" role="status" hidden>
+      <p>這個瀏覽器不讓網頁存資料（可能是無痕模式，或封鎖了網站資料）。你現在做的修改只會留在這個分頁，關掉就沒了。可以用「備份」頁下載備份檔。</p>
+    </div>
+    <div class="banner" id="bnCorrupt" role="status" hidden>
+      <p>先前存的資料讀不出來，這次先用空白內容開啟。你第一次修改時，原本讀不出來的那份會另存起來，不會直接被蓋掉。</p>
+    </div>
+  </div>
+  <header>
+    <h1>出班器材檢查表</h1>
+    <p class="lede">出發前打包、收班後歸還，兩次對照同一份清單。資料只存在這個瀏覽器裡，沒有雲端副本。</p>
+  </header>
+  <nav class="tabs" id="tabs" aria-label="功能">
+    <button type="button" data-view="home">出班</button>
+    <button type="button" data-view="tpl">班型</button>
+    <button type="button" data-view="backup">備份</button>
+  </nav>
+  <div id="view" tabindex="-1"></div>
+  <noscript><p class="note">這個頁面需要啟用 JavaScript 才能使用。</p></noscript>
+</main>
+<input type="file" id="restoreFile" accept="application/json,.json" hidden>
+<div class="toast" id="toast" hidden><span id="toastMsg"></span><button class="btn inv sm" id="toastAct" type="button" hidden></button></div>
+<div class="vh" id="live" role="status" aria-live="polite"></div>
+</body>
+</html>

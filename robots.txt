@@ -2,3 +2,9 @@ User-agent: *
 Disallow: /labor-report/
 Disallow: /money-report/
 Disallow: /health-fitness/
+Disallow: /gear/
+Disallow: /callsheet/
+Disallow: /expiry/
+Disallow: /study/
+Disallow: /weekly/
+Disallow: /vault/

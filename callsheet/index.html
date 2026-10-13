@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; media-src 'none'; base-uri 'none'; form-action 'none'">
+<title>拍攝日通告</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="style.css">
+<script src="data.js" defer></script>
+<script src="app.js" defer></script>
+</head>
+<body>
+<div class="wrap">
+  <header class="top no-print">
+    <h1>拍攝日通告</h1>
+    <p class="lede">填好時間、地點和聯絡人，自動算出當天的日出日落和黃金時刻。可以列印、存成 PDF，或複製成文字貼到 LINE。</p>
+  </header>
+
+  <!-- 常駐提醒（需要時才顯示） -->
+  <div class="notices no-print">
+    <div class="stale" id="staleBanner" role="alert" hidden>
+      <p>這個分頁的資料已過期（另一個分頁有更新），請重新整理</p>
+      <button class="stale-btn" id="staleReload" type="button">重新整理</button>
+    </div>
+    <p class="notice err" id="nCorrupt" role="alert" hidden>讀取已存的通告時發現資料壞掉了。為了不蓋掉原本的內容，這個分頁不會儲存任何東西。可以從備份檔還原，或清除全部後重新開始。</p>
+    <p class="notice err" id="nStorage" role="alert" hidden>這個瀏覽器不允許儲存資料，所以填的內容不會被保留，關掉頁面就沒了。請在做完後用「列印」或「複製文字版」留下來。</p>
+    <p class="notice err" id="nSaveFail" role="alert" hidden>儲存失敗，可能是瀏覽器空間不夠。請先按「下載備份」把資料留下來。</p>
+  </div>
+
+  <!-- 畫面一：通告清單與備份 -->
+  <section id="viewList" aria-labelledby="hList">
+    <div class="sect-head">
+      <h2 class="tape" id="hList" tabindex="-1">通告清單</h2>
+      <button class="btn primary" id="btnNew" type="button" data-lock="edit">
+        <svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg>新增通告
+      </button>
+    </div>
+    <ul class="sheets" id="sheetList" aria-label="通告清單"></ul>
+    <p class="empty" id="listEmpty">還沒有通告。按「新增通告」開始，一個拍攝日一張。</p>
+
+    <section class="card backup" aria-labelledby="hBackup">
+      <h2 class="tape" id="hBackup">備份</h2>
+      <p class="backup-status" id="backupStatus"></p>
+      <p class="note">通告只存在這個瀏覽器裡，沒有雲端副本，換手機或清掉瀏覽器資料就沒有了。備份檔和複製出去的文字都含有聯絡人電話，請自己收好。</p>
+      <div class="actions">
+        <button class="btn" id="btnBackup" type="button" data-lock="edit">
+          <svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 2v8M4.5 7 8 10.5 11.5 7M3 13h10"/></svg>下載備份
+        </button>
+        <button class="btn" id="btnRestore" type="button" data-lock="replace">
+          <svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 10V2M4.5 5 8 1.5 11.5 5M3 13h10"/></svg>從備份還原
+        </button>
+        <button class="btn danger" id="btnClear" type="button" data-lock="replace">清除全部通告</button>
+        <input type="file" id="restoreFile" accept="application/json,.json" hidden>
+      </div>
+      <p class="msg" id="backupMsg" role="status"></p>
+    </section>
+  </section>
+
+  <!-- 畫面二：編輯一張通告（左填寫、右預覽；手機改成切換） -->
+  <section id="viewEdit" hidden aria-labelledby="hEdit" data-pane="form">
+    <h2 class="sr-only" id="hEdit" tabindex="-1">編輯通告</h2>
+    <div class="editbar no-print">
+      <button class="btn" id="btnBack" type="button">
+        <svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M10 3 5 8l5 5"/></svg>回到清單
+      </button>
+      <span class="savestate" id="saveState" role="status"></span>
+      <span class="spacer"></span>
+      <button class="btn" id="btnCopy" type="button">
+        <svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><rect x="5.5" y="5.5" width="8" height="8" rx="1.5"/><path d="M10.5 3.5v-.5a1 1 0 0 0-1-1H3.5a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h.5"/></svg>複製文字版
+      </button>
+      <button class="btn primary" id="btnPrint" type="button">
+        <svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 6V2.5h7V6M4.5 11.5h-2v-5h11v5h-2M4.5 9.5h7v4h-7z"/></svg>列印／存成 PDF
+      </button>
+    </div>
+    <p class="note no-print" id="printHint" hidden>如果列印出來的是整個工具箱，請按工具箱右上角的「在新分頁開啟」，再從新分頁列印。</p>
+
+    <div class="panes-toggle no-print" role="group" aria-label="切換畫面">
+      <button type="button" id="paneForm" aria-pressed="true">填寫</button>
+      <button type="button" id="panePreview" aria-pressed="false">預覽</button>
+    </div>
+
+    <div class="split">
+      <fieldset class="pane-form no-print" id="formWrap">
+        <legend class="sr-only">通告內容</legend>
+
+        <fieldset class="group">
+          <legend>基本資料</legend>
+          <div class="field">
+            <label for="f-title">案名</label>
+            <input type="text" id="f-title" data-f="title" maxlength="120" autocomplete="off" placeholder="例：品牌形象片 Day 1">
+          </div>
+          <div class="field">
+            <label for="f-date">日期</label>
+            <input type="date" id="f-date" data-f="date">
+          </div>
+          <div class="grid2">
+            <div class="field">
+              <label for="f-call">集合時間</label>
+              <input type="time" id="f-call" data-f="callTime">
+            </div>
+            <div class="field">
+              <label for="f-wrap">預計收工</label>
+              <input type="time" id="f-wrap" data-f="wrapTime">
+            </div>
+          </div>
+          <p class="hint" id="wrapHint" hidden>收工時間比集合時間早，通告上會標成「隔日」。</p>
+        </fieldset>
+
+        <fieldset class="group">
+          <legend>地點與座標</legend>
+          <div class="field">
+            <label for="f-loc">地點名稱</label>
+            <input type="text" id="f-loc" data-f="locName" maxlength="120" autocomplete="off" placeholder="例：板橋車站東側廣場">
+          </div>
+          <div class="field">
+            <label for="f-map">貼上 Google 地圖網址</label>
+            <input type="text" id="f-map" autocomplete="off" inputmode="url" spellcheck="false" placeholder="貼上網址，或直接貼「25.0478, 121.5170」" aria-describedby="coordMsg">
+            <p class="hint">地圖 App 的「分享」若給短網址（maps.app.goo.gl），要先在瀏覽器打開，再複製網址列裡的完整網址。</p>
+          </div>
+          <div class="grid2">
+            <div class="field">
+              <label for="f-lat">緯度</label>
+              <input type="text" id="f-lat" data-f="lat" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="25.0478" aria-describedby="err-lat">
+              <p class="fielderr" id="err-lat" hidden></p>
+            </div>
+            <div class="field">
+              <label for="f-lng">經度</label>
+              <input type="text" id="f-lng" data-f="lng" inputmode="decimal" autocomplete="off" spellcheck="false" placeholder="121.5170" aria-describedby="err-lng">
+              <p class="fielderr" id="err-lng" hidden></p>
+            </div>
+          </div>
+          <div class="presets" role="group" aria-label="快速填入城市座標">
+            <span class="presets-label">快速填入</span>
+            <span id="presetBtns"></span>
+          </div>
+          <p class="msg" id="coordMsg" role="status"></p>
+          <p class="sunmini" id="sunMini"></p>
+          <p class="warn-note far" id="farNote" role="status" hidden></p>
+        </fieldset>
+
+        <fieldset class="group">
+          <legend>聯絡人</legend>
+          <p class="warn-note">姓名和電話只存在這台裝置的瀏覽器裡，不會上傳。但備份檔和「複製文字版」會包含電話，轉傳前請注意。</p>
+          <div id="contactList"></div>
+          <button class="btn" id="btnAddContact" type="button">
+            <svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3v10M3 8h10"/></svg>新增聯絡人
+          </button>
+        </fieldset>
+
+        <fieldset class="group">
+          <legend>器材</legend>
+          <div class="field">
+            <label for="f-gear">班型名稱</label>
+            <input type="text" id="f-gear" data-f="gearName" maxlength="120" autocomplete="off" placeholder="例：廣告助理班">
+          </div>
+          <p class="linkline"><a href="../gear/" target="_blank" rel="noopener">開啟器材清單</a><span>在新分頁開啟，對照要帶什麼</span></p>
+        </fieldset>
+
+        <fieldset class="group">
+          <legend>交通、天氣、吃的</legend>
+          <div class="field">
+            <label for="f-transport">交通與停車</label>
+            <textarea id="f-transport" data-f="transport" rows="3" maxlength="4000" placeholder="例：捷運板橋站 3 號出口，停車場在地下二樓"></textarea>
+          </div>
+          <div class="field">
+            <label for="f-weather">天氣備註</label>
+            <textarea id="f-weather" data-f="weather" rows="3" maxlength="4000" placeholder="例：下午可能有雨，帶雨衣和器材防水套"></textarea>
+            <p class="linkline"><a href="https://www.cwa.gov.tw/" target="_blank" rel="noopener noreferrer">到中央氣象署看預報</a><span>在新分頁開啟，這個工具不會自己抓天氣</span></p>
+          </div>
+          <div class="field">
+            <label for="f-food">附近吃的</label>
+            <textarea id="f-food" data-f="food" rows="3" maxlength="4000" placeholder="例：車站二樓美食街，中午休息一小時"></textarea>
+          </div>
+          <div class="field">
+            <label for="f-notes">其他備註</label>
+            <textarea id="f-notes" data-f="notes" rows="3" maxlength="4000" placeholder="例：請穿深色衣服，現場不能開空拍機"></textarea>
+          </div>
+        </fieldset>
+      </fieldset>
+
+      <article class="pane-preview" aria-label="通告預覽">
+        <div class="paper" id="paper"></div>
+      </article>
+    </div>
+  </section>
+</div>
+
+<p class="toast no-print" id="toast" role="status" aria-live="polite"></p>
+
+<!-- 確認視窗（刪除、還原、清除全部共用） -->
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <h2 id="dlgTitle"></h2>
+  <div id="dlgBody"></div>
+  <div class="dlg-actions">
+    <button class="btn" id="dlgCancel" type="button">取消</button>
+    <button class="btn primary" id="dlgOk" type="button">確定</button>
+  </div>
+</dialog>
+
+<!-- 瀏覽器不讓自動複製時，改成讓人自己選取複製 -->
+<dialog id="copyDlg" aria-labelledby="copyTitle">
+  <h2 id="copyTitle">請自己複製這段文字</h2>
+  <p class="note">瀏覽器不讓網頁自動複製。文字已經選好了，長按或按 Cmd／Ctrl＋C 就能複製。</p>
+  <textarea id="copyArea" readonly rows="12" aria-label="文字版通告"></textarea>
+  <div class="dlg-actions">
+    <button class="btn primary" id="copyClose" type="button">關閉</button>
+  </div>
+</dialog>
+</body>
+</html>
